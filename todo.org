@@ -1,0 +1,12 @@
+* sketch of the plan:
+** start with papers:
+*** Virtual Cluster Embedding, the journal version Elsevier TCS
+*** Online Balanced Repartition, the journal version
+*** possibly the Tree Caching if Jasiek allows me to
+*** most likely the Knapsack paper
+** make a detailed plan what to do
+** write a system-oriented intro that glues the papers together
+** rewrite Knapsack paper in term of jobs
+** get to know the domain and collect references from the domain
+* proposed title: "Communication-efficient job partitioning"
+* due date: January
