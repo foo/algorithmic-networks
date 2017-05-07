@@ -10,3 +10,7 @@
 ** get to know the domain and collect references from the domain
 * proposed title: "Communication-efficient job partitioning"
 * due date: January
+* TODO bibliography, add the notes of previous usages
+** Tadek's MSc: the lower-bound for Knapsack
+** Ola's MSc: parts of TC
+** Carlo's PHd: whole VCEMB
