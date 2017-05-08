@@ -14,3 +14,6 @@
 ** Tadek's MSc: the lower-bound for Knapsack
 ** Ola's MSc: parts of TC
 ** Carlo's PHd: whole VCEMB
+* Offline Tree Caching is already known
+** Tree Sparsity TODO: check
+** we have an appendix section on that
