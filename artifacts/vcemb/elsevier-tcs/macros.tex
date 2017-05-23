@@ -1,0 +1,84 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% GENERAL STYLE MACROS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\etal}{{\it et~al.\ }}
+\newcommand{\myparagraph}[1]{{\smallskip\noindent{\bf #1}}}
+\newcommand{\mycase}[1]{{\underline{Case~#1}:}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% THEOREMS AND SUCH
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{fact}{Fact}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% USEFUL LETTERS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\DeclareMathOperator{\polylog}{polylog}
+\newcommand{\emdash}{\hspace{1mm}---\hspace{1mm}}
+\newcommand{\e}{\mathrm{e}}
+\renewcommand{\O}{\mathcal{O}}
+\renewcommand{\Pr}{\mathbf{Pr}}
+\newcommand{\E}{\mathbf{E}}
+\newcommand{\NAT}{\mathbb{N}}
+\newcommand{\REAL}{\mathbb{R}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PARENTHESES ETC
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\ceiling}[1]{\left\lceil #1 \right\rceil}
+\newcommand{\floor}[1]{\left\lfloor #1 \right\rfloor}
+\newcommand{\braced}[1]{{\left\{#1\right\}}}
+\newcommand{\bigbrackd}[1]{{\big[#1\big]}}
+\newcommand{\brackd}[1]{{\left[#1\right]}}
+\newcommand{\parend}[1]{{\left(#1\right)}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% FRACTIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\half}{\frac{1}{2}}
+\newcommand{\onehalf}{\frac{1}{2}}
+\newcommand{\onethird}{\frac{1}{3}}
+\newcommand{\twothirds}{{\textstyle\frac{2}{3}}}
+\newcommand{\fourthirds}{{\textstyle\frac{4}{3}}}
+\newcommand{\fivethirds}{{\textstyle\frac{5}{3}}}
+\newcommand{\threefourths}{{\textstyle\frac{3}{4}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ALGORITHM NAMES, ETC
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\ALG}{\textsc{Alg}}
+\newcommand{\OPT}{\textsc{Opt}}
+\newcommand{\DET}{\textsc{Det}}
+\newcommand{\RAND}{\textsc{Rand}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PSEUDOCODE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\IF}    {{\bf if }}
+\newcommand{\THEN}  {{\bf then }} 
+\newcommand{\FOR}   {{\bf for }}
+\newcommand{\EACH}  {{\bf each }} 
+\newcommand{\DO}  {{\bf do }} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% EDITORIAL MACROS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\definecolor{brown}{rgb}{0.4,0,0} 
+\definecolor{purple}{rgb}{0.2,0,0.6}
+\definecolor{hotpink}{rgb}{1,0.4,0.7}
+\newcommand{\marginnote}[1]{\marginpar{\scriptsize{\begin{flushleft}#1\end{flushleft}}}}
+\newcommand{\todo}[1]{\noindent\colorbox{red}{todo: #1}} 
+\newcommand{\marcin}[1]{\color{red} Marcin: #1\color{black}}
+
