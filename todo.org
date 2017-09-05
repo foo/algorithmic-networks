@@ -29,3 +29,4 @@
 *** uwspólnij nazewnictwo w pracach ICNP i DISC
 *** intro: new challenges in networsk
 **** SDN
+*** o strukturze: czytaj pracę markarian.pdf, tam jest praktyczny wstęp do teoretycznych rezultatów
