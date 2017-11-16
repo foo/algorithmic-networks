@@ -1,18 +1,24 @@
-\documentclass[a4paper]{article}
+\documentclass[a4paper]{book}
 
 \usepackage{amsfonts,amssymb,amsmath}
 \usepackage{graphicx}
 \usepackage[ruled,vlined,commentsnumbered]{algorithm2e}
 \usepackage{hyperref}
-\usepackage{multirow}
 \usepackage[shortlabels]{enumitem}
 \usepackage[utf8]{inputenc}
 \usepackage{comment}
 \usepackage{subfig}
+\usepackage{epstopdf}
 
-\newcommand{\todo}[1]{\noindent\colorbox{red}{todo: #1}\margcomm{todo}} 
-\newcommand{\marcin}[1]{\color{red} Marcin: #1\color{black}\margcomm{marcin}}
-\newcommand{\maciek}[1]{\textcolor{blue}{(Maciek: #1)}\margcomm{maciek}}
+\usepackage{xcolor}
+
+\newcommand{\margcomm}[1]{\marginpar{\footnotesize\raggedright #1}}
+\definecolor{blueLink}{rgb}{0,0.2,0.8}
+\hypersetup{colorlinks,linkcolor=blueLink,urlcolor=blueLink,citecolor=blueLink}
+
+\newcommand{\todo}[1]{\noindent\textcolor{red}{(TODO: #1)}\margcomm{TODO}} 
+\newcommand{\marcin}[1]{\color{blue} Marcin: #1\color{black}\margcomm{marcin}}
+\newcommand{\maciek}[1]{\textcolor{red}{(Maciek: #1)}\margcomm{maciek}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -20,23 +26,29 @@
 
 \author{Maciej Pacut}
 
-
 \begin{document}
 \maketitle
 
-\section{Introduction}
+\tableofcontents
+
+\bibliography{references}  
+
+\chapter{Introduction}
+\todo{test todos}
+\maciek{@up: I think that's a good idea}
+
 \begin{enumerate}
-  \item new challenges in networking
+  \item new challenges in networking \cite{tree-sparsity}
   \item SDN
 \end{enumerate}
 
 \subsection{Organization of the paper}
 
-\section{Mapping virtual networks}
+\part{Mapping virtual networks}
 
-\subsection{Virtual networks with static topology}
+\chapter{Virtual networks with static topology}
 
-\subsubsection{Introduction, practical motivations and related work}
+\section{Introduction, practical motivations and related work}
 Abstract/introduction compilation.
 \begin{enumerate}
   \item The basic problem definition and its applications (with data locality and choice of replica)
@@ -49,7 +61,7 @@ Abstract/introduction compilation.
 \end{enumerate}
 Practical motivations ends here (+ possibly in the conclusions chapter)
 
-\subsubsection{Model}
+\section{Model}
 \begin{enumerate}
   \item Formal definition of the problem of embedding a virtual cluster in the substrate network
   \item The objective function
@@ -60,7 +72,7 @@ Practical motivations ends here (+ possibly in the conclusions chapter)
   \item Variant introduction: Node Interconnect
   \item Variant introduction: Bandwidth Constraints
 \end{enumerate}
-\subsubsection{Contributions/results}
+\section{Contributions/results}
 \begin{enumerate}
   \item Short description of the results.
   \item The main question of the section: polynomially tractable or NP-complete
@@ -68,32 +80,32 @@ Practical motivations ends here (+ possibly in the conclusions chapter)
   \item NP-complete $\rightarrow$ how restricted version is still NP-complete
 \end{enumerate}
 
-\subsubsection{Polynomial-time algorithms intro}
-\subsubsection{Matching-based polynomial-time algorithms}
-\subsubsection{Flow-based polynomial-time algorithms}
-\subsubsection{Dynamic programming-based polynomial-time algorithms}
-\subsubsection{Note on degenerated problems}
-\subsubsection{NP-hardness intro}
+\section{Polynomial-time algorithms intro}
+\section{Matching-based polynomial-time algorithms}
+\section{Flow-based polynomial-time algorithms}
+\section{Dynamic programming-based polynomial-time algorithms}
+\section{Note on degenerated problems}
+\section{NP-hardness intro}
 \begin{enumerate}
   \item The sketch of reductions and generalizations that applies to remainder of the problems (without polynomial-time algorithms)
   \item The 3D Multiple Assignment Problem + references to its NP-hardness
 \end{enumerate}
 
-\subsubsection{NP-hardness result for Multiple Assignment with at least 3 replicas}
-\subsubsection{NP-hardness result for Node Interconnect with at least 3 replicas}
+\section{NP-hardness result for Multiple Assignment with at least 3 replicas}
+\section{NP-hardness result for Node Interconnect with at least 3 replicas}
 
-\subsubsection{Intro to restricted version of 2 replicas}
+\section{Intro to restricted version of 2 replicas}
 
-\subsubsection{NP-hardness result for Multiple Assignment with at most 2 replicas}
-\subsubsection{NP-hardness result for Node Interconnect with at most replicas}
+\section{NP-hardness result for Multiple Assignment with at most 2 replicas}
+\section{NP-hardness result for Node Interconnect with at most replicas}
 
-\subsubsection{Conclusions}
+\section{Conclusions}
 
-\subsection{Virtual networks with dynamic topology}
+\chapter{Virtual networks with dynamic topology}
 
-\subsubsection{Online analysis introduction?}
+\section{Online analysis introduction?}
 
-\subsubsection{Introduction, practical motivations and related work}
+\section{Introduction, practical motivations and related work}
 
 Abstract/introduction/practical motivation/related work compilation.
 
@@ -108,45 +120,47 @@ References and comparisons to previous chapter:
 
 Problems that arise (in paper: part of the model): rent or buy / where to migrate and what / which nodes to evict
 
-\subsubsection{Model}
+\section{Model}
 \begin{enumerate}
   \item Purely mathematical description of the model
   \item The choice of particulare augmentation model
 \end{enumerate}
-\subsubsection{Results}
+\section{Results}
 Short description of the results.
-\subsubsection{Natural greedy algorithm}
-\subsubsection{Lower bound: the reduction from caching}
+\section{Natural greedy algorithm}
+\section{Lower bound: the reduction from caching}
 State clearly the gap between greedy and LB. 
-\subsubsection{Restricted scenario: server capacity = 2. The online rematching}
-\subsubsection{CREP algorithm}
-\subsubsection{Chen's Lower Bound}
-\subsubsection{Conclusions}
+\section{Restricted scenario: server capacity = 2. The online rematching}
+\section{CREP algorithm}
+\section{Chen's Lower Bound}
+\section{Conclusions}
 
-\section{Optimizing routing tables}
+\part{Memory management in network devices (or: cache management in network devices)}
 
-\subsubsection{Introduction, practical motivations and related work}
+\chapter{Optimizing routing tables}
+
+\section{Introduction, practical motivations and related work}
 
 Abstract/introduction/practical motivation/related work compilation.
 Note that Offline TC is known.
 
-\subsubsection{Model}
+\section{Model}
 Formal state of the model.
-\subsubsection{Results}
+\section{Results}
 Short description of the results.
-\subsubsection{Formulation of the rent-or-buy algorithm}
+\section{Formulation of the rent-or-buy algorithm}
 Short chapter.
-\subsubsection{The analysis of TC}
-\subsubsection{The lower-bound on competitive ratio}
+\section{The analysis of TC}
+\section{The lower-bound on competitive ratio}
 
-\subsubsection{Other-than-main results}
+\section{Other-than-main results}
 \begin{enumerate}
   \item Minimizing forwarding tables.
   \item Notes on efficient implementation of TC
 \end{enumerate}
-\subsubsection{Conclusions}
+\section{Conclusions}
 
 
-\section{Conclusions (for the whole thesis)}
+\chapter{Appendix}
 
 \end{document}
