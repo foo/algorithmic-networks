@@ -12,4 +12,7 @@
 *.thm
 *.fdb_latexmk
 *.synctex
-paper.pdf
+thesis.pdf
+.dropbox
+*.bcf
+thesis.run.xml

@@ -1,5 +1,5 @@
-FILE = paper
-TEX_FILES = paper.tex
+FILE = thesis
+TEX_FILES = thesis.tex
 
 all: $(FILE).pdf 
 
@@ -10,7 +10,7 @@ all: $(FILE).pdf
 	pdflatex -synctex=1 $<
 
 clean: 
-	rm -f *.aux *.toc *.log *.out *.nav *.snm *.vrb *.blg *.bbl *.vtc *.synctex.gz *.thm *.fdb_latexmk *.synctex
+	rm -f *.aux *.toc *.log *.out *.nav *.snm *.vrb *.blg *.bbl *.vtc *.synctex.gz *.thm *.fdb_latexmk *.synctex thesis.run.xml *.bcf
 
 distclean: clean
 	rm -f $(FILE).pdf

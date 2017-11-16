@@ -13,8 +13,6 @@
 \usepackage{xcolor}
 
 
-\usepackage{biblatex}
-\addbibresource{references.bib}
 
 \newcommand{\margcomm}[1]{\marginpar{\footnotesize\raggedright #1}}
 \definecolor{blueLink}{rgb}{0,0.2,0.8}
@@ -166,5 +164,7 @@ Short chapter.
 
 \chapter{Appendix}
 
-\printbibliography
+\bibliographystyle{plain}
+\bibliography{references}
+
 \end{document}
