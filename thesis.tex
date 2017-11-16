@@ -12,6 +12,10 @@
 
 \usepackage{xcolor}
 
+
+\usepackage{biblatex}
+\addbibresource{references.bib}
+
 \newcommand{\margcomm}[1]{\marginpar{\footnotesize\raggedright #1}}
 \definecolor{blueLink}{rgb}{0,0.2,0.8}
 \hypersetup{colorlinks,linkcolor=blueLink,urlcolor=blueLink,citecolor=blueLink}
@@ -31,14 +35,13 @@
 
 \tableofcontents
 
-\bibliography{references}  
 
 \chapter{Introduction}
 \todo{test todos}
 \maciek{@up: I think that's a good idea}
 
 \begin{enumerate}
-  \item new challenges in networking \cite{tree-sparsity}
+  \item new challenges in networking \cite{knapsack-cygan-jez}
   \item SDN
 \end{enumerate}
 
@@ -163,4 +166,5 @@ Short chapter.
 
 \chapter{Appendix}
 
+\printbibliography
 \end{document}
