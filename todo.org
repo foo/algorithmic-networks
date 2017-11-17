@@ -30,3 +30,18 @@
 *** intro: new challenges in networsk
 **** SDN
 *** o strukturze: czytaj pracę markarian.pdf, tam jest praktyczny wstęp do teoretycznych rezultatów
+* KOLEJNE SPOTKANIE
+** intro, practical motivations, related work z 3 prac na początek (do part intro, główna część "pracy")
+** w intro: intro to competitive analysis
+** ujednolicenie notacji między VCMB i OBR
+** w mapping part: iuntro do modelu praktycznego nadającego się do obu chapterów z part 1. Practical motivation -> part intro
+** skompiluj intro practical motivation z 3 paperów i zacznij czytać
+** "real" practical motivations -- dodatkowy wstęp:
+*** Virtual Clusters
+*** SDN
+** nowe trendy, zmiana paradygmatów, przeniesienie aplikacji do cloud (data centers) => nowe wyzwania algorytmicze (optymalizacja: szybkość przesyłania pakietów)
+** czytaj Survey o Virtual Clusters -> streść
+** koniec intro: zawęzić do  prac zawartych w thesis (z szerokości SDN/VC)
+** po intro: CONTRIBUTIONS OF THIS THESIS
+*** szkic wspólnej części praktycznej w Part I
+** możesz wrzucić party do pracy + czytać  prace VC/SDN
