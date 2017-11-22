@@ -1,6 +1,8 @@
 \documentclass[a4paper]{book}
 
 \usepackage{amsfonts,amssymb,amsmath}
+\usepackage[thmmarks,hyperref,amsthm,amsmath]{ntheorem}
+
 \usepackage{graphicx}
 \usepackage[ruled,vlined,commentsnumbered]{algorithm2e}
 \usepackage{hyperref}
@@ -9,10 +11,11 @@
 \usepackage{comment}
 \usepackage{subfig}
 \usepackage{epstopdf}
-
+\usepackage{multirow}
 \usepackage{xcolor}
 
-
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
 
 \newcommand{\margcomm}[1]{\marginpar{\footnotesize\raggedright #1}}
 \definecolor{blueLink}{rgb}{0,0.2,0.8}
