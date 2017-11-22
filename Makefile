@@ -1,5 +1,5 @@
 FILE = thesis
-TEX_FILES = thesis.tex
+TEX_FILES = thesis.tex cache-management.tex dynamic-mapping.tex static-mapping.tex introduction.tex appendix.tex
 
 all: $(FILE).pdf 
 
