@@ -45,3 +45,5 @@
 ** po intro: CONTRIBUTIONS OF THIS THESIS
 *** szkic wspólnej części praktycznej w Part I
 ** możesz wrzucić party do pracy + czytać  prace VC/SDN
+* next
+** mgr OLi

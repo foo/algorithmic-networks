@@ -4,10 +4,10 @@
 
 \newcommand{\lref}[2][]{\hyperref[#2]{#1~\ref*{#2}}}
 
-\newcommand{\ALG}{\textsc{TC}\xspace}
-\newcommand{\OPT}{\textsc{Opt}\xspace}
+\newcommand{\ALGTC}{\textsc{TC}\xspace}
+%\newcommand{\OPT}{\textsc{Opt}\xspace}
 \newcommand{\last}{\textrm{last}}
-\newcommand{\size}{\textrm{size}}
+\newcommand{\sizetc}{\textrm{size}}
 \newcommand{\req}{\textrm{req}}
 \newcommand{\cnt}{\textrm{cnt}}
 \newcommand{\val}{\textrm{val}}
@@ -64,20 +64,20 @@ changesets may be applied as the algorithm is also limited by its cache capacity
 
 \section{Algorithm}\label{sec:algo}
 
-The algorithm \textsc{Tree Caching} (\ALG) presented in the following is
+The algorithm \textsc{Tree Caching} (\ALGTC) presented in the following is
 a simple scheme that follows a \emph{rent-or-buy paradigm}: it fetches (or evicts)
 a changeset $X$ if the cost associated with requests at $X$ reaches the cost of 
 such fetch or eviction.
 
-More concretely, \ALG operates in multiple phases. The first phase starts at time $0$.
-\ALG starts each phase with the empty cache and proceeds as follows. Within a
+More concretely, \ALGTC operates in multiple phases. The first phase starts at time $0$.
+\ALGTC starts each phase with the empty cache and proceeds as follows. Within a
 phase, every node keeps a counter, which is initially zero. If at round~$t$ it
 pays~$1$ for serving the request, it increments its counter. Whenever a node
 is fetched or evicted from the cache, its counter is reset to zero. Note that
 this implies that the counter of $v$ is equal to the number of negative
 (positive) requests to $v$ since its last fetching to the cache (eviction from
 the cache). For a~set $A \subseteq T$, we denote the sum of all counters in
-$A$ at time $t$ by $\cnt_t(A)$. At time~$t$, \ALG verifies whether
+$A$ at time $t$ by $\cnt_t(A)$. At time~$t$, \ALGTC verifies whether
 there exists a valid changeset $X$, such that
 \begin{itemize}
 \item \emph{(saturation property)} $\cnt_t(X) \geq |X| \cdot \alpha$ and
@@ -86,7 +86,7 @@ there exists a valid changeset $X$, such that
 \end{itemize}
 In this case, the algorithm modifies its cache applying~$X$. 
 
-If, at time $t$, \ALG is supposed to fetch some set $X$, but by doing so it
+If, at time $t$, \ALGTC is supposed to fetch some set $X$, but by doing so it
 would exceed the cache capacity $\kALG$, it evicts all nodes from the cache
 instead, and starts a~new phase at time~$t$. Such a \emph{final eviction}
 might not be present in the last phase, in which case we call it
@@ -94,7 +94,7 @@ might not be present in the last phase, in which case we call it
 
 
 In \lref[Lemma]{lem:no_over-requested_changesets} (below), we show that at any
-time, all valid changesets satisfying both properties of \ALG are either all
+time, all valid changesets satisfying both properties of \ALGTC are either all
 positive or all negative. Furthermore, right after the algorithm applies a
 changeset, no valid changeset satisfies saturation property.
 
@@ -110,7 +110,7 @@ changeset, no valid changeset satisfies saturation property.
 \label{sec:analysis}
 
 Throughout the paper, we fix an input $I$, its partition into phases, and
-analyze both \ALG and \OPT on a~single fixed phase $P$. We denote the times at
+analyze both \ALGTC and \OPT on a~single fixed phase $P$. We denote the times at
 which $P$ starts and ends by $\beP$ and $\enP$, respectively, i.e., rounds in
 $P$ are numbered from $\beP+1$ to $\enP$. A proof of the following technical
 lemma follows by induction and is presented in 
@@ -139,12 +139,12 @@ negative.
 
 In the following, we assume that no positive requests are given to nodes
 inside cache and no negative ones to nodes outside of it. (This does not
-change the behavior of \ALG and can only decrease the cost of \OPT.)
+change the behavior of \ALGTC and can only decrease the cost of \OPT.)
 
-For the sake of analysis, we assume that at time $\enP$, \ALG actually
+For the sake of analysis, we assume that at time $\enP$, \ALGTC actually
 performs a cache fetch (exceeding the cache size limit) and then, at the same
 time instant, empties the cache. This replacement only increases the cost of
-\ALG. Let $k_P$ denote the number of nodes in the cache of $\ALG$ at $\enP$.
+\ALGTC. Let $k_P$ denote the number of nodes in the cache of $\ALGTC$ at $\enP$.
 In a finished phase, we measure it after the artificial fetch, but right
 before the final eviction, and thus $k_P \geq \kALG + 1$; in an unfinished
 phase $k_P \leq \kALG$.
@@ -154,7 +154,7 @@ The crucial part of our analysis that culminates in
 modify the input sequence by shifting requests up or down the tree, so that
 the resulting input sequence (i) is not harder for \OPT and (ii) is more
 structured: we may lower bound the cost of \OPT on each node separately and
-relate it to the cost of \ALG.
+relate it to the cost of \ALGTC.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -165,7 +165,7 @@ relate it to the cost of \ALG.
 \label{sec:analysis}
 
 Throughout the paper, we fix an input $I$, its partition into phases, and
-analyze both \ALG and \OPT on a~single fixed phase $P$. We denote the times at
+analyze both \ALGTC and \OPT on a~single fixed phase $P$. We denote the times at
 which $P$ starts and ends by $\beP$ and $\enP$, respectively, i.e., rounds in
 $P$ are numbered from $\beP+1$ to $\enP$. A proof of the following technical
 lemma follows by induction and is presented in 
@@ -194,12 +194,12 @@ negative.
 
 In the following, we assume that no positive requests are given to nodes
 inside cache and no negative ones to nodes outside of it. (This does not
-change the behavior of \ALG and can only decrease the cost of \OPT.)
+change the behavior of \ALGTC and can only decrease the cost of \OPT.)
 
-For the sake of analysis, we assume that at time $\enP$, \ALG actually
+For the sake of analysis, we assume that at time $\enP$, \ALGTC actually
 performs a cache fetch (exceeding the cache size limit) and then, at the same
 time instant, empties the cache. This replacement only increases the cost of
-\ALG. Let $k_P$ denote the number of nodes in the cache of $\ALG$ at $\enP$.
+\ALGTC. Let $k_P$ denote the number of nodes in the cache of $\ALGTC$ at $\enP$.
 In a finished phase, we measure it after the artificial fetch, but right
 before the final eviction, and thus $k_P \geq \kALG + 1$; in an unfinished
 phase $k_P \leq \kALG$.
@@ -209,7 +209,7 @@ The crucial part of our analysis that culminates in
 modify the input sequence by shifting requests up or down the tree, so that
 the resulting input sequence (i) is not harder for \OPT and (ii) is more
 structured: we may lower bound the cost of \OPT on each node separately and
-relate it to the cost of \ALG.
+relate it to the cost of \ALGTC.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -228,12 +228,12 @@ $v$ given at round $t$ occupies slot $(v,t)$. From now on, we will identify
 $P$ with a set of requests occupying some slots in the event space.
 
 We partition slots of the whole event space into disjoint parts, called
-\emph{fields}, and we show how this partition is related to the costs of \ALG
+\emph{fields}, and we show how this partition is related to the costs of \ALGTC
 and \OPT. For any node~$v$ and time $t$, $\last_v(t)$ denotes the last time
 strictly before~$t$, when node $v$ changed state from cached to non-cached or
 vice versa; $\last_v(t) = \beP$ if $v$ did not change its state before $t$ in
 phase $P$. For a~changeset~$X_t$ applied by
-\ALG at time $t$, we define the field $F^t$ as
+\ALGTC at time $t$, we define the field $F^t$ as
 \[
   F^t = \left\{\ (v,r) : v \in X_t \, \wedge\, \last_v(t)+1 \leq r \leq t\ \right\}.
 \]
@@ -242,8 +242,8 @@ application of $X_t$ at time $t$. We say that $F^t$ ends at $t$. We call field
 $F^t$ \emph{positive} (\emph{negative}) if $X_t$ is a positive (negative)
 changeset. An~example of a~partitioning into fields is given in
 \lref[Figure]{fig:fields}. We define $\req(F^t)$ as the number of requests
-belonging to slots of~$F^t$ and let $\size(F^t)$ be the number of involved
-nodes (note that $\size(F^t) = |X_t|)$. The observation below follows
+belonging to slots of~$F^t$ and let $\sizetc(F^t)$ be the number of involved
+nodes (note that $\sizetc(F^t) = |X_t|)$. The observation below follows
 immediately by \lref[Lemma]{lem:no_over-requested_changesets}.
 
 \begin{figure}[t]
@@ -262,25 +262,25 @@ immediately by \lref[Lemma]{lem:no_over-requested_changesets}.
 
 \begin{observation}
 \label{obs:field_requests}
-For any field $F$, $\req(F) = \size(F) \cdot \alpha$. All these requests are
+For any field $F$, $\req(F) = \sizetc(F) \cdot \alpha$. All these requests are
 positive (negative) if $F$ is positive (negative).
 \end{observation}
 
 Finally, we call the rest of the event space defined by phase $P$
 \emph{open field} and denote it by $F^\infty$. The set of all fields except $
-F^\infty$ is denoted by $\F$. Let $\size(\F) = \sum_{F \in \F} \size(F)$.
+F^\infty$ is denoted by $\F$. Let $\sizetc(\F) = \sum_{F \in \F} \sizetc(F)$.
 
 \begin{lemma}
 \label{lem:alg_cost}
 For any phase $P$ partitioned into a set of fields $\F \cup \{ F^\infty \}$,
-it holds that $\ALG(P) \leq 2 \alpha \cdot \size(\F) + \req(F^\infty) + k_P
+it holds that $\ALGTC(P) \leq 2 \alpha \cdot \sizetc(\F) + \req(F^\infty) + k_P
 \cdot \alpha$.
 \end{lemma}
 
 \begin{proof}
 By \lref[Observation]{obs:field_requests}, the cost associated with serving
 the requests from all fields from $\mathcal{F}$ is $\sum_{F \in \F} \alpha
-\cdot \size(F) = \alpha \cdot \size(\F)$. The cost of the cache reorganization
+\cdot \sizetc(F) = \alpha \cdot \sizetc(\F)$. The cost of the cache reorganization
 at the fields' ends is exactly the same. The term $\req(F^\infty)$ represents
 the cost of serving the requests from $F^\infty$ and $k_P \cdot \alpha$
 upper-bounds the cost of the final eviction (not present in an unfinished
@@ -299,7 +299,7 @@ the cost of {\OPT}. The rationale behind our construction is based on the
 following thought experiment. Assume that the phase is unfinished (for
 example, when the cache is so large that the whole input corresponds to a
 single phase). Recall that the number of requests in each field $F \in \F$ is
-equal to $\size(F) \cdot \alpha$. Assume that these requests are evenly
+equal to $\sizetc(F) \cdot \alpha$. Assume that these requests are evenly
 distributed among the nodes of $F$ (each node from $F$ receives $\alpha$
 requests in the slots of $F$). Then, the history of any node $v$ is
 alternating between periods spent in positive fields and periods spent in
@@ -309,7 +309,7 @@ a~single node, \OPT has to pay at least $\alpha$ (either $\alpha$ for positive
 requests or $\alpha$ for negative ones, or $\alpha$ for changing the
 cached/non-cached state of $v$). Essentially, this shows that $\OPT$ has to
 pay an amount that can be easily related to $\alpha \cdot
-\size(\F)$.
+\sizetc(\F)$.
 
 Unfortunately, the requests may not be evenly distributed among the nodes. To
 alleviate this problem, we will modify the requests in phase $P$, so that the
@@ -364,10 +364,10 @@ is the snapshot of $F^t$ at time~$\tau$. Note that $F^t$ may have some nodes
 not included in $F^t_{\leq \tau}$. These objects are depicted in
 \lref[Figure]{fig:fields}.
 
-We may extend the notions of $\req$ and $\size$ to arbitrary subsets of fields
+We may extend the notions of $\req$ and $\sizetc$ to arbitrary subsets of fields
 in a natural way.
 For any subset $S \subseteq F$, we call it \emph{over-requested} if
-$\req(S) > \size(S) \cdot \alpha$. 
+$\req(S) > \sizetc(S) \cdot \alpha$. 
 
 \begin{lemma}
 \label{lem:not_over-requested}
@@ -451,7 +451,7 @@ number of requests to $v$ in $F^t$.
 
 We look at all the requests to $v$ in $F^t$ ordered by their round. Let $s$ be
 the round when $(\alpha+1)$-th of them arrives. We will now show that at round
-$s$, \ALG already has $p(v)$ in its cache. If it had not, $\{v\}$ would be a
+$s$, \ALGTC already has $p(v)$ in its cache. If it had not, $\{v\}$ would be a
 tree cap of $F^t_{\leq s}$, and by the first property of
 \lref[Lemma]{lem:not_over-requested}, it would contain at most $\alpha$
 requests, which is a~contradiction. Hence, if we shift the chronologically
@@ -484,9 +484,9 @@ requested exactly $\alpha$ times.
 \label{sec:positive_shifting}
 
 We will now focus on the problem of shifting the positive requests down in a
-single positive field $F^t$, corresponding to a single fetch of \ALG at the
+single positive field $F^t$, corresponding to a single fetch of \ALGTC at the
 time $t$. Our goal is to devise a shifting strategy, that will result in at
-least $\Omega(\size(F^t)/h(T))$ nodes having $\alpha/2$ requests each. While
+least $\Omega(\sizetc(F^t)/h(T))$ nodes having $\alpha/2$ requests each. While
 this result may be suboptimal, deriving a shifting strategy for a~positive
 field that would have the same equal distribution guarantee as the one
 provided by \lref[Corollary]{cor:crucial_lemma_neg} is not possible 
@@ -533,7 +533,7 @@ really shifted, as $u_1$ is $v$ itself. We perform such shift for any $j \in
 \label{lem:crucial_lemma_pos}
 For any positive field $F^t$, it is possible to legally shift its requests
 down, so that they remain within $F^t$ and after the modification at least
-$\size(F^t)/(2 h(T))$ nodes in $F^t$ have at least $\alpha/2$ requests each.
+$\sizetc(F^t)/(2 h(T))$ nodes in $F^t$ have at least $\alpha/2$ requests each.
 \end{lemma}
 
 \begin{proof}
@@ -554,7 +554,7 @@ $\alpha/2$ requests).
 Nodes of $X_t^i$ are independent, i.e., for $u, v \in X_t^i$ the trees $T(u)$
 and $T(v)$ are disjoint. Therefore, we may use the shifting strategy described
 in \lref[Lemma]{lem:downshift} for each node of $X_t^i$ separately. After such
-modification, at least $\lceil |X_t| / (2 h(T)) \rceil \geq \size(F_t) / (2
+modification, at least $\lceil |X_t| / (2 h(T)) \rceil \geq \sizetc(F_t) / (2
 h(T))$ nodes have at least $\alpha / 2$ requests each.
 \end{proof}
 
@@ -565,14 +565,14 @@ h(T))$ nodes have at least $\alpha / 2$ requests each.
 \subsubsection{Using Request Shifting for Bounding OPT}
 \label{sec:lower-bound}
 
-Finally, we may use our request shifting to relate $\size(\F) =
-\sum_{F \in \mathcal{F}} \size(F)$ to the cost of $\OPT$ in a single phase $P$.
-Recall that $k_P$ denotes the size of \ALG's cache at the end of $P$. We
+Finally, we may use our request shifting to relate $\sizetc(\F) =
+\sum_{F \in \mathcal{F}} \sizetc(F)$ to the cost of $\OPT$ in a single phase $P$.
+Recall that $k_P$ denotes the size of \ALGTC's cache at the end of $P$. We
 assume that {\OPT} may start the phase with an arbitrary state of the cache.
 
 \begin{lemma}
 \label{lem:leftovers}
-For any phase $P$, $\OPT(P) \geq (\size(\F) / (4 h(T)) - k_P)
+For any phase $P$, $\OPT(P) \geq (\sizetc(\F) / (4 h(T)) - k_P)
 \cdot \alpha/2$.
 \end{lemma}
 
@@ -584,7 +584,7 @@ phase $P'$ that satisfies both
 \lref[Corollary]{cor:crucial_lemma_neg} and
 \lref[Lemma]{lem:crucial_lemma_pos}. 
 By \lref[Observation]{obs:pprim_easier_than_p}, it is sufficient to show that
-$\OPT(P') \geq (\size(\F) / (4 h(T)) - k_P) \cdot \alpha/2$.
+$\OPT(P') \geq (\sizetc(\F) / (4 h(T)) - k_P) \cdot \alpha/2$.
 
 \begin{figure}[t]
 \centering
@@ -592,14 +592,14 @@ $\OPT(P') \geq (\size(\F) / (4 h(T)) - k_P) \cdot \alpha/2$.
 \caption{Partitioning of the phase into interleaving \pin and \pout periods
 for node $v$. The thick line represents cache contents. The \emph{leftover}
 \pout period (the last one) is present for node $v$ as it has finished phase
-$P$ inside \ALG's cache. The periods can be followed by requests contained in
+$P$ inside \ALGTC's cache. The periods can be followed by requests contained in
 $F^\infty$.}
 \label{fig:leftover}
 \end{figure}
 
 We focus on a single node $v$.  We cut its history into interleaved periods:
 \pout \emph{periods}, when $v$ is outside the cache and receives positive 
-requests, and \pin \emph{periods} when \ALG keeps $v$ in the cache and $v$
+requests, and \pin \emph{periods} when \ALGTC keeps $v$ in the cache and $v$
 receives negative requests. A final (possibly empty) part corresponding to the
 time when $v$ is in the $F^\infty$ field is not accounted in \pout or \pin
 periods, i.e., each \pin or \pout period corresponds to some field $F \in \F$.
@@ -607,13 +607,13 @@ Let $p^\pin$ and $p^\pout$ denote the total number of \pin and \pout periods
 (respectively) for all nodes during the phase. An~example is given
 in~\lref[Figure]{fig:leftover}.
 
-Recall that \ALG starts each phase with an empty cache, and hence each node
-starts with an \pout period. For $k_P$ nodes that are in {\ALG}'s cache at the
+Recall that \ALGTC starts each phase with an empty cache, and hence each node
+starts with an \pout period. For $k_P$ nodes that are in {\ALGTC}'s cache at the
 end of the phase (and only for them) their history ends with an \pout period
 not followed by an \pin period. We call them \emph{leftover periods}. Thus,
 $p^\pout = p^\pin + k_P$. The total number of periods ($p^\pin + p^\pout$) is
-equal to the total size of all \emph{fields}, $\size(\F)$, and thus $p^\pout 
-\geq \size(\F) / 2$.
+equal to the total size of all \emph{fields}, $\sizetc(\F)$, and thus $p^\pout 
+\geq \sizetc(\F) / 2$.
 
 We call a period \emph{full} if it has at least $\alpha/2$ requests. The
 shifting strategies described in the previous section ensure that all
@@ -626,7 +626,7 @@ periods; each of them together with the following \pin period constitutes a
 described by a~full \pout-\pin pair: it pays $\alpha$ either for changing the
 cached/non-cached state of a node, or $\alpha/2$ for all positive requests or
 $\alpha/2$ for all negative ones. Thus, $\OPT(P') \geq ( p^\pout / (2 h(T)) -
-k_P ) \cdot \alpha/2 \geq ( \size(\F) / (4 h(T)) - k_P ) \cdot \alpha/2$.
+k_P ) \cdot \alpha/2 \geq ( \sizetc(\F) / (4 h(T)) - k_P ) \cdot \alpha/2$.
 \end{proof}
 
 
@@ -636,9 +636,9 @@ k_P ) \cdot \alpha/2 \geq ( \size(\F) / (4 h(T)) - k_P ) \cdot \alpha/2$.
 \subsection{Competitive Ratio}
 \label{sec:comp_ratio}
 
-To relate the cost of \OPT to \ALG in a single phase $P$, we still need to
+To relate the cost of \OPT to \ALGTC in a single phase $P$, we still need to
 upper-bound $\req (F^\infty)$ and relate $k_P \cdot \alpha$ to the cost of
-$\OPT$ (i.e., compare the bounds on \ALG and \OPT provided by
+$\OPT$ (i.e., compare the bounds on \ALGTC and \OPT provided by
 \lref[Lemma]{lem:alg_cost} and \lref[Lemma]{lem:leftovers}, respectively).
 
 For the next two lemmas, we define $\VOPT$ as the set of all nodes that were
@@ -677,8 +677,8 @@ $\req(F^\infty_+ \cap \VOPTC) \leq \req(\VOPTC) \leq \OPT(P)$.
 $F^\infty_+$ is a valid changeset for cache $C_{\enP} \sqcup X_{\enP}$.
 As $\VOPT$ is a subforest of $T$, $F^\infty_+ \cap \VOPT$ is also a valid
 changeset for the cache $C_{\enP} \sqcup X_{\enP}$. Therefore, $\req
-(F^\infty_+ \cap \VOPT) \leq \size(F^\infty_+ \cap \VOPT) \cdot \alpha$, as
-otherwise the set fetched at time $\enP$ would not be maximal. (\ALG could
+(F^\infty_+ \cap \VOPT) \leq \sizetc(F^\infty_+ \cap \VOPT) \cdot \alpha$, as
+otherwise the set fetched at time $\enP$ would not be maximal. (\ALGTC could
 then fetch $X_{\enP} \sqcup (F^\infty_+ \cap \VOPT)$ instead of $X_{\enP}$.)
 Thus, $\req (F^\infty_+ \cap \VOPT) \leq |\VOPT| \cdot \alpha = \kOPT \cdot
 \alpha + (|\VOPT| - \kOPT)
@@ -713,7 +713,7 @@ By combining \lref[Lemma]{lem:alg_cost}, \lref[Lemma]{lem:leftovers} and
 \begin{corollary}
 \label{cor:any_phase_bound}
 For any phase $P$, it holds that 
-$\ALG(P) \leq O(h(T)) \cdot \OPT(P) + O(h(T) \cdot (k_P + \kALG) \cdot \alpha)$.
+$\ALGTC(P) \leq O(h(T)) \cdot \OPT(P) + O(h(T) \cdot (k_P + \kALG) \cdot \alpha)$.
 \end{corollary}
 
 Using the corollary above, its remains to bound the value of~$k_P$. This is
@@ -728,7 +728,7 @@ $k_P \cdot \alpha \leq \OPT(P) \cdot (\kALG + 1) / (\kALG + 1 - \kOPT)$.
 
 \begin{proof}
 First, we compute the number of positive requests in $\VOPTC$. Let $X_{t_1},
-X_{t_2}, \ldots, X_{t_s}$ be all positive changesets applied by \ALG in~$P$.
+X_{t_2}, \ldots, X_{t_s}$ be all positive changesets applied by \ALGTC in~$P$.
 For any~$t$, let $X'_t = X_t \setminus \VOPT$. As $X_t$ is some tree cap and
 $\VOPT$ is a~subforest of $T$, $X'_t$ is a~tree cap of $X_t$. By
 \lref[Corollary]{cor:density}, the number of requests to nodes of $X'_t$ in
@@ -753,7 +753,7 @@ alone. For the latter part, it has to pay $1$ for each of at least $(k_P -
 
 
 \begin{theorem}
-The algorithm \ALG is $O(h(T) \cdot \kALG/(\kALG-\kOPT+1))$-competitive.
+The algorithm \ALGTC is $O(h(T) \cdot \kALG/(\kALG-\kOPT+1))$-competitive.
 \end{theorem}
 
 \begin{proof}
@@ -761,10 +761,10 @@ Let $R = h(T) \cdot \kALG/(\kALG-\kOPT+1)$. We split an input~$I$ into a
 sequence of finished phases followed by a single unfinished phase (which may
 not be present). For a~finished phase $P$, we have $k_P > \kALG$, and hence
 \lref[Corollary]{cor:any_phase_bound} and \lref[Lemma]{lem:opt_bound2}
-imply that $\ALG(P) \leq O(R) \cdot \OPT(P)$. For an unfinished phase $k_P
-\leq \kALG$, and therefore, by \lref[Corollary]{cor:any_phase_bound}, $\ALG(P)
+imply that $\ALGTC(P) \leq O(R) \cdot \OPT(P)$. For an unfinished phase $k_P
+\leq \kALG$, and therefore, by \lref[Corollary]{cor:any_phase_bound}, $\ALGTC(P)
 \leq O(h(T)) \cdot \OPT(P) + O(h(T) \cdot \kALG \cdot \alpha)$. Summing over
-all phases of $I$ yields $\ALG(I) \leq O(R) \cdot \OPT(I) + O(h(T) \cdot \kALG
+all phases of $I$ yields $\ALGTC(I) \leq O(R) \cdot \OPT(I) + O(h(T) \cdot \kALG
 \cdot \alpha)$.
 \end{proof}
 
@@ -774,14 +774,14 @@ all phases of $I$ yields $\ALG(I) \leq O(R) \cdot \OPT(I) + O(h(T) \cdot \kALG
 
 \section{Implementation of TC}\label{sec:implementing_counters}
 
-Recall that at each time $t$, \ALG verifies the existence of a valid changeset
+Recall that at each time $t$, \ALGTC verifies the existence of a valid changeset
 that satisfies saturation and maximality properties (see the definition of
-\ALG in \lref[Section]{sec:algo}). Here, we show that this operation can be
+\ALGTC in \lref[Section]{sec:algo}). Here, we show that this operation can be
 performed efficiently. In particular, in the following two subsections, we
 will prove the following theorem.
 
 \begin{theorem}
-\ALG can be implemented using $O(|T|)$ additional memory, so that to make a
+\ALGTC can be implemented using $O(|T|)$ additional memory, so that to make a
 decision at time~$t$, it performs $O(h(T) + \max \{ h(T), \degree(T) \} \cdot |X_t|)$ operations,
 where $\degree(T)$ is a maximum node degree in $T$ and 
 $X_t$ is the changeset applied at time $t$ ($|X_t| = 0$ if no changeset is
@@ -790,18 +790,18 @@ applied).
 
 
 Let $v_t$ be the node requested at round $t$. Note that we may restrict our
-attention to requests that entail a~cost for \ALG, as otherwise its counters
-remain unchanged and certainly \ALG does not change cache contents. We use
+attention to requests that entail a~cost for \ALGTC, as otherwise its counters
+remain unchanged and certainly \ALGTC does not change cache contents. We use
 \lref[Lemma]{lem:no_over-requested_changesets} to restrict possible candidates
 for changesets that can be applied at time $t$. First, we note that if a~node
-$v_t$ requested at round $t$ is outside the cache, then, at time~$t$, \ALG may
+$v_t$ requested at round $t$ is outside the cache, then, at time~$t$, \ALGTC may
 only fetch some changeset, and otherwise it may only evict some changeset.
 Therefore, we may construct two separate schemes, one governing fetches and
 one for evictions.
 
 In \lref[Section]{sec:implementing_positive_counters}, using 
 \lref[Lemma]{lem:no_over-requested_changesets}, we show that after processing 
-a~positive request, \ALG needs to verify at most $h(T)$ possible positive changesets,
+a~positive request, \ALGTC needs to verify at most $h(T)$ possible positive changesets,
 each in constant time, using an auxiliary data
 structure. The cost of updating this structure at time $t$ is 
 $O(h(T) + h(T) \cdot |X_t|)$.
@@ -819,7 +819,7 @@ $O(h(T) + \degree(T) \cdot |X_t|)$ operations.
 
 At any time $t$ and for any non-cached node $u$, we may define $P_t(u)$ as a
 tree cap rooted at $u$ containing all non-cached nodes from $T(u)$. During an
-execution of \ALG, we maintain two values for each non-cached node~$u$:
+execution of \ALGTC, we maintain two values for each non-cached node~$u$:
 $\cnt_t(P_t(u))$ and $|P_t(u)|$. When a counter at node~$v_t$ is incremented, we
 update $\cnt_t(P_t(u))$ for each ancestor~$u$ of~$v$ (at most $h(T)$ updated
 values). Furthermore, if a node~$v$ changes its state from cached to
@@ -836,9 +836,9 @@ ancestors $u$ of $v_t$, starting from the tree root and ending at $v_t$, and
 we stop at the first node~$u$, for which $P_t(u)$ is saturated (i.e.,
 $\cnt_t(P_t(u)) \geq |P_t(u)| \cdot \alpha$). If such a $u$ is found, the
 corresponding set $P_t(u)$ satisfies also the maximality condition (cf.~the
-definition of \ALG) as all valid changesets that are supersets of $P_t(u)$
-were already verified to be non-saturated. Therefore, in such a case, \ALG
-fetches~$P_t(u)$. Otherwise, if no saturated changeset is found, \ALG does
+definition of \ALGTC) as all valid changesets that are supersets of $P_t(u)$
+were already verified to be non-saturated. Therefore, in such a case, \ALGTC
+fetches~$P_t(u)$. Otherwise, if no saturated changeset is found, \ALGTC does
 nothing. Checking all ancestors of $v_t$ can be performed in time $O(h(T))$.
 
 \subsection{Negative Requests and Evictions}
@@ -847,7 +847,7 @@ nothing. Checking all ancestors of $v_t$ can be performed in time $O(h(T))$.
 Handling evictions is more complex. If the request to
 node $v_t$ at round $t$ was negative,
 \lref[Lemma]{lem:no_over-requested_changesets} tells us only that the negative 
-changeset evicted by \ALG has to be a tree cap rooted at $u$, where $u$ is the
+changeset evicted by \ALGTC has to be a tree cap rooted at $u$, where $u$ is the
 root of the cached tree containing $v_t$. There are exponentially many such
 tree caps, and hence their naïve verification is intractable. To alleviate
 this problem, we introduce the following helper notion. For any set of cached
@@ -877,7 +877,7 @@ $u$ (at most $\deg(T)$ of them) and for each child $w$, if $\val_t(H_t(w)) >
 0$, we recursively compute set $H_t(w)$. Thus, the total time for constructing
 $H_t(u)$ is $O(\deg(T) \cdot |H_t(u)|)$.
 
-During an execution of \ALG, we update stored values accordingly.
+During an execution of \ALGTC, we update stored values accordingly.
 That is, whenever a~counter at a cached node $v_t$ is incremented, we update
 $\val_t(H_t(u))$ values for each cached ancestor $u$ of $v_t$, starting from
 \mbox{$u = v_t$} and proceeding towards the cached tree root. Any such update can be
@@ -897,14 +897,14 @@ eviction. Recall that for a negative request $v_t$, the changeset to be
 evicted has to be a tree cap rooted at $u$, where $u$ is the root of a cached subtree
 containing $v_t$. For succinctness, we use $H^u$ to denote $H_t(u)$. We show
 that if $\val_t(H^u) < 0$, then there is no valid negative changeset that is
-saturated, and hence \ALG does not perform any action, and if $\val_t(H^u) >
-0$, then $H^u$ is both saturated and maximal, and hence \ALG may evict~$H^u$.
+saturated, and hence \ALGTC does not perform any action, and if $\val_t(H^u) >
+0$, then $H^u$ is both saturated and maximal, and hence \ALGTC may evict~$H^u$.
 
 \begin{enumerate} 
 \item First, assume that $\val_t(H^u) < 0$. Then, for any tree cap~$X$ rooted
 at~$u$, it holds that $\cnt_t(X) - |X| \cdot \alpha < \val_t(X) \leq
 \val_t(H^u) < 0$, i.e., $X$ is not saturated, and hence cannot be evicted by
-\ALG.
+\ALGTC.
 
 \item Second, assume that $\val_t(H^u) > 0$. As $\cnt_t(H^u) - |H^u| \cdot
 \alpha$ is an integer and $|H^u|/(|T|+1) < 1$, it holds that $\cnt_t(H^u) -
@@ -996,22 +996,22 @@ It remains to show that \lref[Invariant]{item:prop1} holds for any step $t >
 \beP$. It is trivially true for $t = \beP+1$ 
 as $\cnt_{t-1}(X) = 0$ then. Let $t+1$ be the earliest time in phase $P$ for
 which \lref[Invariant]{item:prop1} does not hold; we will then show a
-contradiction with the definition of \ALG or a contradiction with other
+contradiction with the definition of \ALGTC or a contradiction with other
 Invariants at time $t$. That is, we assume that there exists a positive
 changeset $X$ for $C_{t+1}$ such that $\cnt_t(X) \geq |X| \cdot \alpha$ (the
-proof for a negative changeset is analogous). Note that \ALG must have
+proof for a negative changeset is analogous). Note that \ALGTC must have
 performed an action (fetch or eviction) at time $t$ as otherwise $X$ would be
 also  a changeset for $C_t = C_{t+1}$ with $\cnt_t(X) \geq |X| \cdot \alpha$,
-which means that $X$ should have been applied by \ALG at time $t$. We consider
+which means that $X$ should have been applied by \ALGTC at time $t$. We consider
 two cases.
 
-If \ALG fetches a positive changeset $Y$ at time $t$, $C_{t+1} = C_t \sqcup Y$
+If \ALGTC fetches a positive changeset $Y$ at time $t$, $C_{t+1} = C_t \sqcup Y$
 and $\cnt_t(Y) = |Y|\cdot\alpha$. Then, $Y \sqcup X$ is a changeset for $C_t$,
 and $\cnt_t(Y \sqcup X) \geq |Y \sqcup X| \cdot \alpha$. This contradicts
-the maximality property of set~$Y$ chosen at time~$t$ by~\ALG.
+the maximality property of set~$Y$ chosen at time~$t$ by~\ALGTC.
 
-If \ALG evicts a negative changeset $Y$ at time $t$, $C_{t+1} = C_t \setminus
-Y$. \lref[Invariant]{item:prop2} and the definition of \ALG implies $\cnt_t(Y) =
+If \ALGTC evicts a negative changeset $Y$ at time $t$, $C_{t+1} = C_t \setminus
+Y$. \lref[Invariant]{item:prop2} and the definition of \ALGTC implies $\cnt_t(Y) =
 |Y| \cdot \alpha$, and thus, by \lref[Invariant]{item:propmid}, $Y$ contains
 the node requested at round $t$. As $X \cap Y \subseteq C_t$, \mbox{$X \cap Y$} does
 not have any positive requests at time~$t$, and therefore $\cnt_t(X \setminus
@@ -1027,7 +1027,7 @@ node).
 \begin{proof}[Proof of Lemma~\ref*{lem:no_over-requested_changesets}]
 The inequality $\cnt_t(X) \leq |X| \cdot \alpha$ is equivalent to
 \lref[Invariant]{item:prop2} of \lref[Claim]{cla:inductive_properties}.
-Assume now that $X$ is applied at time $t$. By the definition of \ALG,
+Assume now that $X$ is applied at time $t$. By the definition of \ALGTC,
 $\cnt_t(X) \geq |X| \cdot \alpha$, and thus $\cnt_t(X) = |X| \cdot \alpha$,
 i.e., \lref[Property]{lemit:2} follows. Then, \lref[Invariant]{item:propmid}
 of \lref[Claim]{cla:inductive_properties} implies \lref[Property]{lemit:1}.

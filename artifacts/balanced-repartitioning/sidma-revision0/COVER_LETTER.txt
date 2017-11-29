@@ -1,0 +1,29 @@
+Dear Editor, 
+
+Please find enclosed our manuscript submitted to SIAM Journal on Discrete
+Mathematics.
+
+Parts of the material of this article were presented at the 30th International
+Symposium on Distributed Computing (DISC), Paris, France, September 2016. We
+significantly revised the article for this journal version and present
+improved results:
+
+- We give a completely new analysis of the CREP algorithm (Section 4). As 
+  a result of this new analysis, we were able to derive an improved theorem:
+  CREP is competitive already with (2+eps)-augmentation (in the conference
+  version we assumed an 4-augmentation).
+
+- We present a new analysis for the online matching problem. While the main
+  result in the theorem did not change compared to the conference version, we
+  believe that the new potential function proof is much more elegant.
+
+- We also reworked the non-technical parts of the paper.
+
+We herewith confirm that the article is not under submission at any other
+journal.
+
+Thank you very much for your time and considering our work for publication.
+
+On behalf of all authors, 
+
+Marcin Bienkowski

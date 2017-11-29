@@ -1,1 +1,1258 @@
-\section{Deferred}
+\newcommand{\ONL}{\textsc{Onl}\xspace}
+\newcommand{\ONLreq}{\textsc{Onl}^\textnormal{req}\xspace}
+\newcommand{\ONLmig}{\textsc{Onl}^\textnormal{mig}\xspace}
+\newcommand{\GREEDY}{\textsc{Greedy}\xspace}
+\newcommand{\MGREEDY}{M^\textsc{GR}}
+\newcommand{\MOPT}{M^\textsc{OPT}}
+\newcommand{\OFF}{\textsc{Off}\xspace}
+\newcommand{\OPT}{\textsc{Opt}\xspace}
+\newcommand{\ALG}{\textsc{Alg}\xspace}
+\newcommand{\CREP}{\textsc{Crep}\xspace}
+\newcommand{\DET}{\textsc{Det}\xspace}
+\newcommand{\CREPreq}{\CREP^\textnormal{req}}
+\newcommand{\CREPmig}{\CREP^\textnormal{mig}}
+\newcommand{\ovr}{\textsc{ovr}}
+\newcommand{\T}{\mathcal{T}}
+\newcommand{\eps}{\ensuremath{\epsilon}}
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\cut}{\textsc{cut}}
+\newcommand{\eold}{e^\textrm{old}}
+\newcommand{\enew}{e^\textrm{new}}
+\newcommand{\V}{\mathcal{V}}
+\newcommand{\optmig}{\textsc{opt-mig}}
+\newcommand{\del}{\textsc{del}}
+\newcommand{\final}{\textsc{final}}
+\newcommand{\size}{\textsc{size}}
+\newcommand{\comm}{\textsc{comm}}
+\newcommand{\Phiinit}{\Phi^\textrm{S}}
+\newcommand{\winit}{w^\textrm{S}}
+
+\section{The Model}
+
+Formally, the online \emph{Balanced RePartitioning} problem (BRP) is defined as
+follows. There is a set of $n$ nodes, initially distributed arbitrarily
+across $\ell$~clusters, each of size~$k$. We call two nodes~$u,v\in V$
+\emph{collocated} if they are in the same cluster.
+
+An input to the problem is a sequence of communication requests $\sigma =
+(u_1,v_1),$ $(u_2,v_2), (u_3,v_3), \ldots$, where pair $(u_t,v_t)$ means that
+nodes exchange a fixed amount of data. For succinctness of later descriptions,
+we assume that a request $(u_t,v_t)$ occurs at time $t \geq 1$. At any time~$t
+\geq 1$, an online algorithm needs to serve the~communication
+request~$(u_t,v_t)$. Right before serving the request, the online algorithm
+can repartition the nodes into new clusters. We assume that
+a~communication request between two collocated nodes costs 0. The cost of a
+communication request between two nodes located in different clusters is
+normalized to~1, and the cost of migrating a node from one cluster to another
+is~$\alpha \geq 1$, where $\alpha$ is a parameter (an integer). For any
+algorithm \ALG, we denote its total cost (consisting of communication plus
+migration costs) on sequence $\sigma$ by $\ALG(\sigma)$.
+
+The description of some algorithms (in particular the ones in \ref{sec:upper}
+and \ref{sec:crep}) is more natural if they first serve a request and then
+optionally migrate. Clearly, this modification can be implemented at no extra cost by
+postponing the migration to the next step.
+
+We are in the realm of competitive worst-case analysis and compare the
+performance of an online algorithm to the performance of an optimal offline
+algorithm. Formally, let~$\ONL(\sigma)$ resp.~$\OPT(\sigma)$ be the cost
+induced by~$\sigma$ on an online algorithm \ONL resp.~on an optimal offline
+algorithm \OPT. In contrast to \ONL, which learns the~requests one-by-one as
+it serves them, \OPT has a complete knowledge of the entire request
+sequence~$\sigma$ ahead of~time. The goal is to design online repartitioning
+algorithms that provide worst-case guarantees. In particular, $\ONL$ is said
+to be $\rho$-competitive if there is a constant $\beta$ such that for any
+input sequence~$\sigma$ it holds that
+\[
+	\ONL(\sigma) \leq \rho \cdot \OPT(\sigma) + \beta 
+	\enspace.
+\]
+Note that $\beta$ cannot depend on input $\sigma$ but can depend on other
+parameters of the problem, such as the number of nodes or the number of clusters.
+The minimum $\rho$ for which $\ONL$ is $\rho$-competitive is called the 
+\emph{competitive ratio} of $\ONL$. 
+
+We consider two different settings:
+
+\begin{description}
+
+\item[Without augmentation:] The nodes fit perfectly into the clusters,
+i.e.,~$n=k\cdot \ell$. Note that in this setting, due to cluster capacity
+constraints, a node can never be migrated alone, but it must be \emph{swapped}
+with another node at a cost of~$2\alpha$. We also assume that when an
+algorithm wants to migrate more than two nodes, this has to be done using
+several swaps, each involving two nodes.
+
+\item[With augmentation:] An online algorithm has access to additional space
+in each cluster. We say that an algorithm is~$\delta$-augmented if the size of
+each cluster is~$k' = \delta \cdot k$, whereas the total number of nodes
+remains~$n = k\cdot \ell < k'\cdot \ell$. As usual in competitive analysis,
+the augmented online algorithm is compared to the optimal offline algorithm
+with cluster capacity~$k$.
+\end{description}
+
+An online repartitioning algorithm has to cope with the following issues:
+
+\begin{description}
+
+\item[Serve remotely or migrate (``rent or buy'')?] For a brief communication
+pattern, it may not be worthwhile to collocate the nodes: the migration might
+be too large in comparison to communication costs.
+
+\item[Where to migrate, and what?]
+If an algorithm decides to collocate nodes $x$ and~$y$, the question becomes
+how. Should $x$ be migrated to the cluster holding $y$, $y$ to the one holding
+$x$, or should both nodes be migrated to a new cluster?
+
+\item[Which nodes to evict?]
+There may not exist sufficient space in the desired destination cluster. In
+this case, the~algorithm needs to decide which nodes to ``evict'' (migrate to
+other clusters), to free up space.
+
+\end{description}
+
+\section{A Simple Upper Bound}
+\label{sec:upper}
+
+As a warm-up and to present the model, we start with a straightforward $O(k^2
+\cdot \ell^2)$-competitive deterministic algorithm \DET. At any time, \DET
+serves a request, adjusts its internal structures (defined below)
+accordingly and then possibly migrates nodes. \DET operates in phases, and each
+phase is analyzed separately. The first phase starts with the first request.
+
+In a single phase, \DET maintains a helper structure: a complete graph on all
+$\ell \cdot k$ nodes, with an edge present between each pair of nodes. We say
+that a communication request is \emph{paid} (by \DET) if it occurs between
+nodes from different clusters, and thus entails a cost for \DET. For each edge
+between nodes $x$ and $y$, we define its weight~$w_{x,y}$ to be the number of
+paid communication requests between $x$ and~$y$ since the beginning of~the~current phase.
+
+Whenever an edge weight reaches $\alpha$, it is called \emph{saturated}. If a
+request causes the corresponding edge to~become saturated,
+\DET computes a new placement of nodes (potentially for all of them), so that all
+saturated edges are inside clusters (there is only one new saturated edge). If
+this is not possible, node positions are not changed, the~current phase ends
+with the current request and a new phase begins with the next request. Note
+that all edge weights are reset to zero at the beginning of a phase.
+
+
+\begin{theorem}
+\DET is $O(k^2 \cdot \ell^2)$-competitive.
+\end{theorem}
+
+\begin{proof}
+We bound the costs of \DET and \OPT in a single phase. First, observe that
+whenever an~edge weight reaches $\alpha$, its endpoint nodes will be collocated 
+until the end of the phase, and therefore its weight is not
+incremented anymore. Hence the weight of any edge is at most $\alpha$.
+
+Second, observe that the graph induced by saturated edges always constitutes 
+a~forest. For the sake of contradiction, suppose that, at a time $t$,
+two nodes $x$ and~$y$, which are not
+connected by a saturated edge, become connected by a path of saturated edges.
+From that time onward, \DET stores them in a single cluster. Hence, the
+weight~$w_{x,y}$ cannot increase at subsequent time points, and $(x,y)$ may
+not become saturated. The forest property implies that the number of saturated
+edges is smaller than $k \cdot \ell$.
+
+The two observations above allow us to bound the cost of \DET in a single
+phase. The number of reorganizations is at most the number of saturated edges,
+i.e., at most~$k \cdot \ell$. As the cost associated with a single
+reorganization is $O(k \cdot \ell \cdot \alpha)$, the total cost of all node
+migrations in a single phase is at most $O(k^2 \cdot \ell^2 \cdot \alpha)$.
+The communication cost itself is equal to the total weight of all edges, and
+by the first observation, it is at most $\binom{k \cdot \ell}{2}
+\cdot \alpha < k^2 \cdot \ell^2 \cdot \alpha$. Hence for any phase $P$ (also
+for the last one), it holds that $\DET(P) = O(k^2 \cdot \ell^2 \cdot \alpha)$.
+
+Now we lower-bound the cost of \OPT on any phase $P$ but the last one. If \OPT
+performs a node swap in $P$, it pays $2 \alpha$. Otherwise its assignment of
+nodes to clusters is fixed throughout $P$. Recall that at the end of $P$, \DET
+failed to reorganize the nodes. This means that for any static mapping of the
+nodes to clusters (in particular the one chosen by \OPT), there will be a
+saturated intra-cluster edge. The communication cost over such an~edge incurred
+by \OPT is at least $\alpha$ (it can be also strictly greater than~$\alpha$ as
+the edge weight only counts the communication requests paid by \DET).
+
+Therefore, the $\DET$-to-$\OPT$ cost ratio in any phase but the last one is at
+most $O(k^2 \cdot \ell^2)$ and the cost of \DET on the last phase is at
+most $O(k^2 \cdot \ell^2 \cdot \alpha)$. Hence,
+$\DET(\sigma) \leq O(k^2 \cdot \ell^2) \cdot \OPT(\sigma) + O(k^2 \cdot
+\ell^2 \cdot \alpha)$ for any input $\sigma$.
+\end{proof}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Algorithm {\sc Crep}}
+\label{sec:crep}
+
+In this section, we present the main result of this paper, a
+\emph{Component-based REPartitioning algorithm (\CREP)} which achieves a
+competitive ratio of $O((1 + 1/\eps) \cdot k \log k)$ with augmentation
+$2+\eps$, for any~$\eps \geq \frac{1}{k}$ (i.e., the augmented cluster
+is of size at least $2k+1$). \CREP maintains a similar graph structure as the
+simple deterministic $O(k^2 \cdot \ell^2)$-competitive algorithm from the
+previous section, i.e., it keeps counters denoting how many times it paid for a
+communication between two nodes. Similarly, at any time $t$,
+\CREP serves the current request, adjusts its internal structures, and then
+possibly migrates nodes. Unlike \DET, however, the execution of \CREP is
+\emph{not} partitioned into global phases: the reset of counters to zero can
+occur at different times.
+
+
+\subsection{Algorithm Definition}
+
+We describe the construction of \CREP in two stages. The first stage uses
+an~intermediate concept of \emph{communication components}, which are groups of at
+most $k$ nodes. In the second stage, we show how components are assigned to
+clusters, so that all nodes from any single component are always stored in a
+single cluster.
+
+
+\subsubsection{Stage 1: Maintaining Components}
+
+Roughly speaking, nodes are grouped into components if they communicated a lot
+recently. At the very beginning, each node is in a singleton component. Once
+the cumulative communication cost between nodes distributed across $s$
+components exceeds $\alpha \cdot (s-1)$, $\CREP$ merges them into a~single
+component. If a resulting component size exceeds $k$, it becomes deleted and
+replaced by singleton components.
+
+More precisely, the algorithm maintains a time-varying \emph{partition of all
+nodes into components}. As a helper structure, \CREP keeps a complete graph on
+all $k \cdot \ell$ nodes, with an edge present between each pair of nodes. For
+each edge between nodes $x$ and $y$, \CREP maintains its weight $w_{x,y}$. We
+say that a communication request is \emph{paid} (by \CREP) if it occurs
+between nodes from different clusters, and thus entails a cost for \CREP. If
+$x$ and $y$ belong to the same component, then $w_{x,y} = 0$. Otherwise,
+$w_{x,y}$ is equal to the number of paid communication requests between $x$
+and~$y$ since the last time when they were placed in different components by
+\CREP. It is worth emphasizing that during an~execution of \CREP, it is
+possible that $w_{x,y} > 0$ even when $x$ and $y$ belong to~the~same cluster.
+
+For any subset of components $S = \{ c_1, c_2, \ldots, c_{|S|} \}$ (called
+\emph{component-set}), by $w(S)$ we denote the total weight of all edges
+between nodes of $S$. Note that positive weight edges occur only between
+different components of~$S$. We call a component-set \emph{trivial} if it
+contains only one component; $w(S) = 0$ in such a case.
+
+Initially, all components are singleton components and all edge weights are
+zero. At time $t$, upon a~communication request between a pair of nodes $x$
+and $y$, if $x$ and $y$ lie in the same cluster, the corresponding cost is~$0$
+and \CREP does nothing. Otherwise, the cost entailed to \CREP is $1$, nodes
+$x$ and $y$ lie in different clusters (and hence also in different
+components), and the following updates of weights and components are
+performed.
+
+\begin{enumerate}
+
+\item \emph{Weight increment.} Weight $w_{x,y}$ is incremented.
+
+\item \emph{Merge actions.} We say that a non-trivial component-set $S = \{
+c_{i_1}, \ldots, c_{i_{|S|}} \}$ is \emph{mergeable} if $w(S) \geq
+(|S|-1) \cdot \alpha$. If a mergeable component-set $S$ exists, then all its
+components are merged into a single one. If multiple mergeable component-sets
+exist, \CREP picks the one with maximum number of components, breaking ties
+arbitrarily. Weights of all intra-$S$ edges are reset to zero, and thus
+intra-component edge weights are always zero. A mergeable set $S$ induces
+a~sequence of $|S|-1$ \emph{merge actions}:
+\CREP iteratively replaces two arbitrary components 
+from~$S$ by a component being their union (this constitutes a single merge
+action).
+
+\item \emph{Delete action.} If the component resulting from merge action(s)
+has more than $k$ nodes, it is deleted and replaced by singleton
+components. Note that weights of edges between these singleton components are
+all zero as they have been reset by the preceding merge actions.
+
+\end{enumerate}
+
+We say that merge actions are \emph{real} if they are not followed
+by a delete action (at the same time point) and \emph{artificial} otherwise. 
+
+
+
+\subsubsection{Stage 2: Assigning Components to Clusters}
+
+At time $t$, \CREP processes a communication request and recomputes components
+as described in the first stage. Recall that we require that nodes of a single
+component are always stored in a~single cluster. To maintain this property for
+artificial merge actions, no actual migration is necessary. The property may
+however be violated by real merge actions. Hence, in the following, we assume
+that in the first stage \CREP found a mergeable component set $S = \{ c_1, 
+\ldots, c_{|S|} \}$ that triggers $|S|-1$ merge actions not 
+followed by a delete action.
+
+\CREP consecutively processes each real merge action by migrating some nodes.
+We describe this process for a single real merge action involving two
+components $c_x$ and $c_y$. As a delete action was not executed, $|c_x| +
+|c_y| \leq k$, where $|c|$ denotes the number of component $c$ nodes.
+Without loss of generality, $|c_x| \leq |c_y|$.
+
+We may assume that $c_x$ and $c_y$ are in different clusters as otherwise
+\CREP does nothing. If the cluster containing $c_y$ has $|c_x|$ free space,
+then $c_x$ is migrated to this cluster. Otherwise, \CREP finds a cluster that
+has at~most $k$ nodes, and moves both $c_x$ and $c_y$ there. We call the
+corresponding actions \emph{component migrations}. By an~averaging argument,
+there always exists a cluster that has at most $k$ nodes, and hence, with
+$(2+\eps)$-augmentation, component migrations are always feasible.
+
+
+
+\subsection{Analysis: Structural Properties}
+
+We start with a structural property of components and edge weights.
+It states that immediately after \CREP merges (and
+possibly deletes) a component-set, no other component-set is~mergeable. This
+property holds independently of the actual placement of components in
+particular clusters.
+
+\begin{lemma}
+\label{lem:wS_bound}
+At any time $t$, after \CREP performs its merge and delete actions (if any),
+$w(S) < \alpha \cdot (|S|-1)$ for any non-trivial component-set $S$.
+\end{lemma}
+
+\begin{proof}
+We prove the lemma by an induction on steps. Clearly, the lemma holds before an
+input sequence starts as then $w(S) = 0 \leq \alpha - 1 < \alpha \cdot
+(|S|-1)$ for any non-trivial set $S$. We assume that it holds at time $t-1$
+and show it for time $t$.
+
+At time $t$, only a single weight, say $w_{x,y}$, may be incremented. If after
+the increment, \CREP does not merge any component, then clearly $w(S) < \alpha
+\cdot (|S|-1)$ for any non-trivial set $S$. Otherwise, at time $t$, \CREP
+merges a~component-set $A$ into a new component $c_A$, and then possibly
+deletes $c_A$ and creates singleton components from its nodes. We show that
+the lemma statement holds then for any non-trivial component-set $S$. We
+consider three cases.
+
+\begin{enumerate}
+
+\item Component-sets $A$ and $S$ do not share any common node. Then, $A$ and
+$S$ consist only of components that were present already right before time~$t$
+and they are all disjoint. The edge~$(x,y)$ involved in~communication at time
+$t$ is contained in~$A$, and hence does not contribute to the weight of
+$w(S)$. By the inductive assumption, $w(S) < \alpha \cdot (|S|-1)$ held right
+before time $t$. As $w(S)$ is not affected by \CREP actions at step $t$, the
+inequality holds also right after time $t$.
+
+\item \CREP does not delete $c_A$ and $c_A \in S$. Let $X = S \setminus
+\{c_A\}$. Let $w(A,X)$ denote the total weight of all edges with one endpoint
+in $A$ and another in~$X$. As \CREP merged component-set~$A$ and did not merge
+component-set $A \uplus X$, $A$ was mergeable ($w(A) \geq \alpha \cdot
+(|A|-1)$), while $A \uplus X$ was not, i.e., $w(A) + w(A,X) + w(X) = w(A
+\uplus X) < \alpha \cdot (|A|+|X|-1)$. Therefore, $w(A,X) + w(X) < \alpha
+\cdot |X|$ right after weight $w_{x,y}$ is incremented at time $t$. Observe
+that when component-set $A$ is merged and all intra-$A$ edges have their weights 
+reset to zero, neither $w(A,X)$ nor $w(X)$ is affected.
+Therefore after \CREP merges $A$ into $c_A$, $w(S) =
+w(A,X) + w(X) < \alpha \cdot |X| = \alpha \cdot (|S| - 1)$.
+
+\item \CREP deletes $c_A$ creating singleton components $d_1, d_2, \ldots, d_r$ 
+and some of these components belong to~set $S$. This time, we define $X$ to be
+the set $S$ without these components ($X$ might be also an empty set). In~the
+same way as in the previous case, we may show that $w(A,X) + w(X) < \alpha
+\cdot |X|$ after \CREP performs merge and delete operations. Hence, at this
+time $w(S) \leq w(A,X) + w(X) < \alpha \cdot |X| \leq \alpha \cdot (|S|-1)$.
+The last inequality follows as $S$ has strictly more components than $X$.
+
+\end{enumerate}
+\end{proof}
+
+Since only one request is given at a time, and since all weights and $\alpha$
+are integers, \ref{lem:wS_bound} immediately implies the following
+result.
+
+\begin{corollary}
+\label{cor:mergeable_sets} Fix any time $t$ and consider weights right after
+they are updated by \CREP, but before \CREP performs merge actions. Then,
+$w(S) \leq (|S|-1) \cdot \alpha$ for any component-set $S$. In particular,
+$w(S) = (|S|-1) \cdot \alpha$ for a mergeable component-set~$S$.
+\end{corollary}
+
+
+
+\subsection{Analysis: Lower Bound on OPT}
+
+For estimating the cost of \OPT, we pick any input sequence $\sigma$ and we
+execute \CREP on it. Then, we execute \OPT on~$\sigma$ and we analyze its cost
+in terms of the number of merges and deletions performed by \CREP. We split
+any swap of two nodes performed by \OPT into two migrations of~the~corresponding nodes.
+
+For any component $c$ maintained by \CREP, let $\tau(c)$ be the time of its
+creation. A~non-singleton component~$c$ is created at $\tau(c)$ by the merge
+of a component-set, henceforth denoted by~$S(c)$. For a singleton component,
+$\tau(c)$ is the time when the component that previously contained the sole
+node of $c$ was deleted; $\tau(c) = 0$ if $c$ existed at the beginning of
+input~$\sigma$. We will use time $0$ as an artificial time point that occurred
+before an actual input sequence.
+
+For a non-singleton component $c$, we 
+define $F(c)$ as the set of the following (node, time) pairs:
+\begin{align*}
+	F(c) = \biguplus_{b \in S(c)} \{ b \}  \times \left\{ \tau(b)+1, \ldots, \tau(c) \right\}
+	\enspace.
+\end{align*}
+Intuitively, $F(c)$ tracks the history of all nodes of $c$ from the time 
+(exclusively) they started belonging to some previous component $b$, until the time 
+(inclusively) they become members of $c$. Note that for any two components 
+$c_1,c_2$, sets~$F(c_1)$ and $F(c_2)$ are disjoint.
+The union of all $F(c)$ (over all components $c$) 
+cover all possible node-time pairs (except for time zero). 
+
+For a given component $c$, we say that a communication request between nodes
+$x$ and $y$ at time~$t$ \emph{is contained} in $F(c)$ if both $(x,t) \in F(c)$
+and $(y,t) \in F(c)$. Note that only the requests contained in~$F(c)$
+could contribute towards later creation of $c$ by \CREP. In fact, by
+\ref{cor:mergeable_sets}, the number of these requests that
+entailed an actual cost to~\CREP is exactly $(|S(c)| - 1) \cdot \alpha$.
+
+We say that a migration of node $x$ performed by \OPT at time $t$ \emph{is
+contained} in~$F(c)$ if $(x,t) \in F(c)$. For any component $c$, we define
+$\OPT(c)$ as the cost incurred by \OPT due to requests contained in~$F(c)$, 
+plus the cost of~\OPT migrations contained in~$F(c)$. The total cost of \OPT
+can then be lower-bounded by the sum of $\OPT(c)$ over all components $c$.
+(The cost of \OPT can be larger as $\sum_c \OPT(c)$ does not account for 
+communication requests not contained in $F(c)$ for any component~$c$.)
+
+\begin{lemma}
+\label{lem:merge_action_cut}
+Fix any component $c$ and partition $S(c)$ into a set of $g \geq 2$ disjoint
+component-sets $S_1, S_2, \ldots, S_g$. The number of communication requests
+in $F(c)$ that are between sets $S_i$ is at least $(g-1) \cdot \alpha$.
+\end{lemma}
+\begin{proof}
+Let $w$ be the weight measured right after its increment at time $\tau(c)$.
+Observe that the number of all communication requests from $F(c)$ that were
+between sets $S_i$ and that \emph{were paid} by \CREP is $w(S(c)) -
+\sum_{i=1}^g w(S_i)$. It suffices to show that this amount is at least $(g-1)
+\cdot \alpha$. By \ref{cor:mergeable_sets}, $w(S(c)) = (|S(c)|-1)
+\cdot \alpha$ and $w(S_i) \leq (|S_i|-1) \cdot \alpha$. Therefore, $w(S(c)) -
+\sum_{i=1}^g w(S_i) \geq (|S(c)|-1) \cdot \alpha - \sum_{i=1}^g (|S_i|-1)
+\cdot \alpha = (g-1) \cdot \alpha$.
+\end{proof}
+
+For any component $c$ maintained by \CREP, let $Y_c$ denote set of clusters
+containing nodes of $c$ in the solution of \OPT after \OPT performs its
+migrations (if any) at time~$\tau(c)$. In particular, if $\tau(c) = 0$, then
+$Y_c$ consists of only one cluster that contained the sole node of $c$ 
+at the beginning of an input sequence.
+
+\begin{lemma}
+\label{lem:opt_recursive_bound}
+For any non-trivial component $c$, it holds that $\OPT(c) \geq (|Y_c| - 1)
+\cdot \alpha - \sum_{b \in S(c)} (|Y_b| - 1) \cdot \alpha$.
+\end{lemma}
+
+\begin{proof}
+Fix a component $b \in S(c)$ and any node $x \in b$. Let $\optmig(x)$ be the
+number of \OPT migrations of~node $x$ at times $t \in \{ \tau(b)+1, \ldots,
+\tau(c) \}$. Furthermore, let $Y'_x$ be the set of clusters that
+contained $x$ at some moment of a~time $t \in \{ \tau(b)+1, \ldots, \tau(c)
+\}$ (in the solution of \OPT). We extend these notions to components:
+$\optmig(b) = \sum_{x \in b} \optmig(x)$ and $Y'_b = \bigcup_{x \in b} Y'_x$.
+Observe that $|Y'_b| \leq |Y_b| + \optmig(b)$.
+
+We aggregate components of~$S(c)$ into component-sets called \emph{bundles},
+so that any two bundles have their nodes always in disjoint clusters. To this
+end, we construct a~hypergraph, whose nodes correspond to clusters from
+$\bigcup_{b \in S(c)} Y'_b$. Each component $b \in S(c)$ defines a hyperedge
+that connects all nodes (clusters) that are in $Y'_b$. Now we look at
+connected components of this hypergraph (called \emph{hypergraph parts} to avoid
+ambiguity). As the hyperedge related to component $b$ connects $|Y'_b|$ nodes,
+there are
+\begin{align*}
+	B \,
+	\geq &\; \textstyle |\bigcup_{b \in S(c)} Y'_b| - \sum_{b \in S(c)} (|Y'_b|-1) \\
+	\geq &\; \textstyle |Y_c| - \sum_{b \in S(c)} (|Y_b|-1) - \sum_{b \in S(c)} \optmig(b)
+\end{align*}
+hypergraph parts. Each hypergraph part corresponds to a bundle consisting of
+components contained in~clusters belonging to this part, i.e., the number of
+bundles is also $B$.
+
+By \ref{lem:merge_action_cut}, the number of communication requests in
+$F(c)$ that are between different bundles is at least $(B-1) \cdot \alpha$.
+Each such request is paid by \OPT because, by the definition of bundles, it involves
+a communication between two nodes which \OPT stored in different clusters.
+Additionally, $\OPT(c)$ involves $\sum_{b \in S(c)}
+\optmig(b)$ node migrations in $F(c)$, and therefore $\OPT(c) \geq (B-1) \cdot
+\alpha + \sum_{b \in S(c)} \optmig(b) \cdot \alpha
+\geq (|Y_c|-1) \cdot \alpha - \sum_{b \in S(c)} (|Y_b|-1) \cdot \alpha$.
+\end{proof}
+
+
+
+\begin{lemma}
+\label{lem:opt_lower_bound}
+For any input $\sigma$, let $\del(\sigma)$ be the set of components that were
+eventually deleted by \CREP. Then $\OPT(\sigma) \geq \sum_{c \in \del(\sigma)}
+|c| / (2k) \cdot \alpha$.
+\end{lemma}
+
+\begin{proof}
+Fix any component $c \in \del(\sigma)$. Consider a tree~$\T(c)$ which
+describes how component~$c$ was created: the leaves of $\T(c)$ are singleton
+components containing nodes of $c$, the root is $c$ itself, and each internal
+node corresponds to a~component created at a single time by merging its
+children.
+
+We now sum $\OPT(b)$ over all components $b$ from $\T(c)$, including 
+the root $c$ and the leaves $L(\T(c))$. The~lower bound given 
+by \ref{lem:opt_recursive_bound} sums telescopically, i.e.,
+\begin{align*}
+	\textstyle \sum_{b \in \T(c)} \OPT(b) \;
+		\geq &\; \textstyle (|Y_c|-1) \cdot \alpha - \sum_{b \in L(\T(c))} (|Y_b|-1) \cdot \alpha \\
+		= &\; \textstyle (|Y_c|-1) \cdot \alpha 
+	\enspace,
+\end{align*}
+where the equality follows as any $b \in L(\T(c))$ is a singleton component,
+and therefore $|Y_b| = 1$. As $c$ has $|c|$ nodes, it has to span at least
+$\lceil |c|/k \rceil$ clusters of \OPT, and therefore $\sum_{b \in \T(c)}
+\OPT(b) \geq (\lceil |c|/k \rceil -1) \cdot \alpha \geq |c| / (2 k) \cdot
+\alpha$, where the second inequality follows because $c \in \del(\sigma)$ and
+thus $|c| > k$.
+
+The proof is concluded by observing that, for any two deleted components $c_1$
+and $c_2$, the corresponding trees~$\T(c_1)$ and $\T(c_2)$ do not share common
+components, and therefore $\OPT(\sigma) \geq \sum_{c \in \del(\sigma)} \sum_{b
+\in \T(c)} \OPT(b) \geq \sum_{c \in \del(\sigma)} |c| / (2k)$.
+\end{proof}
+
+
+\subsection{Analysis: Upper Bound on CREP}
+
+To bound the cost of \CREP, we fix any input $\sigma$ and introduce the following 
+notions. Let~$M(\sigma)$ be the sequence of merge actions 
+(real and artificial ones) performed by \CREP. 
+For any real merge action $m \in M(\sigma)$, by
+$\size(m)$ we denote the size of the smaller component that was
+merged. For an~artificial merge action, we set $\size(m) = 0$.
+
+Recall that $\del(\sigma)$ denotes the 
+set of all components that become eventually deleted by \CREP. Let $\final(\sigma)$ 
+be the set of all components that exist when \CREP finishes sequence $\sigma$.
+Note that $w(\final(\sigma))$ is the total weight of all edges after processing
+$\sigma$. 
+
+We split 
+$\CREP(\sigma)$ into two parts: the cost of serving requests, $\CREPreq(\sigma)$, 
+and the cost of node migrations, $\CREPmig(\sigma)$. 
+
+\begin{lemma}
+\label{lem:crep_req}
+For any input $\sigma$, $\CREPreq(\sigma) = |M(\sigma)| \cdot \alpha + w(\final(\sigma))$.
+\end{lemma}
+
+\begin{proof}
+The proof follows by an induction on all requests of $\sigma$. Whenever
+\CREP pays for the communication request, the corresponding edge weight is
+incremented and both sides increase by $1$. At a time when $s$ components
+are merged, $s-1$ merge actions are executed and the sum of all edge weights
+decreases exactly by $(s-1) \cdot \alpha$. Then, the value of both sides
+remain unchanged.
+\end{proof}
+
+\begin{lemma}
+\label{lem:crep_mig}
+For any input $\sigma$, with $(2+\eps)$-augmentation, 
+$\CREPmig(\sigma) \leq (1+4/\eps) \cdot \alpha \cdot \sum_{m \in M(\sigma)} \size(m)$.
+\end{lemma}
+
+\begin{proof}
+If $\CREP$ has more than $2 k$ nodes in cluster $V_i$ (for $i \in
+\{1,\ldots,\ell\}$), then we call this excess \emph{overflow} of $V_i$;
+otherwise, the overflow of $V_i$ is zero. We denote the overflow of cluster
+$V_i$ measured right after processing sequence $\sigma$ by $\ovr^\sigma(V_i)$.
+It is sufficient to show the following relation for any sequence $\sigma$:
+\begin{equation}
+\label{eq:crep_migrations}
+ \CREPmig(\sigma) \;+\; \sum_{j=1}^\ell (4/\eps) \cdot \alpha \cdot \ovr^\sigma(V_j) 
+ \; \leq \; (1+4/\eps)  \cdot \alpha \cdot \sum_{m \in M(\sigma)} \size(m) 
+\enspace.
+\end{equation}
+As the second summand of \eqref{eq:crep_migrations} is always non-negative,
+\eqref{eq:crep_migrations} will imply the lemma. 
+
+The proof will follow by an induction on all requests in $\sigma$. Clearly,
+\eqref{eq:crep_migrations} holds trivially at the beginning, as there are no
+overflows, and thus both sides of \eqref{eq:crep_migrations} are zero.
+Assume that \eqref{eq:crep_migrations} holds for a~sequence $\sigma$
+and we show it for sequence $\sigma \cup \{ r \}$, where $r$ is some request.
+
+We may focus on request $r$ that triggers component(s) migration as otherwise
+\eqref{eq:crep_migrations} holds trivially. Such a migration is triggered by a
+real merge action $m$ of two components $c_x$ and $c_y$. We assume that $|c_x|
+\leq |c_y|$, and hence $\size(m) = |c_x|$. Note that $|c_x| + |c_y| \leq k$,
+as otherwise the resulting component would be deleted and no migration would
+be performed.
+
+Let $V_x$ and $V_y$ denote the cluster that held components $c_x$ and $c_y$,
+respectively, and $V_z$ be the destination cluster for $c_x$ and $c_y$ (it is
+possible that $V_z = V_y$). For any cluster~$V$, we denote the change in 
+its overflow by $\Delta \ovr(V) = \ovr^{\sigma \cup \{r\}}(V) - \ovr^\sigma(V)$. 
+It suffices to show that the
+change of the left hand side of \eqref{eq:crep_migrations} is at most
+the~increase of its right hand side, i.e.,
+\begin{equation}
+\label{eq:crep_mig_inc}
+\CREPmig(r) \;+\; \sum_{V \in \{ V_x, V_y, V_z \}} (4/\eps) \cdot \alpha \cdot \Delta\ovr(V) 
+\;\leq\; (1+4/\eps) \cdot |c_x| \cdot \alpha
+\enspace.
+\end{equation}
+For the proof, we consider three cases.
+
+\begin{enumerate}
+\item 
+$V_y$ had at least $|c_x|$ empty slots. In this case, \CREP simply migrates
+$c_x$ to $V_y$ paying $|c_x| \cdot \alpha$. Then, $\Delta \ovr(V_x) \leq 0$,
+$\Delta \ovr(V_y) \leq |c_x|$, $V_z = V_y$, and thus \eqref{eq:crep_mig_inc}
+follows.
+
+\item 
+$V_y$ had less than $|c_x|$ empty slots and $|c_y| \leq (2/\eps) \cdot |c_x|$.
+\CREP migrates both $c_x$ and $c_y$ to~component $V_z$ and the incurred cost is 
+$\CREPmig(r) = (|c_x| + |c_y|) \cdot \alpha \leq (1+2/\eps) \cdot |c_x| \cdot \alpha
+< (1 + 4/\eps) \cdot |c_x| \cdot \alpha$. 
+It remains to show that the second summand of \eqref{eq:crep_mig_inc} is~at~most $0$. 
+Clearly, $\Delta \ovr(V_x) \leq 0$ and $\Delta \ovr(V_y) \leq 0$. 
+Furthermore, the number of 
+nodes in $V_z$ was at~most~$k$ before the migration by the definition of \CREP,
+and thus is at~most $k + |c_x| + |c_y| \leq 2k$ after the migration.
+This implies that $\Delta \ovr(V_z) = 0 - 0 = 0$.
+
+\item 
+$V_y$ had less than $|c_x|$ empty slots and $|c_y| > (2/\eps) \cdot |c_x|$.
+As in the previous case, \CREP migrates $c_x$ and $c_y$ to~component $V_z$, 
+paying $\CREPmig(r) = (|c_x| + |c_y|) \cdot \alpha < 2 \cdot |c_y| \cdot \alpha$.
+This time, $\CREPmig(r)$ can be much larger than the right hand side 
+of~\eqref{eq:crep_mig_inc}, and thus we will resort to showing that the second summand~of~\eqref{eq:crep_mig_inc} is at most $ - 2 \cdot |c_y| \cdot \alpha$.
+
+As in the previous case, $\Delta \ovr(V_x) \leq 0$ and $\Delta \ovr(V_z) = 0$. 
+Observe that $|c_x| < (\eps / 2) \cdot |c_y| \leq (\eps / 2) \cdot k$.
+As the migration of $|c_x|$ to $V_y$ was not possible, the initial number
+of nodes in $V_y$ was greater than $(2 + \eps) \cdot k - |c_x| \geq (2+\eps/2) \cdot k$,
+i.e., $\ovr^\sigma(V_y) \geq (\eps/2) \cdot k \geq (\eps/2) \cdot |c_y|$. 
+As component $c_y$ was migrated out of $V_y$, the number of overflow nodes in $V_y$ changes by
+\[
+	\Delta \ovr(V_y) 
+		= - \min \left\{ \,\ovr^\sigma(V_y), \,|c_y| \,\right\}
+		\leq - (\eps/2) \cdot |c_y|
+	\enspace.
+\]
+Therefore, the second summand of \eqref{eq:crep_mig_inc} is at most 
+$(4/\eps) \cdot \alpha \cdot \Delta\ovr(V_y) \leq - (4/\eps) \cdot \alpha \cdot (\eps/2) \cdot |c_y|
+= - 2 \cdot |c_y| \cdot \alpha$ as desired.
+\end{enumerate}
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Analysis: Competitive Ratio}
+
+In the previous two subsections, we related $\OPT(\sigma)$ to the total
+size~of components that are deleted by \CREP
+(cf.~\ref{lem:opt_lower_bound}) and $\CREP(\sigma)$ to $\sum_{m \in
+M(\sigma)} \size(m)$, where the latter amount is related to the merging
+actions performed by \CREP (cf.~\ref{lem:crep_mig}). Now we will link
+these two amounts. Note that each delete action corresponds to preceding real
+merge actions that led to the creation of the eventually deleted component.
+
+\begin{lemma}
+\label{lem:bounding_merges}
+For any input $\sigma$, it holds that 
+$\sum_{m \in M(\sigma)} \size(m) 
+	\leq \sum_{c \in \del(\sigma)} |c| \cdot \log k +
+	\sum_{c \in \final(\sigma)} |c| \cdot \log |c|$,
+where all logarithms are binary.
+\end{lemma}
+
+\begin{proof}
+We prove the lemma by an induction on all requests of $\sigma$. At the very beginning, both sides of the lemma
+inequality are zero, and hence the induction basis holds trivially. 
+We assume that the lemma inequality is preserved for a sequence $\sigma$ and we show it for 
+sequence $\sigma \cup \{ r \}$, where $r$ is an arbitrary request. We may assume that $r$ 
+triggers some merge actions, otherwise the claim follows trivially.
+
+First, assume $r$ triggered a sequence of real merge actions. We show that the
+lemma inequality is preserved after processing each merge action. Let $c_x$
+and $c_y$ be merged components, with sizes $p = |c_x|$ and $q = |c_y|$, where
+$p \leq q$ without loss of generality. Due to such action, the right hand side
+of the lemma inequality increases by
+\begin{align*}
+  (p + q) \cdot & \log (p + q) - p \cdot \log p - q \cdot \log q \\
+		= &\; p \cdot (\log (p+q) - \log p) + q \cdot (\log (p+q) - \log q) \\
+		\geq &\; p \cdot \log (p+q) / p \\
+		\geq &\; p \cdot \log 2 = p \enspace.
+\end{align*}
+As~the~left hand side of the inequality changes exactly by $p$, the inductive
+hypothesis holds.
+
+Second, assume $r$ triggered a sequence of artificial merge actions (i.e., followed by a
+delete action) and let $c_1, c_2, \ldots, c_g$ denote components that were
+merged to create component $c$ that was immediately deleted. Then, the right
+hand side of the lemma inequality changes by $- \sum_{i = 1}^g |c_i| \cdot
+\log |c_i| + |c| \cdot \log k
+\geq - \sum_{i = 1}^g |c_i| \cdot \log k + |c| \cdot \log k = 0$.
+As~the~left hand side of the lemma inequality is unaffected by artificial
+merge actions, the inductive hypothesis follows also in this case.
+\end{proof}
+
+
+\begin{theorem}
+With augmentation at least $2+\eps$, \CREP is~$O((1 + 1/\eps) \cdot k \cdot \log k)$-competitive.
+\end{theorem}
+
+\begin{proof}
+Fix any input sequence $\sigma$. 
+By \ref{lem:crep_req} and \ref{lem:crep_mig}, 
+\begin{align*}
+	\CREP(\sigma) 
+	= &\; \CREPmig(\sigma) + \CREPreq(\sigma) \\
+	\leq &\; \textstyle (1+4/\eps) \cdot \alpha \cdot \sum_{m \in M(\sigma)} \size(m) + |M(\sigma)| \cdot \alpha + w(\final(\sigma)) 
+	\enspace.
+\end{align*}
+
+Regarding a bound for $|M(\sigma)|$, we observe the following. First, if \CREP
+executes artificial merge actions, then they are immediately followed by a
+delete action of the resulting component $c$. The number of artificial merge
+actions is clearly at most $|c|-1 \leq |c|$, and thus the total number of all
+artificial actions in $M(\sigma)$ is at most $\sum_{c \in \del(\sigma)} |c|$.
+Second, if $\CREP$ executes a real merge action $m$, then
+$\size(m) \geq 1$. Combining these two bounds yields $|M(\sigma)| \leq \sum_{m
+\in M(\sigma)} \size(m) + \sum_{c \in \del(\sigma)} |c|$. We use this inequality 
+and later apply \ref{lem:bounding_merges} to~bound $\sum_{m \in M(\sigma)} 
+\size(m)$ obtaining
+\begin{align*}
+	\CREP&(\sigma) - w(\final(\sigma)) \\
+  \leq &\; \textstyle (1+4/\eps) \cdot \alpha \cdot \sum_{m \in M(\sigma)} \size(m) 
+    + |M(\sigma)| \cdot \alpha \\ 
+	\leq &\; \textstyle (2+4/\eps) \cdot \alpha \cdot \sum_{m \in M(\sigma)} \size(m) 
+		+ \alpha \cdot \sum_{c \in \del(\sigma)} |c|  \\
+	\leq &\; \textstyle (2+4/\eps) \cdot \alpha \cdot \left( 
+			\sum_{c \in \del(\sigma)} |c| \cdot \log k + \sum_{c \in \final(\sigma)} |c| \cdot \log |c|
+			\right)
+			+ \alpha \cdot \sum_{c \in \del(\sigma)} |c| \\
+	\leq &\; \textstyle (3+4/\eps) \cdot \alpha \cdot 
+			\sum_{c \in \del(\sigma)} |c| \cdot \log k 
+			+ (2+4/\eps) \cdot \alpha \cdot
+			\sum_{c \in \final(\sigma)} |c| \cdot \log |c|
+	\enspace.
+\end{align*}
+By \ref{lem:opt_lower_bound}, $\sum_{c \in \del(\sigma)} |c| \cdot \alpha \leq 
+2k \cdot \OPT(\sigma)$. This yields
+\begin{align*}
+	\CREP(\sigma)
+	\leq &\; \textstyle O(1+1/\eps) \cdot k \cdot \log k \cdot \OPT(\sigma)
+			+ \beta \enspace,
+\intertext{where}
+	\beta = &\; O(1+1/\eps) \cdot \alpha \cdot
+			\sum_{c \in \final(\sigma)} |c| \cdot \log |c|
+			+ w(\final(\sigma)) 
+	\enspace.
+\end{align*}
+To bound $\beta$, observe that the component-set $\final(\sigma)$
+contains at most $k \cdot \ell$ components, and hence
+by~\ref{lem:wS_bound}, $w(\final(\sigma)) < k \cdot \ell \cdot
+\alpha$. Furthermore, the maximum of $\sum_{c \in \final(\sigma)} |c| \cdot
+\log |c|$ is achieved when all nodes in a specific cluster constitute a single
+component. Thus, $\sum_{c \in \final(\sigma)} |c| \cdot \log |c|
+\leq \ell \cdot ((2+\eps) \cdot k) \cdot \log ((2+\eps) \cdot k) = O(\ell
+\cdot k \cdot \log k)$.
+In total, $\beta = O((1 + 1/\eps) \cdot \alpha \cdot \ell \cdot k \cdot \log k)$, 
+i.e., it can be upper-bounded by a constant independent of input sequence $\sigma$,
+which concludes the proof.
+\end{proof}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Online Rematching}
+\label{sec:k-two}
+
+Let us now consider the special case where clusters are of size two ($k=2$,
+arbitrary~$\ell$). This can be viewed as an online maximal (re)matching problem:
+clusters of size two contain (``match'') exactly one pair of nodes, and
+maximizing pairwise communication within each cluster is equivalent to
+minimizing inter-cluster communication. 
+
+
+\subsection{Greedy Algorithm}
+
+We define a natural greedy online algorithm~$\GREEDY$, parameterized by a real
+positive number $\lambda$. Similarly to our other algorithms,
+\GREEDY  maintains an edge weight for each pair of nodes. 
+The weights of all edges are initially zero. Weights of intra-cluster edges
+are always zero and weights of inter-cluster edges are related to the number
+of paid communication requests between edge endpoints. 
+
+When facing an inter-cluster request between nodes $x$
+and~$y$, $\GREEDY$ increments the weight $w(e)$, where $e = (x,y)$. Let $x'$
+and $y'$ be the nodes collocated with $x$ and~$y$, respectively. If after the
+weight increase, it holds that $w(x,y) + w(x',y') \geq \lambda
+\cdot \alpha$, $\GREEDY$ performs a swap: it places $x$ and $y$ in one
+cluster and $x'$ and~$y'$ in another; afterwards it resets the weights of
+edges $(x,y)$ and $(x',y')$ to 0. Finally, \GREEDY pays for the request
+between $x$ and $y$. Note that if the request triggered a migration, then
+\GREEDY does not pay its communication cost.
+
+
+\subsection{Analysis}
+
+We use $E$ to denote the set of all edges.
+Let $\MGREEDY$ ($\MOPT$) denote the set of all edges $e = (u,v)$, such 
+that $u$ and $v$ are collocated by \GREEDY (\OPT). 
+Note that $\MGREEDY$ and $\MOPT$ are perfect matchings on the set of all nodes.
+
+For the analysis, we associate the following edge-potential with any edge $e$:
+\[
+	\Phi(e) = \begin{cases}
+		0 			& \textrm{if $e \in \MGREEDY$,} \\
+		- w(e) 	& \textrm{if $e \in \MOPT \setminus \MGREEDY$,} \\
+		f \cdot w(e) & \textrm{if $e \notin \MOPT$ and $e \notin \MGREEDY$,} \\
+	\end{cases}
+\]
+where $f \geq 0$ is a constant that will be defined later. 
+
+The union of $\MGREEDY$ and $\MOPT$ constitutes a set of alternating cycles:
+an alternating cycle of length~$2 j$ (for some $j \geq 1$) consists of $2 j$
+nodes, $j$ edges from $\MGREEDY$ and $j$ edges from $\MOPT$, interleaved. The
+case $j = 1$ is~degenerate: such a cycle consists of a single edge from $\MGREEDY
+\cap \MOPT$, but we still count it as a cycle of length $2$. We define the
+cycle-potential as
+\[
+	\Psi = - C \cdot g \cdot \alpha,
+\]
+where $C$ is the number of all cycles and $g \geq 0$ is a constant that will
+be defined later.
+
+To simplify the analysis, we slightly modify the way weights are increased by
+\GREEDY. The modification is~applied only when the weight increment triggers 
+a~node migration. Recall that this happens when there is an inter-cluster
+request between nodes $x$ and $y$. The corresponding weight $w(x,y)$ is then
+increased by $1$. After the~increase, it holds that $w(x,y) + w(x',y') \geq
+\lambda \cdot \alpha$. (Nodes $x'$ and $y'$ are those collocated with $x$ and $y$,
+respectively.) Instead, we increase $w(x,y)$ possibly by a~smaller amount, so
+that $w(x,y) + w(x',y')$ becomes \emph{equal} to $\lambda \cdot \alpha$. This
+modification allows for a more streamlined analysis and is local: before and
+after the modification, \GREEDY performs a migration and right after that
+it resets weight $w(x,y)$ to zero.
+
+We split processing of a communication request $(x,y)$ into three stages. In
+the first stage, \OPT performs an~arbitrary number of migrations. In the
+second stage, weight $w(x,y)$ is increased accordingly and both \OPT and
+\GREEDY serve the request. It is possible that the weight increase triggers a
+node swap of \GREEDY, in which case its serving cost is zero. Finally, in the
+third stage, \GREEDY may perform a node swap.
+
+We will show that for an appropriate choice of $\lambda$, $f$ and $g$, for all
+three stages described above the following inequality holds:
+\begin{equation}
+\label{eq:rematch_bound}
+	\textstyle \Delta \GREEDY + \Delta \Psi + \sum_{e \in E} \Delta \Phi(e) \leq 7 \cdot \Delta \OPT \enspace.
+\end{equation}
+Here, $\Delta \GREEDY$ and $\Delta \OPT$ denote the increases of \GREEDY's and
+\OPT's cost, respectively. $\Delta \Psi$ and $\Delta \Phi(e)$ are the changes
+of the potentials $\Psi$ and $\Phi(e)$. The 7-competitiveness then immediately
+follows from summing \eqref{eq:rematch_bound} and bounding the initial and
+final values of the potentials. 
+
+\begin{lemma}
+\label{lem:opt_swap}
+If $2 \cdot (f+1) \cdot \lambda + g \leq 14$, then \eqref{eq:rematch_bound}
+holds for the first stage.
+\end{lemma}
+
+\begin{proof}
+We consider any node swap performed by \OPT. Clearly, for such an event
+$\Delta \GREEDY = 0$ and $\Delta \OPT = 2 \cdot \alpha$. The number of cycles
+decreases at most by one, and thus $\Delta \Psi \leq g \cdot \alpha$.
+
+We will now upper-bound the change in the edge-potentials. Let $\eold_1$ and
+$\eold_2$ be the edges that were removed from $\MOPT$ by the swap and let
+$\enew_1$ and $\enew_2$ be the edges added to $\MOPT$. For any $i \in
+\{1,2\}$, $\Delta \Phi(\enew_i) \leq 0$ as the initial value of
+$\Phi(\enew_i)$ is at least $0$ and the final value of $\Phi(\enew_i)$ is at
+most $0$. Similarly, $\Delta \Phi(\eold_i) \leq (f+1) \cdot w(\eold_i)$ as the
+initial value of $\Phi(\eold_i)$ is at least $-w(\eold_i)$ and the final value
+of $\Phi(\eold_i)$ is at most $f \cdot w(\eold_i)$.
+
+Summing up, $\sum_{e \in E} \Delta \Phi \leq (f+1) \cdot (w(\eold_1) +
+w(\eold_2)) \leq 2 \cdot (f+1) \cdot \lambda \cdot \alpha$ as the weight of each edge
+is at most $\lambda \cdot \alpha$. By combining the bounds above and using the
+lemma assumption, we obtain $\Delta \GREEDY + \sum_{e \in E} \Delta \Phi(e) +
+\Delta \Psi \leq 0 + 2 \cdot (f+1) \cdot \lambda \cdot \alpha + g \cdot \alpha 
+\leq 14 \cdot \alpha = 7 \cdot \Delta \OPT$.
+\end{proof}
+
+
+\begin{lemma}
+\label{lem:rematch_req}
+If $f \leq 6$, then \eqref{eq:rematch_bound} holds for the second stage.
+\end{lemma}
+
+\begin{proof}
+In this stage, both \GREEDY and \OPT serve a communication request between
+nodes $x$ and $y$. Let $e_c = (x,y)$. As neither \GREEDY nor \OPT migrates any
+nodes in this stage, the structure of alternating cycles remains
+unchanged, i.e., $\Delta \Psi = 0$. Furthermore, only edge~$e_c$ may change its
+weight, and therefore, among all edges, only the edge-potential of $e_c$ may
+change. We consider two cases.
+\begin{enumerate}
+
+\item If $e_c \in \MGREEDY$, then $\Delta \GREEDY = 0$ and $\Delta \OPT \geq 0$. As
+$w(e_c)$ is unchanged, $\Delta \Phi(e_c) = 0$, and therefore 
+$\Delta \GREEDY + \Delta \Phi(e_c) = 0 = \Delta \OPT$. 
+
+\item If $e_c \notin \MGREEDY$, then let $\Delta w(e_c) \leq 1$ denote the increase 
+of the weight of edge~$e_c$. Note that $\Delta \GREEDY \leq \Delta w(e_c)$: 
+either no migration is triggered and $\Delta \GREEDY = \Delta w(e_c) = 1$
+or a migration is triggered and then \GREEDY does not pay for the request.
+
+If $e_c \in \MOPT$, then $\Delta \OPT = 0$ and $\Delta \Phi(e_c) = -w(e_c)$.
+Thus, $\Delta \GREEDY + \Delta \Phi(e_c) \leq 0 = \Delta \OPT$. Otherwise, 
+$e_c \notin \MOPT$, in which case 
+$\Delta \OPT = 1$. Furthermore $\Delta \Phi(e_c) = f \cdot \Delta w(e_c)$,
+and thus $\Delta \GREEDY + \Delta \Phi(e_c) = (f+1) \cdot w(e_c) \leq f+1 =
+(f+1) \cdot \Delta \OPT$.
+\end{enumerate}
+
+Therefore, in the second stage, $\Delta \GREEDY + \Delta \Psi + \sum_{e \in E}
+\Delta \Phi(e) \leq (f+1) \cdot \Delta \OPT$,
+which implies \eqref{eq:rematch_bound} as we assumed $f \leq 6$.
+\end{proof}
+
+
+\begin{lemma}
+\label{lem:greedy_swap}
+If $2 + \lambda \leq g \leq f \cdot \lambda - 2$, 
+then  \eqref{eq:rematch_bound} holds for the third stage.
+\end{lemma}
+
+
+
+\begin{proof}
+In the third stage (if it is present), $\GREEDY$ performs a swap. Clearly, for
+such an event $\Delta \GREEDY = 2 \cdot \alpha$ and $\Delta \OPT = 0$. 
+
+There are four edges involved in a swap: let $(x,x')$ and $(y,y')$ be the
+edges that were in $\MGREEDY$ before the swap and let $(x,y)$ and $(y,y')$ be
+the new edges in $\MGREEDY$ after the swap. Note that $w(x,x') = w(y,y') = 0$
+before and after the swap. By the definition of \GREEDY and our modification
+of weight updates, $w(x,y) + w(x',y') = \lambda
+\cdot \alpha$ before the swap, and after the swap these weights are reset to
+zero.
+
+For any edge $e$, let $\winit(e)$ and $\Phiinit(e)$ denote the weight and the
+edge-potential of~$e$ right before the swap. By~the~bounds above, $\Delta
+\GREEDY + \sum_{e \in E} \Delta \Phi(e) + \Delta\Psi = 2 \cdot \alpha -
+\Phiinit(x,y) - \Phiinit(x',y') + \Delta \Psi$, and hence to show
+\eqref{eq:rematch_bound} it suffices to show that the latter amount is at most
+$7 \cdot \Delta \OPT = 0$. We consider three cases.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.95\textwidth]{figs/dynamic-mapping/fig_rematch}
+\caption{Three cases in the analysis of the third stage (a swap performed by
+\GREEDY). Solid edges denote edges that were removed from $\MGREEDY$ because
+of the swap, dashed ones denote the ones that were added to $\MGREEDY$. Dotted
+paths denote the remaining parts of the involved alternating cycle(s).}
+\label{fig:rematch}
+\end{figure}
+
+\begin{enumerate}
+
+\item
+Assume that edges $(x,x')$ and $(y,y')$ were in different alternating
+cycles before the swap, see \ref{fig:rematch}a. Then the number
+of~alternating cycles decreases by one, and hence $\Delta \Psi = g \cdot
+\alpha$. Let $C$ be the cycle that contained edge $(x,x')$. Node $x$ is adjacent
+to an edge from $C$ that belongs to $\MOPT$. (It is possible that this edge is
+$(x,x')$; this occurs in the degenerate case when $C$ is of length~$2$.) As
+$\MOPT$ is a matching, $(x,y) \notin \MOPT$. Analogously, $(x',y') \notin
+\MOPT$. Therefore, $\Phiinit(x,y) + \Phiinit(x',y') = f \cdot w(x,y) + f \cdot
+w(x',y') = f \cdot \lambda \cdot \alpha$. Using the lemma assumption,
+$\Delta \GREEDY + \sum_{e \in E} \Delta \Phi(e) + \Delta\Psi = (2 + g - f
+\cdot \lambda) \cdot \alpha \leq 0$.
+
+\item
+Assume that edges $(x,x')$ and $(y,y')$ belonged to the same cycle and
+it contained the nodes in the order $x,x',\ldots,y,y',\ldots$,
+see~\ref{fig:rematch}b. In this case it holds that 
+$\Delta \Psi = 0$, since 
+the number of alternating cycles is unaffected by the swap. By similar
+reasoning as in the previous case, neither $(x,y)$ nor $(x',y')$ belong to
+$\MOPT$, and thus again, $\Phiinit(x,y) + \Phiinit(x',y') = f \cdot w(x,y) + f
+\cdot w(x',y') = f \cdot \lambda \cdot \alpha$. In this case, $\Delta \GREEDY
++ \sum_{e \in E} \Delta \Phi(e) + \Delta\Psi = (2 - f \cdot \lambda) \cdot
+\alpha \leq (2 + g - f \cdot \lambda) \cdot \alpha \leq 0$.
+
+\item 
+Assume that edges $(x,x')$ and $(y,y')$ belonged to the same cycle and
+it contained the nodes in the order $x,x',\ldots,y',y,\ldots$,
+see~\ref{fig:rematch}c. When the swap is performed, the number of
+alternating cycles decreases, and thus $\Delta \Psi = -g \cdot \alpha$. Unlike
+the previous cases, here it is possible that $(x,y)$ and $(x',y')$ belong to
+$\MOPT$. But even in such a case, we may lower-bound the initial values of the
+corresponding edge-potentials: $\Phiinit(x,y) + \Phiinit(x',y') \geq -
+\winit(x,y) - \winit(x',y') = - \lambda \cdot \alpha$. Using the lemma
+assumption, $\Delta \GREEDY + \sum_{e \in E} \Delta \Phi(e) + \Delta\Psi = (2
+- g + \lambda) \cdot \alpha \leq 0$.
+\end{enumerate}
+
+\end{proof}
+
+
+
+
+\begin{theorem}
+\label{thm:rematching}
+For $\lambda = 4/5$, $\GREEDY$ is $7$-competitive.
+\end{theorem}
+
+\begin{proof}
+We choose $f = 6$ and $g = 14/5$. The chosen values of $\lambda$, $f$ and $g$
+satisfy the conditions of \ref{lem:rematch_req},
+\ref{lem:greedy_swap} and \ref{lem:opt_swap}. Summing these
+inequalities over all stages occurring while serving an input sequence~$\sigma$
+yields
+\begin{equation*}
+	\textstyle \GREEDY(\sigma) + (\Psi_\textrm{final} - \Psi_\textrm{initial})
+	+ \sum_{e \in E} \left( 
+		\Phi_\textrm{final}(e) - \Phi_\textrm{initial}(e) \right)
+	\leq 7 \cdot \OPT(\sigma) \enspace,
+\end{equation*}
+where $\Psi_\textrm{final}$ and $\Phi_\textrm{final}(e)$ denote the final
+values of the potentials and $\Psi_\textrm{initial}$ and
+$\Phi_\textrm{initial}(e)$ their initial values. We observe that all the
+potentials occurring in the inequality above are lower-bounded and
+upper-bounded by values that are independent of the input sequence $\sigma$.
+That is, $\Psi_\textrm{final} - \Psi_\textrm{initial} \geq - g \cdot \ell
+\cdot \alpha$ (as the number of~alternating cycles is at most $\ell$) and
+$\Phi_\textrm{final}(e) - \Phi_\textrm{initial}(e) \geq - (f+1) \cdot w(e)
+\geq - (f+1) \cdot \lambda \cdot \alpha$ (as all edge weights are always 
+at most $\lambda \cdot \alpha$). The number of edges is exactly $\binom{2
+\cdot \ell}{2}$, and therefore
+\begin{align*}
+	 \GREEDY(\sigma) 
+	\leq &\; 7 \cdot \OPT(\sigma) 
+	+ \textstyle g \cdot \ell \cdot \alpha + \binom{2 \cdot \ell}{2} \cdot (f+1) \cdot 
+	\lambda \cdot \alpha \\
+	\leq &\; 7 \cdot \OPT(\sigma) 
+	+ O(\ell^2 \cdot \alpha)
+	\enspace.
+\end{align*}
+This concludes the proof.
+\end{proof}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Lower Bounds}
+\label{sec:lower}
+
+In order to shed light on the optimality of the presented online algorithm, we
+next investigate lower bounds on the competitive ratio achievable by any
+(deterministic) online algorithm. We start by showing a reduction of the BRP
+problem to online paging, which will imply that already for two clusters the
+competitive ratio of the problem is at least $k-1$. We strengthen this bound,
+providing a lower bound of $k$ that holds for any amount of augmentation, as
+long as the augmentation does not allow to put all nodes in a single 
+cluster. The proof uses the averaging argument. We refine this approach for a
+special case of online rematching ($k = 2$ without augmentation), for which we
+present a~lower bound of $3$.
+
+
+\subsection{Lower Bound by Reduction to Online Paging}
+\label{sec:paging}
+
+\begin{theorem}
+Fix any $k$. If there exist a $\gamma$-competitive deterministic algorithm $B$
+for BRP for two clusters, each of~size~$k$, then there exists a
+$\gamma$-competitive deterministic algorithm $P$ for the paging problem with 
+cache size $k-1$ and where the number of different pages is $k$.
+\end{theorem}
+
+\begin{proof}
+The pages are denoted by $p_1,p_2,\ldots,p_k$. Without loss of generality, we
+assume that the initial cache is equal to $p_1,p_2,\ldots,p_{k-1}$. We fix any
+input sequence $\sigma^P = \sigma^P_1, \sigma^P_2, \sigma^P_3, \ldots$ for the
+paging problem, where $\sigma^P_t$ denotes the $t$-th accessed page. We show
+how to construct, in an online manner, an online algorithm $P$ for the paging
+problem that operates in the following way. It internally runs the algorithm~$B$, 
+starting on the initial assignment of nodes to clusters that will be
+defined below. For a requested page $\sigma^P_t$, it creates a subsequence
+of~communication requests for the BRP problem, runs $B$ on them, and serves
+$\sigma^P_t$ on the basis of $B$'s responses.
+
+We use the following $2k$ nodes for the BRP problem: paging nodes $p_1,p_2,
+\ldots, p_k$, auxiliary nodes $a_1,a_2,\ldots,$ $a_{k-1}$, and a special node
+$s$. We say that the node clustering is \emph{well aligned} if one cluster
+contains the node $s$ and $k-1$ paging nodes, and the other cluster contains
+one paging node and all auxiliary nodes. There is a natural bijection between
+possible cache contents and well aligned configurations: the cache consists of
+the $k-1$ paging nodes that are in the same cluster as node $s$. (Without loss
+of generality, we may assume that the cache of any paging algorithm is always
+full, i.e., consists of $k-1$ pages.) If the configuration $c$ of a BRP
+algorithm is well aligned, $\textsc{cache}(c)$ denotes the corresponding cache
+contents.
+
+The initial configuration for the BRP problem is the well aligned
+configuration corresponding to the initial cache (pages
+$p_1,p_2,\ldots,p_{k-1}$ in the cache).
+
+For any paging node $p$, let $\comm(p)$ be a subsequence of communication
+requests for the BRP problem, consisting ot the request $(p, s)$, followed by
+$\binom{k-1}{2}$ requests to all pairs of auxiliary nodes. Given an input
+sequence $\sigma^P$ for online paging, we construct the input sequence
+$\sigma^B$ for the BRP problem in the following way: For a request
+$\sigma^P_t$, we repeat a~subsequence $\comm(\sigma^P_t)$ till the node
+clustering maintained by $B$ becomes well aligned and $\sigma^P_t$ becomes
+collocated with $s$. Note that $B$ must eventually achieve such a node
+configuration: otherwise its cost would be arbitrarily large while a sequence
+of repeated $\comm(\sigma^P_t)$ subsequences can be served at~a~constant
+cost---the competitive ratio of~$B$ would then be unbounded. We denote the
+resulting sequence of $\comm(\sigma^P_t)$ subsequences by
+$\comm_t(\sigma^P_t)$.
+
+To construct the response to the paging request $\sigma^P_t$, the algorithm
+$P$ runs $B$ on $\comm_t(\sigma^P_t)$. Right after processing
+$\comm_t(\sigma^P_t)$, node configuration $c$ of $B$ is well aligned and
+$\sigma^P_t$ is collocated with~$s$. Hence, $P$ may change its cache
+configuration to $\textsc{cache}(c)$: such a response is feasible because
+since $\sigma^P_t$ is collocated with $s$, it is included by $P$ in the cache.
+Furthermore, we may relate the cost of $P$ to the cost of~$B$: If $P$ modifies
+the cache contents, the corresponding cost is $1$, as exactly one page has to
+be fetched. Such a change occurs only if $B$ changed node placement in
+clusters (at a~cost of at least $2 \cdot \alpha$). Therefore, $2
+\cdot \alpha \cdot P(\sigma^P_t) \leq B(\comm_t(\sigma^P_t))$, which
+summed over all requests from sequence $\sigma^P$ yields $2 \cdot
+\alpha \cdot P(\sigma^P) \leq B(\sigma^B)$.
+
+Now we show that there exists an (offline) solution \OFF to $\sigma^B$, whose
+cost is exactly $2 \cdot \alpha \cdot \OPT(\sigma^P)$. Recall that, for a
+paging request $\sigma^P_t$, $\sigma^B$ contains the~corresponding sequence
+$\comm_t(\sigma^P_t)$. Before serving the first request
+of~$\comm_t(\sigma^P_t)$, \OFF changes its state to a well aligned
+configuration corresponding to the cache of $\OPT$ right after serving paging
+request $\sigma^P_t$. This ensures that the subsequence $\comm_t(\sigma^P_t)$
+is free for \OFF. Furthermore, the cost of node migration of \OFF is $2
+\alpha$ (two paging nodes are swapped) if $\OPT$ performs a fetch, and 0 if
+$\OPT$ does not change its cache contents. Therefore,
+$\OFF(\comm_t(\sigma^P_t)) = 2 \cdot \alpha \cdot \OPT(\sigma^P_t)$, which
+summed over the entire sequence $\sigma^P$ yields $\OFF(\sigma^B) = 2 \cdot
+\alpha \cdot \OPT(\sigma^P)$.
+
+As $B$ is $\rho$-competitive for the BRP problem, there exists a constant
+$\beta$, such that for any sequence $\sigma^P$ and the corresponding sequence
+$\sigma^B$, it holds that $B(\sigma^B) \leq \gamma \cdot \OPT(\sigma^B) +
+\beta$. Combining this inequality with proven relations between $P$ and $B$
+and between \OFF and \OPT yields
+\[
+	2 \cdot \alpha \cdot P(\sigma^P) \leq 
+	B(\sigma^B) \leq \gamma \cdot \OPT(\sigma^B) + \beta
+	\leq \gamma \cdot \OFF(\sigma^B) + \beta
+	 =\gamma \cdot 2 \cdot \alpha \cdot \OPT(\sigma^P) + \beta
+	\enspace,
+\]
+and therefore $P$ is $\gamma$-competitive.
+\end{proof}
+
+As any deterministic algorithm for the paging problem with cache size $k-1$
+has a competitive ratio of~at~least $k-1$~\cite{SleTar85}, we obtain the
+following result.
+
+\begin{corollary}
+The competitive ratio of the BRP problem on two clusters is at least $k-1$. 
+\end{corollary}
+
+
+\subsection{Additional Lower Bounds}
+\label{sec:lower-bounds}
+
+\begin{theorem}\label{thm:loweraugmk}
+No~$\delta$-augmented deterministic online algorithm \ONL
+can achieve a competitive ratio smaller than~$k$, as long as~$\delta < \ell~$.
+\end{theorem}
+
+\begin{proof}
+In our construction, all nodes are numbered from $v_0$ to $v_{n-1}$. All
+presented requests are edges in~a~ring graph on these nodes with edge $e_i$
+defined as $(v_i,v_{(i+1) \mod n })$ for~$i = 0, \ldots, n-1$. At any time,
+the adversary gives a communication request between an arbitrary pair of nodes
+not collocated by \ONL. As $\delta < \ell$, \ONL cannot fit the entire ring in
+a single cluster, and hence such pair always exists. Such a request
+entails a cost of~at~least~$1$ for \ONL. This way, we may define an~input
+sequence $\sigma$ of an~arbitrary length, such that $\ONL(\sigma) \geq
+|\sigma|$.
+
+Now we present $k$ offline algorithms $\OFF_1, \OFF_2, \ldots, \OFF_k$, such
+that, neglecting an initial node reorganization that they will perform before
+the input sequence starts, the sum of their total costs on $\sigma$ is exactly
+$|\sigma|$. Toward this end, for any $j \in \{0,\ldots,k-1\}$, we define a
+set~$\cut(j) = \{ e_j, e_{j+k}, e_{j+2k},
+\ldots, e_{j+(\ell-1)\cdot k} \}$. For any~$j$, set $\cut(j)$ defines a
+natural partitioning of all nodes into clusters, each containing $k$ nodes.
+Before processing $\sigma$, the algorithm $\OFF_j$ first migrates its nodes
+(paying at most $n \cdot \alpha$) to the clustering defined by $\cut(j)$ and
+then never changes the node placement.
+
+As all sets $\cut(j)$ are pairwise disjoint, for any request $\sigma_t$,
+exactly one algorithm $\OFF_j$ pays for the request, and thus $\sum_{j=1}^k
+\OFF_j(\sigma_t) = 1$. Therefore, taking the initial node reorganization into
+account, we obtain that $\sum_{j=1}^k \OFF_j(\sigma) \leq k \cdot n \cdot
+\alpha + \ONL(\sigma)$. By the averaging argument, there exists offline
+algorithm $\OFF_j$, such that $\OFF_j(\sigma) \leq \frac{1}{k} \cdot
+\sum_{j=1}^k \OFF_j(\sigma) \leq n \cdot \alpha + \ONL(\sigma) / k$.
+Thus, $\ONL(\sigma) \geq k \cdot \OFF_j(\sigma) - k \cdot n \cdot
+\alpha \geq k \cdot \OPT(\sigma) - k \cdot n \cdot \alpha$.
+The~theorem follows because the additive constant $k \cdot n \cdot \alpha$
+becomes negligible as the length of $\sigma$ grows.
+\end{proof}
+
+
+\begin{theorem}
+No deterministic online algorithm \ONL can achieve a competitive ratio 
+smaller than~$3$ for the case $k = 2$ (without augmentation).
+\end{theorem}
+
+\begin{proof} As in the previous proof, we number the nodes from $v_0$ to
+$v_{n-1}$. We distinguish three types of node clusterings. Configuration A:
+$v_0$ collocated with $v_1$, $v_2$ collocated with $v_3$, other nodes
+collocated arbitrarily; configuration B: $v_1$ collocated with $v_2$, $v_3$
+collocated with $v_0$, other nodes collocated arbitrarily; configuration C:
+all remaining clusterings.
+
+Similarly to the proof of \ref{thm:loweraugmk}, the adversary always
+requests a communication between two nodes not collocated by \ONL.
+This time the exact choice of such nodes is relevant: \ONL receives request to
+$(v_1,v_2)$ in configuration A, and to $(v_0,v_1)$ in configurations B and C.
+
+We define three offline algorithms. They will keep nodes
+$\{v_0,\ldots,v_3\}$ in the first two clusters and the remaining nodes in the
+remaining clusters (the remaining nodes will never change their clusters). 
+More concretely, $\OFF_1$ keeps nodes $\{v_0,\ldots,v_3\}$ always in
+configuration A and $\OFF_2$ always in configuration B. Furthermore, we define
+the third algorithm $\OFF_3$ that is in configuration B if \ONL is in
+configuration A, and is in configuration A if \ONL is in configuration B or C.
+
+We split the cost of $\ONL$ into the cost for serving requests, $\ONLreq$, and
+the cost paid for its migrations, $\ONLmig$. Observe that, for~any~request
+$\sigma_t$, $\OFF_1(\sigma_t) + \OFF_2(\sigma_t) = \ONLreq(\sigma_t)$.
+Moreover, as $\OFF_3$ does not pay for any request and migrates at the same
+time as \ONL does, $\OFF_3(\sigma_t) = \ONLmig(\sigma_t)$. Summing up,
+$\sum_{j=1}^3 \OFF_j(\sigma_t) = \ONL(\sigma_t)$ for any request $\sigma_t$.
+Taking into account the initial reconfiguration of nodes in $\OFF_j$ solutions
+(which involves at~most one swap of cost $2 \cdot \alpha$), we obtain that
+$\sum_{j=1}^3 \OFF(\sigma) \leq 2 \cdot \alpha + \ONL(\sigma)$. Hence, by the
+averaging argument, there exists $j \in \{1,2,3\}$, such that $\ONL(\sigma)
+\geq 3 \cdot \OFF_j(\sigma) - 2 \cdot \alpha \geq 3 \cdot \OPT(\sigma) - 
+2 \cdot \alpha$. This concludes the proof, as $2 \cdot \alpha$ becomes
+negligible as the length of $\sigma$ grows.
+\end{proof}
+
