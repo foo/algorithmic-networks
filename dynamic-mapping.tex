@@ -1,3 +1,38 @@
+\todo{Remove references to ``this paper''}
+
+\section{Introduction (TODO: CHANGE TITLE)}
+
+Graph partitioning problems, like minimum graph bisection or minimum balanced
+cuts, are among the most fundamental problems in theoretical computer science.
+They are intensively studied also due to their numerous practical
+applications, e.g., in communication networks, parallel processing, data
+mining and community discovery in social networks. Interestingly however, not
+much is known today about how~to~\emph{dynamically} partition nodes which
+interact or communicate in a~time-varying fashion.
+
+This paper initiates the study of a natural model for \emph{online graph
+partitioning}. We are given a~set of~$n$ nodes with time-varying pairwise
+communication patterns, which have to be partitioned into~$\ell$~clusters of
+equal size~$k$. Intuitively, we would like to minimize inter-cluster
+interactions by mapping frequently communicating nodes to the same cluster.
+Since communication patterns change over time, partitions should be
+readjusted dynamically, that is, the nodes should be \emph{repartitioned}, in
+an online manner, by \emph{migrating} them between clusters. The objective is
+to jointly minimize inter-cluster communication and repartitioning costs,
+defined respectively as the number of communication requests ``served
+remotely'' and the number of times nodes are migrated from one cluster to
+another.
+
+This fundamental online optimization problem has many applications. For
+example, in the context of~cloud computing, $n$ may represent virtual machines
+or containers that are distributed across~$\ell$ physical servers, each having
+$k$ cores: each server can host $k$ virtual machines. We would like to
+(dynamically) distribute the virtual machines across the servers such that
+datacenter traffic and migration costs are minimized.
+
+
+
+
 \section{Model}
 
 Formally, the online \emph{Balanced RePartitioning} problem (BRP) is defined as
