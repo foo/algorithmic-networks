@@ -1,0 +1,209 @@
+% general macros
+
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+
+
+\newcommand{\margcomm}[1]{\marginpar{\footnotesize\raggedright #1}}
+\definecolor{blueLink}{rgb}{0,0.2,0.8}
+\hypersetup{colorlinks,linkcolor=blueLink,urlcolor=blueLink,citecolor=blueLink}
+
+\newcommand{\todo}[1]{\noindent\textcolor{red}{(TODO: #1)}\margcomm{TODO}} 
+\newcommand{\marcin}[1]{\color{blue} Marcin: #1\color{black}\margcomm{marcin}}
+\newcommand{\maciek}[1]{\textcolor{red}{(Maciek: #1)}\margcomm{maciek}}
+
+
+
+
+% VC macros
+
+\newcommand{\VmSlot}{\text{VM slot}}
+\newcommand{\VmSlots}{\VmSlot\text{s}}
+\newcommand{\VM}{\textsc{VM}}
+\newcommand{\Problem}{\textsc{DummyName Problem}}
+\newcommand{\MaFactor}{m}
+\newcommand{\Path}{\ensuremath{p}}
+\newcommand{\RedundancyFactor}{\ensuremath{r}}
+\newcommand{\variab}{\nu}
+
+\newcommand{\Source}{\ensuremath{s^{+}}}
+\newcommand{\Sink}{\ensuremath{s^{-}}}
+
+\newcommand{\VmChunkAssignment}{\mu}
+\newcommand{\NodeMapping}{\pi}
+\newcommand{\ChunkLocation}{\pi}
+
+\newcommand{\ChunkType}{\tau}
+\newcommand{\VirtualNodes}{\ensuremath{V}}
+\newcommand{\VirtualEdges}{\ensuremath{E_V}}
+\newcommand{\VirtualNode}{v}
+\newcommand{\VirtualEdge}{e}
+\newcommand{\VCSwitch}{\ensuremath{\textsc{center}}}
+\newcommand{\SubstrateNodes}{\ensuremath{V_S}}
+\newcommand{\SubstrateEdges}{\ensuremath{E_S}}
+\newcommand{\SubstrateNode}{\ensuremath{v}}
+\newcommand{\SubstrateEdge}{\ensuremath{e}}
+\newcommand{\Leaf}{\ensuremath{l}}
+\newcommand{\Leaves}{\ensuremath{L}}
+\newcommand{\Chunks}{\ensuremath{\textsc{chunks}}}
+\newcommand{\aroot}{\emph{root}}
+
+\newcommand{\Opt}{\ensuremath{Opt}}
+\newcommand{\Children}{\ensuremath{children}}
+
+\newcommand{\Uplink}{\ensuremath{\textsc{uplink}}}
+\newcommand{\ChunkCount}{\ensuremath{y}}
+\newcommand{\VmCount}{\ensuremath{\textsc{vis}}}
+\newcommand{\Right}{\ensuremath{r}}
+\newcommand{\InverseAssignment}{\ensuremath{\VmChunkAssignment^{-1}}}
+
+\newcommand{\clauses}{\alpha}
+\newcommand{\vars}{\beta}
+\newcommand{\variables}{\beta}
+\newcommand{\achunk}{\ensuremath{c}}
+\newcommand{\Chunk}{\ensuremath{c}}
+\newcommand{\capa}{\emph{cap}}
+\newcommand{\capacity}{\emph{cap}}
+\newcommand{\Distance}{\emph{\textsc{dist}}}
+\newcommand{\dist}{\emph{dist}}
+\newcommand{\CostPerChunk}{\emph{cost}}
+
+
+\newcommand{\VC}{\textsc{VC}}
+\newcommand{\CC}{\textsc{NI}}
+
+\newcommand{\VE}{\textsc{VE}}
+\newcommand{\FP}{\textsc{FP}}
+\newcommand{\RS}{\textsc{RS}}
+\newcommand{\BW}{\textsc{BW}}
+\newcommand{\MA}{\textsc{MA}}
+\newcommand{\Cost}{\textsc{F}}
+
+\newcommand{\MatchCost}{\textsc{MCost}}
+\newcommand{\chunkOf}{\textsc{chunkOf}}
+
+
+\newcommand{\TDPM}{\textsc{3DPM}}
+
+\newcommand{\Unmatched}{\gamma}
+\newcommand{\ActiveNode}{\textit{active node}}
+\newcommand{\ActiveNodes}{\textit{active nodes}}
+\newcommand{\Solution}{S}
+\newcommand{\CostSol}{\textit{cost}(\Solution)}
+\newcommand{\CostEstimOne}{\widehat{cost}}
+\newcommand{\CostEstimTwo}{\widehat{cost'}}
+\newcommand{\numNodes}{\Vms}
+
+\newcommand{\UnqSubtree}{{{\emph{Unique Subtree}}}}
+\newcommand{\MatchSubtree}{{\emph{Matching Subtree}}}
+\newcommand{\CoverSubtree}{{\emph{Cover Subtree}}}
+\newcommand{\TripleGadget}{{\emph{Triple Gadget}}}
+\newcommand{\TripleGadgets}{{\emph{Triple Gadgets}}}
+\newcommand{\UnqGadget}{{\emph{Unique Gadget}}}
+\newcommand{\UnqGadgets}{{\emph{Unique Gadgets}}}
+\newcommand{\ElGadget}{{\emph{Element Gadget}}}
+\newcommand{\ElGadgets}{{\emph{Element Gadgets}}}
+
+\newcommand{\UniqueE}{{\ensuremath{\mathcal{U}_e}}}
+
+\newcommand{\SpawnedUnqSubtree}{\sigma}
+\newcommand{\SpawnedMatchSubtree}{\delta}
+\newcommand{\SpawnedSubtree}{\textit{nodesInT}}
+\newcommand{\remainBw}{\textit{remainBw}}
+
+\newcommand{\Band}{\textsc{bw}}
+
+\newcommand{\VCEMB}{VCEMB}
+
+\newcommand{\Bandwidth}{\ensuremath{bw}}
+\newcommand{\Tree}{\ensuremath{T}}
+\newcommand{\CostTrans}{\ensuremath{b_1}}
+\newcommand{\CostCom}{\ensuremath{b_2}}
+\newcommand{\Vms}{\ensuremath{n_V}}
+\newcommand{\TSC}{\textsc{3-SC}}
+\newcommand{\TDM}{\textsc{3-DM}}
+\newcommand{\TSAT}{\textsc{3-Sat}}
+\newcommand{\NSAT}{\textsc{Sat}}
+\newcommand{\SAT}{\textsc{Sat}}
+\newcommand{\ZSAT}{\textsc{2-Sat}}
+
+
+\newcommand{\Formula}{\ensuremath{\Psi}}
+\newcommand{\Clauses}{\ensuremath{Cl(\Formula)}}
+\newcommand{\NClauses}{\ensuremath{c}}
+\newcommand{\Vars}{\ensuremath{Var(\Formula)}}
+\newcommand{\NVars}{\ensuremath{|\Vars|}}
+\newcommand{\ChunkTypes}{\ensuremath{ch}}
+\newcommand{\Thr}{\ensuremath{\xi}}
+\newcommand{\VCB}{\ensuremath{VCB}}
+\newcommand{\VCNB}{\ensuremath{VCNB}}
+\newcommand{\varx}{\ensuremath{x}}
+\newcommand{\positive}{\ensuremath{positive}}
+\newcommand{\negative}{\ensuremath{negative}}
+\newcommand{\Val}{\ensuremath{Val}}
+\newcommand{\Sol}{\ensuremath{S}}
+
+
+
+\newtheorem{defn}{Definition}
+\newtheorem{obs}{Observation}
+
+%OBR macros
+\newcommand{\ONL}{\textsc{Onl}\xspace}
+\newcommand{\ONLreq}{\textsc{Onl}^\textnormal{req}\xspace}
+\newcommand{\ONLmig}{\textsc{Onl}^\textnormal{mig}\xspace}
+\newcommand{\GREEDY}{\textsc{Greedy}\xspace}
+\newcommand{\MGREEDY}{M^\textsc{GR}}
+\newcommand{\MOPT}{M^\textsc{OPT}}
+\newcommand{\OFF}{\textsc{Off}\xspace}
+\newcommand{\OPT}{\textsc{Opt}\xspace}
+\newcommand{\ALG}{\textsc{Alg}\xspace}
+\newcommand{\CREP}{\textsc{Crep}\xspace}
+\newcommand{\DET}{\textsc{Det}\xspace}
+\newcommand{\CREPreq}{\CREP^\textnormal{req}}
+\newcommand{\CREPmig}{\CREP^\textnormal{mig}}
+\newcommand{\ovr}{\textsc{ovr}}
+\newcommand{\T}{\mathcal{T}}
+\newcommand{\eps}{\ensuremath{\epsilon}}
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\cut}{\textsc{cut}}
+\newcommand{\eold}{e^\textrm{old}}
+\newcommand{\enew}{e^\textrm{new}}
+\newcommand{\V}{\mathcal{V}}
+\newcommand{\optmig}{\textsc{opt-mig}}
+\newcommand{\del}{\textsc{del}}
+\newcommand{\final}{\textsc{final}}
+\newcommand{\size}{\textsc{size}}
+\newcommand{\comm}{\textsc{comm}}
+\newcommand{\Phiinit}{\Phi^\textrm{S}}
+\newcommand{\winit}{w^\textrm{S}}
+
+
+
+
+%TC macros
+\newtheorem{observation}[theorem]{Observation}
+\newtheorem{claim}[theorem]{Claim}
+
+\newcommand{\lref}[2][]{\hyperref[#2]{#1~\ref*{#2}}}
+
+\newcommand{\ALGTC}{\textsc{TC}\xspace}
+%\newcommand{\OPT}{\textsc{Opt}\xspace}
+\newcommand{\last}{\textrm{last}}
+\newcommand{\sizetc}{\textrm{size}}
+\newcommand{\req}{\textrm{req}}
+\newcommand{\cnt}{\textrm{cnt}}
+\newcommand{\val}{\textrm{val}}
+\newcommand{\degree}{\textrm{deg}}
+\newcommand{\beP}{\textrm{begin}(P)}
+\newcommand{\enP}{\textrm{end}(P)}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\kALG}{k_\textnormal{ONL}}
+\newcommand{\kOPT}{k_\textnormal{OPT}}
+\newcommand{\pin}{\textnormal{\textsc{in}}\xspace}
+\newcommand{\pout}{\textnormal{\textsc{out}}\xspace}
+\newcommand{\VOPT}{V_\textnormal{OPT}}
+\newcommand{\VOPTC}{V_\textnormal{OPT}^\textrm{c}}
+

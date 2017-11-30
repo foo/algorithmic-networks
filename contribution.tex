@@ -1,0 +1,102 @@
+\subsection{Contributions on static mapping}
+
+This paper initiates the formal study of data-locality and replica aware virtual network embedding problems in datacenters.
+In particular, we decompose the general optimization problem into its fundamental aspects, such as
+assignment of chunks, replica selection, and flexible virtual machine
+placement, and answer questions such as:
+\begin{enumerate}
+\item Which chunks to assign to which virtual machine?
+
+\item How to exploit redundancy and select good replicas?
+
+\item How to efficiently embed virtual machines and their inter-connecting network?
+
+\item Can the chunk assignment, replica selection and virtual machine embedding problems be jointly optimized, in polynomial time?
+\end{enumerate}
+
+We draw a complete picture of the problem space: We show that
+even problem variants exhibiting multiple degrees of freedom in terms of
+replica selection and embedding,
+can be solved optimally in polynomial time, and we present several efficient
+algorithms accordingly. However, we also prove limitations in terms of
+computational tractability, by providing reductions from 3-D matching
+and Boolean satisfiability ($\SAT$). Interestingly,
+while it is well-known that (unsplittable) multi-commodity flow
+problems are NP-hard in capacitated networks, our hardness results also hold in \emph{uncapacitated}
+networks; moreover, we show that NP-hard problems already arise in small-diameter networks (as they are
+widely used today~\cite{fattree}).
+
+\subsection{Contribution on dynamic mapping}
+
+
+This paper introduces the online Balanced RePartitioning problem (BRP),
+a fundamental \emph{dynamic} variant of the classic graph clustering problem. 
+We show that BRP features some interesting connections to other well-known
+online graph problems. For $\ell=2$, BRP is able to simulate online paging problem
+and for for $k=2$, BRP is a~novel online version of maximum matching.
+We consider deterministic algorithms and make the following technical
+contributions:
+
+\begin{description}
+
+\item[Algorithms for General Variant:]
+For the non-augmented variant, in \ref{sec:upper}, we first present a~simple
+$O(k^2 \cdot \ell^2)$-competitive algorithm. Our main technical contribution
+is an $O((1+1/\eps) \cdot k \log{k})$-competitive deterministic algorithm
+$\CREP$ for a setting with $(2+\eps)$-augmentation (\ref{sec:crep}).
+We emphasize that this bound does not depend on~$\ell$. This is interesting,
+as in many application domains of this problem, $k$ is small: for example, in
+our motivating virtual machine collocation problem, a server typically hosts
+only a small number of virtual machines (e.g., related to the constant number
+of cores on the server).
+
+\item[Algorithms for Online Rematching:]
+For the special case of online rematching ($k=2$, but arbitrary~$\ell$), in
+\ref{sec:k-two}, we prove that a variant of a greedy algorithm is
+7-competitive. We also demonstrate a lower bound of 3 for any deterministic
+algorithm.
+
+\item[Lower Bounds:]
+By a reduction to online paging, in \ref{sec:paging}, we show that
+for two clusters no deterministic algorithm can obtain a better bound than
+$k-1$. While this shows an~interesting link between BRP and paging, in
+\ref{sec:lower-bounds}, we present a stronger bound. Namely, we
+show that for $\ell \geq 2$ clusters, no deterministic algorithm can beat the
+bound of $k$ even with an~arbitrary amount of augmentation, as~long~as~the
+algorithm cannot keep all nodes in a~single cluster. In contrast, online
+paging is known to~become constant-competitive with constant
+augmentation~\cite{SleTar85}.
+
+\end{description}
+
+
+
+
+\subsection{Contributions on memory management in network devices}
+
+\todo{Mixed with organization of the paper}
+
+We initiate the study of a natural new caching with bypassing problem which
+allows to account for tree-dependencies among items. The problem finds
+immediate applications, e.g., in IP routing and software-defined networking
+(see \lref[Section]{sec:motivation}).
+
+In particular, we consider the online tree caching problem within the resource
+augmentation paradigm: we assume that cache sizes of the online algorithm
+($\kALG$)  and the optimal offline algorithm ($\kOPT$) may differ. We assume
+$\kALG \geq \kOPT$ and let $R = \kALG/(\kALG-\kOPT+1)$.
+
+In \lref[Section]{sec:algo}, we present an elegant deterministic online
+algorithm~\ALG for this problem. While our algorithm is simple, its analysis
+presented in \lref[Section]{sec:analysis} requires several non-trivial
+insights into the problem. In particular, we rigorously prove that \ALG is
+$O(h(T) \cdot R)$-competitive, where $h(T)$ is the height of tree~$T$. That
+is, we show that there exists a constant~$\beta$, such that $\ALG(I) \leq
+O(h(T) \cdot R) \cdot \OPT(I) + \beta$ for any input $I$. Note that this
+result is optimal up to the factor~$O(h(T))$: in
+\lref[Appendix]{sec:lower-bound-on-the-problem}, we show that the lower
+bound~$R$ for the paging problem~\cite{competitive-analysis} implies an
+$\Omega(R)$ lower bound for our problem for any $\alpha \geq 1$. Finally, in
+\lref[Section]{sec:implementing_counters}, we show that \ALG can be
+implemented efficiently.
+
