@@ -1,5 +1,52 @@
 \todo{removed sections: introduction (whole), application: minimizing fwd tables, acknowledgements}
 
+\section{INTRO (TODO RENAME)}
+
+
+In the classic online paging problem, items of some universe are requested by
+a~processing entity (e.g., blocks of RAM are requested by the processor). To
+speed up the access, computers use a faster memory, called
+\emph{cache}, capable of accommodating $k$ such items. Upon a~request to a
+non-cached item, the algorithm has to fetch it into the cache, paying a fixed
+cost, while a request to a cached item is free. If the cache is full, the
+algorithm has to free some space by evicting an arbitrary subset of items from
+the cache.
+
+The paging problem is inherently online: the algorithm has to make decisions
+what to evict from the cache without the knowledge of future requests; its
+cost is compared to the cost of an optimal \emph{offline} solution and the
+worst-case ratio of these two amounts is called \emph{competitive ratio}. The first
+analysis of this basic problem in an online model was given over three
+decades ago by Sleator and Tarjan~\cite{competitive-analysis}. The problem was later
+considered in a~variety of flavors. In particular, some papers considered a
+\emph{bypassing model}~\cite{caching-rejection-penalties,paging-irani}, where
+item fetching is optional: the requested item can be served without being in
+the cache, for another fixed cost (usually being at most the cost of item
+fetching).
+
+In this paper, we introduce a natural extension of this fundamental problem, where
+items have inter-de\-pen\-den\-cies. More precisely, we assume that the universe is
+an arbitrary (not necessarily binary) rooted tree $T$ and the requested items
+are its nodes. For any tree node $v$, $T(v) \subseteq T$ is a subtree rooted
+at $v$ containing $v$ and all its descendants. We require the following
+property: if a~node $v$ is in the cache, then all nodes of $T(v)$ are also
+cached. In other words, we require that \emph{the cache is a~subforest of
+$T$}, i.e., a union of disjoint subtrees of~$T$.  We call this problem
+\emph{online tree caching}.
+
+Furthermore, we assume a bypassing model and distinguish between two types of
+requests: a request can be either \emph{positive} or \emph{negative}. The
+positive requests correspond to ``normal'' requests known from caching
+problems: we pay~$1$ if the node is not cached; for a negative request, we pay
+$1$ if the corresponding request is cached. After serving the request, we may
+reorganize our cache arbitrarily, but the resulting cache has to still be a
+subforest of $T$. We pay $\alpha$ for fetching or evicting any single node,
+where $\alpha \geq 1$ is an integer and a~parameter of the problem. Our goal
+is to minimize the overall cost of maintaining the cache and serving the
+requests.
+
+
+
 \section{Model}\label{sec:preliminaries}
 
 We denote the height of $T$ by $h(T)$. For any node $v$, $T(v)$ denotes the
