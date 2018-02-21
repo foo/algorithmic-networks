@@ -30,7 +30,7 @@
 *** intro: new challenges in networsk
 **** SDN
 *** o strukturze: czytaj pracę markarian.pdf, tam jest praktyczny wstęp do teoretycznych rezultatów
-* KOLEJNE SPOTKANIE
+* spotkanie MBi 24.11
 ** intro, practical motivations, related work z 3 prac na początek (do part intro, główna część "pracy")
 ** w intro: intro to competitive analysis
 ** ujednolicenie notacji między VCMB i OBR
@@ -47,3 +47,16 @@
 ** możesz wrzucić party do pracy + czytać  prace VC/SDN
 * next
 ** mgr OLi
+* spotkanie MBi 01.12
+** 
+* zrobione grudzien
+** ujednolicenie pracy terminologia z OBR do VC
+*** node, server, communication, ...
+*** brak różnych użyć standardowych zmiennych: k, n
+*** pozostało:
+**** koszt komunikacji wybrać zmienną alpha? w VC są dwa takie koszty
+**** ujednolicenie w obrazkach
+**** jak nazwać chunks and replicas?
+**** jaką część terminologii virtual cluster wpisać do ORB?
+**** component-set == virtual cluster?
+**** reduction: gadgets => clusters? graphs => networks?

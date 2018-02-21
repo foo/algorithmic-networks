@@ -1,12 +1,122 @@
-\section{Outline of the Thesis}
 
-\todo{Number of bibliography entries seems too low}
-\todo{Incorporate practical sections}
-\todo{Model, The model and preliminaries -- unify}
-\todo{Move the lemma from appendix into the paper (tree caching)}
+\indent\textbf{\emph{Paradigm shift in computing.}}
+Growing demand to perform large-scale computations influences changes in organizaton of underlying computational infrastructure.
+Hardware-related implementation details of data centers has been the subject to refinement from the earliest days of computing.
+Concurrently, the software that manages the operation of data center evolved, further influencing the way data centers are structured and the way clients interact with them.
+Improvements in task isolation, resource sharing and transparent concurrency encouraged growth of data centers' processing capabilities.
+The software advancements played the primal role in allowing the increase in computational power of data centers without wasting its resources.
+Computational tasks require multiple types of resources to complete: CPU time, memory, I/O operations and network bandwith.
+Needs for resources often vary in time and are unpredictable or expensive to predict.
+Co-existence of multiple tasks in the data center allows to compensate for the variable demand for resources in computational tasks by resource-aware scheduling.
+Such techniques are especially useful (but not limited to) in computationally-intensive applications, where the response time is not the primary concern.
+Examples of such applications include
+engineering (material modelling, electronic circuits optimization),
+computational biology and chemistry (protein folding, DNA sequence matching),
+physics (fluid dynamics, seach for exoplanets, weather and climate prediction),
+and wide range of optimization for military and industry (packing and covering, data mining, economics, artificial intelligence).
+
+\textbf{\emph{Outsourcing computations.}}
+Growth of data center influences not only the physical implementation of its infrastructure, but also its ownership by specialied companies, geographical location \& outside-world connectivity and the way clients interact with them.
+Modern general-purpose and open for general use data centers such as Microsoft Azure \cite{url-azure}, Amazon Elastic Cloud Computing EC2 \cite{url-amazon-ec2} or Google Compute Engine \cite{url-gce} provide on-demand computational power while hiding most of details concerning resource management.
+
+From the perspective of the client, outsourcing computations provides a wide range of benefits.
+It is possible to avoids costs of infrastructure management and maintenance, which is crucial for computational tasks that arise occasionally.
+If the demand for resources increases unexpectedly, it can be immediately provided without physical extension of the infrastructure.
+Existance of competition in data center market provides security and competitive pricing.
+
+From the perspective of the infrastructure owner, multitude of problems and requirements arise: security in resource-sharing scenerios, standarization and compatibility, automation, availability, extensibility and modularity, recovery, and many more.
+An important class of new challenges in data center is optimization of running costs.
+Processing speed can scale down to save energy, read-only memory can be shared or distributed, and cooperating processes can migrate closer in the network to save bandwidth.
+
+
+\textbf{\emph{Modern technologies in data center management.}}
+
+A particular piece of technology that suits the model of modern data center extraordinarly well is virtualization.
+Virtualization provides an abstraction layer, called the \emph{virtual machine} for the underlying hardware of a computer system.
+Such virtual machine mimics functionality of the physical hardware so closely and directly that it can be used as an environment for a complete operating system.
+Such operating system, running on a virtual machine is called the \emph{guest operating system}, which operates in additon to the \emph{host operating system}, which operates on the physical hardware.
+
+(virtualization suits clients)
+Guest operating system's perspective is restricted to such exposed virtual machine and is provided with an illusion of possesing the whole computer system.
+One of main features of virtualization in datacenter is to provide the complete and non-restricted environment for the client that is isolated from the management software and other clients' tasks.
+
+(virtualization suits data center owners)
+Besides providing an abstraction layer, virtualization provides several control features.
+Absolute control over the underlying, virtual hardware of the guest operating system allows to suspend and resume the execution of the guest operating system.
+Such functionality provides building blocks for the feature of migration, which transfers the complete virtual machine to a different physical machine.
+Possibility of migration plays an important role in load balancing in the data center and allows for sophisticated optimizations such as reducing network distance between communicating virtual machines.
+
+Data center consists of multiple virtual machines running on physical nodes that are connected by physical network.
+Data centers provide its resources to the clients as the set of virtual machines connected by a virtual network.
+Cooperation over the network. Network reservations.
+
+Virtualization allows to be flexible in renting infrastructure. But poses new challenges in datacenters.
+Existing virtualization solutions: XEN.
+
+\textbf{\emph{New challenges.}}
+
+Problem central to this thesis
+
+\begin{center}
+  \emph{How to assign virtual machines to physical machines in the datacenter?}
+\end{center}
+
+We elaborate more in subsequent subsection.
+
+\section{Not covered}
+
+
+\begin{itemize}
+  \item
+Variety of types of computations are endless, but certain applications are known to consume as much computational power as it is provided: protein folding, weather prediction, economic systems analysis, artificial intelligence and data mining, material modelling, drug design, DNA sequence matching, drug design, search for Exo-planets, fluid dynamics, military, optimization for industries etc.
+\item The topology of multiple computers: set of computers connected by the network.
+\item Parallelism as a consequence of Moore's law diminish for single core (physical limitations on size of electronic circuts).
+\end{itemize}
+
+
+\section{SEPARATOR}
+
+\section{Algorithmic challenges of the virtual machines embedding}
+
+In this thesis we consider two scenarios:
+\begin{enumerate}
+  \item the communication pattern among virtual machines is known up-front
+  \item the communication pattern is not known, and has to be discovered and is a subject to changes over time
+\end{enumerate}
+
+\section{Network optimization}
+
+TODO Tree Caching
+
+\section{Performance metrics}
+
+Methods of Measuring the Quality of Results
+
+\subsection{Online Algorithms and Competitive Analysis}
+
+Sleator, Tarjan: list update \cite{competitive-analysis}
+Borodin book \cite{borodin-book}
+
+\subsection{Time and Space Complexity and NP-completeness}
+
+
+\section{Bibliographic notes}
+
+\section{Outline of the Thesis}
 
 Organization of the ``paper'', how connected the chapters are.
 
+\section{Contribution of This Thesis}
+
+\input{contribution}
+
+\section{Related Work}
+
+\input{related-work}
+
+
+\section{SEPARATOR}
+Sketches:
 \section{New Challenges in Data Centers and Networking}
 
 \subsection{Software-defined Networking}
@@ -21,13 +131,9 @@ Organization of the ``paper'', how connected the chapters are.
 
 \section{Methods of Measuring the Quality of Results}
 
-\subsection{Time and Space Complexity and NP-completeness}
 \subsection{Online Algorithms and Competitive Analysis}
 
-\section{Contribution of This Thesis}
+Sleator, Tarjan: list update \cite{competitive-analysis}
+Borodin book \cite{borodin-book}
 
-\input{contribution}
-
-\section{Related Work}
-
-\input{related-work}
+\subsection{Time and Space Complexity and NP-completeness}
