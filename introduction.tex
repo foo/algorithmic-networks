@@ -1,65 +1,96 @@
 \indent\textbf{\emph{Paradigm shift in computing.}}
-In the last decade, we witnessed a growing demand to perform large-scale computations 
-such as protein folding, fluid dynamics, weather prediction and wide range of optimization for military and industry.
-This influenced changes in organizaton of underlying computational infrastructure.
-Hardware-related implementation details of data centers has been the subject to refinement from the earliest days of computing.
-Concurrently, the software that manages the operation of data center evolved, further influencing the way data centers are structured and the way clients interact with them.
-Improvements in task isolation, resource sharing and transparent concurrency encouraged growth of data centers' processing capabilities.
-The software advancements played the primal role in allowing data centers to grow without wasting its resources.
+In the last decade, we witnessed a growing demand to perform large-scale
+computations, such as protein folding, fluid dynamics, weather prediction and
+wide range of optimization for military and industry.
+The scale of such computations exceedes abilities of a single computer, hence computations are performed on large sets of machines that cooperate over interconnecting network, collectively called the \emph{computer cluster}.
+Owning and maintaing such infrastructure is often impractical and expensive, and parties look for alternative ways to perform computations.
+Outsourcing such computations provides a wide range of benefits.
+First of all, it mitigates the costs of infrastructure management and maintenance.
+This is crucial especially for computational tasks that arise occasionally, such as optimizations for industries \maciek{More examples needed. Those listed before are naive to list as occasional}.
+In addition, it dismisses the need to foresee the appropriate demand for resources.
+If the demand for resources increases unexpectedly, it can be immediately provided without physical extension of the infrastructure.
+Above rationalities combined led to shift the computations to large, dedicated and remote computer clusters that are called \emph{data centers}, and coined the term \emph{cloud computing}.\maciek{the last ``and'' would need parethesis}
+
+The demand for outsourcing computations to the cloud created a whole market for such services.
+Modern general-purpose and open for general use data centers such as Microsoft Azure \cite{url-azure}, Amazon Elastic Cloud Computing EC2 \cite{url-amazon-ec2} or Google Compute Engine \cite{url-gce} provide convenient on-demand computational power while hiding most of details concerning resource management.
+
 Computational tasks require multiple types of resources to complete: CPU time, memory, I/O operations and network bandwith.
 Demand for resources often vary in time and is unpredictable or expensive to predict.
-Co-existence of multiple tasks in the data center allows to compensate for the variable demand for resources of computational tasks by resource-aware scheduling.
+For this reason, the data center that performs \emph{just one task at the time} are doomed to waste resources.
+However, co-existence of multiple tasks in the data center allows to compensate for the variable demand for resources of computational tasks by resource-aware scheduling.
 Such techniques are especially useful in (but not limited to) computationally-intensive applications, where the response time is not the primary concern.
 
-\textbf{\emph{Outsourcing computations.}}
-Growth of data center influences not only the physical implementation of its infrastructure, but also data center ownership, geographical location \& outside-world connectivity and the way clients interact with them.
-Modern general-purpose and open for general use data centers such as Microsoft Azure \cite{url-azure}, Amazon Elastic Cloud Computing EC2 \cite{url-amazon-ec2} or Google Compute Engine \cite{url-gce} provide convinient on-demand computational power while hiding most of details concerning resource management.
+\emph{From the perspective of an data center owner}, the main goal 
+is an efficient management of resources. This is interwined with 
+a multitude of problems and requirements: security in resource-sharing scenarios,
+standarization and compatibility, automation, availability, extensibility and
+modularity, recovery, and many more. An important class of new challenges in
+data center is \emph{optimization of resource usage}. In particular, 
+processing speed can
+scale down to save energy, memory can be shared or distributed, and cooperating
+processes can migrate closer in the network to save bandwidth.
 
-\emph{From the perspective of a client}, outsourcing computations provides a wide range of benefits.
-It is possible to avoids costs of infrastructure management and maintenance, which is crucial especially for computational tasks that arise occasionally.
-If the demand for resources increases unexpectedly, it can be immediately provided without physical extension of the infrastructure.
-Existence of competition in data center market provides security and competitive pricing.
+\section{Machine virtualization}
 
-\emph{From the perspective of an infrastructure owner}, business opportunities emerge.
-For infrastructure owners performing their own computational tasks, unused resources can bring profit instead of being wasted.
-However, multitude of problems and requirements arise: security in resource-sharing scenerios, standarization and compatibility, automation, availability, extensibility and modularity, recovery, and many more.
-An important class of new challenges in data center is \emph{optimization of resource usage}.
-Processing speed can scale down to save energy, memory can be shared or distributed, and cooperating processes can migrate closer in the network to save bandwidth.
+This computational paradigm shift is strongly connected with the advancements 
+in the underlying computational infrastructure, both in hardware and in software. 
+The processing capabilities of data centers 
+would not be possible without improvements in
+task isolation, resource sharing and transparent concurrency.
+The software advancements played the
+primal role in allowing data centers to grow without wasting its resources.
 
-
-\textbf{\emph{Modern technologies in data center management.}}
 A particular piece of technology that suits the model of modern data center extraordinarly well is virtualization.
 Virtualization provides an abstraction layer for the underlying hardware of a computer system, called the \emph{virtual machine}.
-Virtual machine mimics functionality of the physical hardware so closely and directly that it can be used as an environment for a complete operating system.
-Such operating system, running on a virtual machine is called the \emph{guest operating system}. Guest system operates in additon to the \emph{host operating system}, which operates directly on the physical hardware.
-Mature virtualization solutions are available for data center usage: Xen \cite{url-xen}, KVM \cite{url-kvm}, Hyper-V \cite{url-hyperv}, VMware ESXi \cite{url-vmware}.
+Virtual machine mimics functionality of the physical hardware so closely and
+directly that it can be used as an environment for a complete operating system.
+Such operating system, running on a virtual machine is called the \emph{guest
+operating system}. It operates in additon to the \emph{host operating
+system}, which operates directly on the physical hardware. 
 
-\emph{Virtualization appeals to clients.}
-The perspective of the guest operating system is restricted to such exposed virtual machine and is provided with an illusion of possesing the whole computer system.
-The main features of virtualization in datacenter is \emph{to provide the complete and non-restricted environment} for the client that is isolated from the management software and other clients' tasks.
+Mature virtualization solutions are available for data center usage: Xen
+\cite{url-xen}, KVM \cite{url-kvm}, Hyper-V \cite{url-hyperv}, VMware ESXi
+\cite{url-vmware}. The perspective of the guest
+operating system is restricted to such exposed virtual machine and is provided
+with an illusion of possesing the whole computer system. The main features of
+virtualization in datacenter is \emph{to provide the complete and
+non-restricted environment} for the client that is isolated from the management
+software and other clients' tasks.
 
-\emph{Virtualization appeals to data center owners.}
-Besides providing an abstraction layer, virtualization provides several control features.
-Absolute control over the underlying, virtual hardware of the guest operating system allows to suspend and resume the execution of the guest operating system at will.
-Such functionality provides building blocks for the feature of migration, which transfers the complete virtual machine to a different physical machine.
-Possibility of migration plays an important role in load balancing in the data center and allows for sophisticated optimizations such as reducing network distance between communicating virtual machines.
+Besides providing an abstraction layer, virtualization provides several
+control features. Absolute control over the underlying, virtual hardware of
+the guest operating system allows to suspend and resume the execution of the
+guest operating system at will. Such functionality provides building blocks
+for the feature of migration, which transfers the complete virtual machine to
+a different physical machine. Possibility of migration plays an important role
+in load balancing in the data center and allows for sophisticated
+optimizations such as reducing network distance between communicating virtual
+machines.
 
-Data center consists of multiple virtual machines running on physical nodes that are connected by physical network.
-Single virtual machine often provides insufficent resources for the client, as its resources are limited by resources available to its host.
-Data centers provide its resources to clients as a set of virtual machines connected by a network.
-The network that connects virtual machines is restricted and controlled in similar manner to hardware virtualization, and is called a \emph{virtual network}.
-Cooperating virtual machines are often refered to as a \emph{nodes} of a virtual network.
-To guarantee certain quality of service (\emph{QoS}), up-front bandwidth reservations are a requisite.
-However, the generality of performed calculations results in unpredictibility of communication patterns and poses a challenge in optimization of bandwidth reservations.
+Data center consists of multiple virtual machines running on physical nodes
+that are connected by physical network. Single virtual machine often provides
+insufficient resources for the client, as its resources are limited by resources
+available to its host. Data centers provide its resources to clients as a set
+of virtual machines connected by a network. The network that connects virtual
+machines is restricted and controlled in similar manner to hardware
+virtualization, and is called a \emph{virtual network}. Cooperating virtual
+machines are often refered to as a \emph{nodes} of a virtual network. To
+guarantee certain quality of service (\emph{QoS}), up-front bandwidth
+reservations are a requisite. However, the generality of performed calculations
+results in unpredictibility of communication patterns and poses a challenge in
+optimization of bandwidth reservations.
 
-\textbf{\emph{New challenges in data center management.}}
-Virtualization allows flexibility in renting infrastructure, and might offer savings in resource management.
-However, efficient use of resources requires sophisticated techniques to achieve its goal.
-In this thesis, we focus on using the tools provided by modern virtualization techologies for efficient usage of important resource in the data center -- the network bandwidth.
-Problem central to this thesis is stated as follows:
+Virtualization allows
+flexibility in renting infrastructure, and might offer savings in resource
+management. However, efficient use of resources requires sophisticated
+techniques to achieve its goal. In this thesis, we focus on using the tools
+provided by modern virtualization techologies for efficient usage of important
+resource in the data center -- the network bandwidth. Problem central to this
+thesis is stated as follows:
 
 \begin{center}
-  \emph{How to assign virtual machines to physical machines to optimize network usage?}
+  \emph{How to assign virtual machines to physical machines to optimize network
+  usage?}
 \end{center}
 
 We elaborate more in subsequent subsection.
