@@ -6,13 +6,16 @@ The scale of such computations exceedes abilities of a single computer, hence co
 Owning and maintaing such infrastructure is often impractical and expensive, and parties look for alternative ways to perform computations.
 Outsourcing such computations provides a wide range of benefits.
 First of all, it mitigates the costs of infrastructure management and maintenance.
-This is crucial especially for computational tasks that arise occasionally, such as optimizations for industries \maciek{More examples needed. Those listed before are naive to list as occasional}.
+This is crucial especially for computational tasks that arise occasionally, such as high-quality rendering, production process optimization, computer verification of products with long development time, analysis of human-harvested data, and multiple forms of computer-aid for scientists.
 In addition, it dismisses the need to foresee the appropriate demand for resources.
 If the demand for resources increases unexpectedly, it can be immediately provided without physical extension of the infrastructure.
-Above rationalities combined led to shift the computations to large, dedicated and remote computer clusters that are called \emph{data centers}, and coined the term \emph{cloud computing}.\maciek{the last ``and'' would need parethesis}
+This led to shift of computations to large-scale remote computer clusters with massive processing and storage capabilities.
+Specialized facilites that contain computer clusters with their support infrastructure are called \emph{data centers}.
+Performing computations in external data centers that provide the impression of unlimited computational power on demand is called the \emph{cloud computing}.
 
 The demand for outsourcing computations to the cloud created a whole market for such services.
-Modern general-purpose and open for general use data centers such as Microsoft Azure \cite{url-azure}, Amazon Elastic Cloud Computing EC2 \cite{url-amazon-ec2} or Google Compute Engine \cite{url-gce} provide convenient on-demand computational power while hiding most of details concerning resource management.
+Processing capabilities are quickly and conveniently accessible for every interested party.
+Modern processing power suppliers such as Microsoft Azure \cite{url-azure}, Amazon Elastic Cloud Computing EC2 \cite{url-amazon-ec2} or Google Compute Engine \cite{url-gce} provide convenient on-demand computational power while hiding most of details concerning resource management.
 
 Computational tasks require multiple types of resources to complete: CPU time, memory, I/O operations and network bandwith.
 Demand for resources often vary in time and is unpredictable or expensive to predict.
@@ -37,8 +40,6 @@ in the underlying computational infrastructure, both in hardware and in software
 The processing capabilities of data centers 
 would not be possible without improvements in
 task isolation, resource sharing and transparent concurrency.
-The software advancements played the
-primal role in allowing data centers to grow without wasting its resources.
 
 A particular piece of technology that suits the model of modern data center extraordinarly well is virtualization.
 Virtualization provides an abstraction layer for the underlying hardware of a computer system, called the \emph{virtual machine}.
@@ -57,18 +58,14 @@ virtualization in datacenter is \emph{to provide the complete and
 non-restricted environment} for the client that is isolated from the management
 software and other clients' tasks.
 
-Besides providing an abstraction layer, virtualization provides several
-control features. Absolute control over the underlying, virtual hardware of
-the guest operating system allows to suspend and resume the execution of the
-guest operating system at will. Such functionality provides building blocks
-for the feature of migration, which transfers the complete virtual machine to
-a different physical machine. Possibility of migration plays an important role
-in load balancing in the data center and allows for sophisticated
-optimizations such as reducing network distance between communicating virtual
-machines.
+Besides providing an abstraction layer, virtualization provides several control features.
+Absolute control over the underlying, virtual hardware of the guest operating system allows to suspend and resume the execution of the guest operating system at will.
+Such functionality provides building blocks for the feature of \emph{migration}, which transfers the complete virtual machine to a different physical machine.
+Migration of a running virtual machine without shutting it down is called the \emph{teleportation}, and provides a powerful resource-management tool that is transparent to clients.
+Such mechanisms play an important role in load balancing in the data center and allows for sophisticated optimizations such as reducing network distance between communicating virtual machines.
 
 Data center consists of multiple virtual machines running on physical nodes
-that are connected by physical network. Single virtual machine often provides
+that are connected by a physical network. Single virtual machine often provides
 insufficient resources for the client, as its resources are limited by resources
 available to its host. Data centers provide its resources to clients as a set
 of virtual machines connected by a network. The network that connects virtual
@@ -107,12 +104,13 @@ In optimization of network usage, the objective function is the total cost of su
 In this thesis we consider substrate networks in form of a tree, which models closely the popular topology of a Fat-Tree, but fails to approximate some sophisticated topologies such as a Butterfly Topology.
 In the tree topology, we distinguish a specific class of physical machines that cannot host virtual machines, and their sole role is to transmit communication patterns.
 Machines that are able to host virtual machines are placed in leaves of the substrate graph.
+Figure \ref{fig:tree-topology} presents an example of tree topology graph.
 
 
-\begin{figure}[t]
+\begin{figure}[th]
 \centering
 \includegraphics[width=0.79\columnwidth]{figs/tree-topology.pdf}
-\caption{The model of typical data center.}\label{fig:overview}
+\caption{The model of typical data center.}\label{fig:tree-topology}
 \vspace{-1em}
 \end{figure}
 
@@ -124,17 +122,21 @@ TODO Tree Caching
 
 In this thesis we consider two scenarios regarding virtual machines embeddings:
 \begin{enumerate}
-  \item The communication pattern among virtual machines is known up-front
-  \item The communication pattern is not known, and has to be discovered and is a subject to changes over time
+  \item \emph{The static scenario}, where virtual machines are irrevocably assigned to their physical machines at the moment of creation of virtual nodes
+  \item \emph{The dynamic scenario}, where virtual machines can migrate between physical machines
 \end{enumerate}
 
-\maciek{I realised that the paragraph below is wrong. In both cases the communication pattern is not known. The difference lies in how we proceed: either we try to discover patters, or we make complete graph reservations}
+In both scenarios we assume that the communication pattern among virtual nodes is not known.
+The static scenario, to guarantee certain quality of service (\emph{QoS}), we need to acquire network reservations for \emph{all} possible communication patterns among cooperating virtual machines.
+The combinatorial problem that we consider in the static scenario is essentially the minimum-cost embedding of a clique in a tree, enriched by certain extensions motivated by Map-Reduce applications.
+On the other hand, in the dynamic scenario, we rearrange the placement of virtual nodes in reply to changes in communication pattern.
+The migration cost and the communication costs need to be balanced, effectively stating a variant the classic online \emph{rent-or-buy} scenario.
 
-Consider the scenario, where the communication pattern is not known.
-In order to guarantee certain quality of service (\emph{QoS}), we need to acquire network reservations for \emph{all} possible communication patterns among cooperating virtual machines.
-Hence, in such scenario, we consider the worst-case communication graph in form of a clique.
-The combinatorial problem that we consider in Part 1 is essentially the minimum-cost embedding of a clique in a tree, enriched by certain extensions motivated by Map-Reduce applications.
-We consider the wide range of possible extensions, most notably:
+\subsection{Contributions on Static Mapping}
+
+In Part I, we study the data-locality and replica aware virtual network embedding problems in datacenters.
+The model we consider is a variant of graph embedding problem, where the host graph is a tree, and a guest graph consists of union of a clique and a matching.
+We consider the wide range of possible extensions that model certain aspects of Map-Reduce applications, most notably:
 
 \begin{itemize}
 \item \emph{Data chunk processing}. In Map-Reduce applications, set of virtual machines processes large amounts of data that are stored in distributed file system. Each chunk of data must be assigned and transferred to a virtual machine. Data chunk transfer requires its own network reservations.
@@ -144,23 +146,55 @@ We consider the wide range of possible extensions, most notably:
 \item \emph{Bandwidth constraints}. Each link in substrate network has its capacity. For the embedding to be feasible, the total network reservations has to obey link capacities.
 \end{itemize}
 
-Consider the scenario, where the communication pattern is not known.
-Migration.
 
+In particular, we decompose the general optimization problem into its fundamental aspects, such as
+assignment of chunks, replica selection, and flexible virtual machine
+placement, and answer questions such as:
+\begin{enumerate}
+\item Which chunks to assign to which virtual machine?
 
+\item How to exploit redundancy and select good replicas?
 
-\input{contribution}
+\item How to efficiently embed virtual machines and their inter-connecting network?
+
+\item Can the chunk assignment, replica selection and virtual machine embedding problems be jointly optimized, in polynomial time?
+\end{enumerate}
+
+We draw a complete picture of the problem space: we show that
+even problem variants exhibiting multiple degrees of freedom in terms of
+replica selection and embedding,
+can be solved optimally in polynomial time, and we present several efficient
+algorithms accordingly. However, we also prove limitations in terms of
+computational tractability, by providing reductions from 3-D matching
+and Boolean satisfiability ($\SAT$). Interestingly,
+while it is well-known that (unsplittable) multi-commodity flow
+problems are NP-hard in capacitated networks, our hardness results also hold in \emph{uncapacitated}
+networks; moreover, we show that NP-hard problems already arise in small-diameter networks (as they are
+widely used today~\cite{fattree}).
+
+\subsection{Contributions on Dynamic Mapping}
+
+The model we consider is a variant of online graph clustering.
+Certain assumptions such as 1-level tree. Hierarchical structure modeled by hosting multiple vms on one pm.
+Competitive analysis.
+
+\subsection{Contributions on Memory Management in Network Devices}
+
+\todo{braaap}
 
 \subsection{Performance metrics}
 
+
+\maciek{Propose that this subsection is not needed. Methods of measuring the quality of results is already stated in contributions on static matching (for time and space)}
+
 Methods of Measuring the Quality of Results
 
-\subsubsection{Online Algorithms and Competitive Analysis}
+\emph{Online Algorithms and Competitive Analysis}
 
 Sleator, Tarjan: list update \cite{competitive-analysis}
 Borodin book \cite{borodin-book}
 
-\subsubsection{Time and Space Complexity and NP-completeness}
+\emph{Time and Space Complexity and NP-completeness}
 
 
 \section{Related Work}
