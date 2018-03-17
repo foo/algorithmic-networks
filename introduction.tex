@@ -1,47 +1,42 @@
-\indent\textbf{\emph{Paradigm shift in computing.}}
+\indent
 In the last decade, we witnessed a growing demand to perform large-scale
-computations, such as protein folding, fluid dynamics, weather prediction and
-wide range of optimization for military and industry.
-The scale of such computations exceedes abilities of a single computer, hence computations are performed on large sets of machines that cooperate over interconnecting network, collectively called the \emph{computer cluster}.
-Owning and maintaing such infrastructure is often impractical and expensive, and parties look for alternative ways to perform computations.
-Outsourcing such computations provides a wide range of benefits.
+computations, such as protein folding, fluid dynamics, weather and market prediction, or production process optimization.
+The scale of such computations exceedes abilities of a single computer, hence computations need to be performed on large sets of machines that cooperate over interconnecting network, collectively called the \emph{computer cluster}.
+Owning and maintaing large-scale computing infrastructure is often impractical and expensive, and parties look for alternative ways to perform computations.
+In comparison, outsourcing computations provides a wide range of benefits.
 First of all, it mitigates the costs of infrastructure management and maintenance.
-This is crucial especially for computational tasks that arise occasionally, such as high-quality rendering, production process optimization, computer verification of products with long development time, analysis of human-harvested data, and multiple forms of computer-aid for scientists.
-In addition, it dismisses the need to foresee the appropriate demand for resources.
+This is crucial especially for computational tasks that arise occasionally, such as high-quality rendering, computer verification of products with long development time or analysis of human-harvested data.
+Second, such approach dismisses the need to foresee the appropriate demand for resources.
 If the demand for resources increases unexpectedly, it can be immediately provided without physical extension of the infrastructure.
-This led to shift of computations to large-scale remote computer clusters with massive processing and storage capabilities.
-Specialized facilites that contain computer clusters with their support infrastructure are called \emph{data centers}.
-Performing computations in external data centers that provide the impression of unlimited computational power on demand is called the \emph{cloud computing}.
+This led to shift of computations to large-scale \emph{remote} facilites that contain computer clusters with their support infrastructure, the so-called \emph{data centers}.
+Performing computations in these external data centers provide the impression of unlimited computational power on demand is called the \emph{cloud computing}.
 
 The demand for outsourcing computations to the cloud created a whole market for such services.
-Processing capabilities are quickly and conveniently accessible for every interested party.
 Modern processing power suppliers such as Microsoft Azure \cite{url-azure}, Amazon Elastic Cloud Computing EC2 \cite{url-amazon-ec2} or Google Compute Engine \cite{url-gce} provide convenient on-demand computational power while hiding most of details concerning resource management.
+Processing capabilities are quickly and conveniently accessible for every interested party.
 
 Computational tasks require multiple types of resources to complete: CPU time, memory, I/O operations and network bandwith.
-Demand for resources often vary in time and is unpredictable or expensive to predict.
+Demand for these resources often vary in time and is unpredictable.
 For this reason, the data center that performs \emph{just one task at the time} are doomed to waste resources.
-However, co-existence of multiple tasks in the data center allows to compensate for the variable demand for resources of computational tasks by resource-aware scheduling.
+However, the co-existence of multiple tasks in the data center allows to compensate for the variable demand for resources by resource-aware scheduling.
 Such techniques are especially useful in (but not limited to) computationally-intensive applications, where the response time is not the primary concern.
 
-\emph{From the perspective of an data center owner}, the main goal 
-is an efficient management of resources. This is interwined with 
-a multitude of problems and requirements: security in resource-sharing scenarios,
-standarization and compatibility, automation, availability, extensibility and
-modularity, recovery, and many more. An important class of new challenges in
-data center is \emph{optimization of resource usage}. In particular, 
-processing speed can
-scale down to save energy, memory can be shared or distributed, and cooperating
-processes can migrate closer in the network to save bandwidth.
+This thesis assumes the perspective of a data center owner, whose main goal is an \emph{efficient management of resources}.
+For example, processing speed can scale down to save energy, memory can be shared or distributed, and cooperating processes can migrate closer in the network to save bandwidth.
+In this thesis we focus on \emph{efficient usage of interconnecting network} in a data center.
+Optimization of this resource is critical to perform efficient large-scale computations, as those involve multiple machines that cooperate over network.
+
+To perform any type of optimization, we need the possibility to alter certain aspects of the task operation.
+Generally such alternations are transparent, which means that those preserve the semantics of a computation.
+With wide range of possible alternations, we can provide better optimization techniques.
+In this thesis, we make use of a sophisticated control system, called a \emph{virtualization}, which is a subject of the following section.
 
 \section{Machine virtualization}
 
-This computational paradigm shift is strongly connected with the advancements 
-in the underlying computational infrastructure, both in hardware and in software. 
-The processing capabilities of data centers 
-would not be possible without improvements in
-task isolation, resource sharing and transparent concurrency.
+Techniques presented in this thesis rely upon logical isolation of a computation from the physical machine that performs the computation.
+This gives a possibility to manage the physical placement of a computation in a way that is transparent to the computation.
+A particular piece of technology that provided the flexibility in placement of computations is \emph{virtualization}.
 
-A particular piece of technology that suits the model of modern data center extraordinarly well is virtualization.
 Virtualization provides an abstraction layer for the underlying hardware of a computer system, called the \emph{virtual machine}.
 Virtual machine mimics functionality of the physical hardware so closely and
 directly that it can be used as an environment for a complete operating system.
@@ -49,7 +44,7 @@ Such operating system, running on a virtual machine is called the \emph{guest
 operating system}. It operates in additon to the \emph{host operating
 system}, which operates directly on the physical hardware. 
 
-Mature virtualization solutions are available for data center usage: Xen
+There are several mature virtualization solutions for data center usage: Xen
 \cite{url-xen}, KVM \cite{url-kvm}, Hyper-V \cite{url-hyperv}, VMware ESXi
 \cite{url-vmware}. The perspective of the guest
 operating system is restricted to such exposed virtual machine and is provided
@@ -95,7 +90,7 @@ We elaborate more in subsequent subsection.
 \section{Algorithmic aspects of the virtual machines embedding}
 
 To state optimization problems, we model certain aspects of data center operation.
-Physical components of a data center are often modelled in form of a graph called a \emph{substrate network}, in which vertices correspond to \emph{physical machines}, and edges correspond to \emph{network interconnect}.
+Physical components of a data center are often modelled in form of a graph called a \emph{substrate network}, in which vertices correspond to \emph{physical machines}, and edges correspond to \emph{interconnecting network}.
 Communication cost between pair of physical machines is proportional to edge-distance in substrate network (the number of \emph{hops} in the substrate network).
 Communication pattern among virtual machines is also modelled as a graph, called a \emph{communication graph}.
 In such settings, the communication among virtual machines running on certain physical machines is modelled as a \emph{graph embedding} of communication graph into a substrate network.
@@ -117,6 +112,20 @@ Figure \ref{fig:tree-topology} presents an example of tree topology graph.
 \section{Algorithmics aspects of network optimization}
 
 TODO Tree Caching
+
+\section{Trash}
+
+
+\maciek{To zdanie tu nie pasuje, ale chetnie bym o tym gdzies napisal}
+This is intertwined with a multitude of problems and requirements: security in resource-sharing scenarios, standarization and compatibility, automation, availability, extensibility and modularity, recovery, and many more.
+
+This computational paradigm shift is strongly connected with the advancements 
+in the underlying computational infrastructure, both in hardware and in software. 
+The processing capabilities of data centers 
+would not be possible without improvements in
+task isolation, resource sharing and transparent concurrency.
+\todo{To prawda, ale bardziej zależy nam na ułatwieniu samej optymalizacji zasobów}
+
 
 \section{Contributions of this thesis and thesis organization}
 
@@ -171,6 +180,8 @@ while it is well-known that (unsplittable) multi-commodity flow
 problems are NP-hard in capacitated networks, our hardness results also hold in \emph{uncapacitated}
 networks; moreover, we show that NP-hard problems already arise in small-diameter networks (as they are
 widely used today~\cite{fattree}).
+
+\newpage
 
 \subsection{Contributions on Dynamic Mapping}
 
