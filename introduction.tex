@@ -9,27 +9,35 @@ This is crucial especially for computational tasks that arise occasionally, such
 Second, such approach dismisses the need to foresee the appropriate demand for resources.
 If the demand for resources increases unexpectedly, it can be immediately provided without physical extension of the infrastructure.
 This led to shift of computations to large-scale \emph{remote} facilites that contain computer clusters with their support infrastructure, the so-called \emph{data centers}.
-Performing computations in these external data centers provide the impression of unlimited computational power on demand is called the \emph{cloud computing}.
+Performing computations in these external data centers provides the impression of unlimited computational power on demand, and is called the \emph{cloud computing}.
 
 The demand for outsourcing computations to the cloud created a whole market for such services.
 Modern processing power suppliers such as Microsoft Azure \cite{url-azure}, Amazon Elastic Cloud Computing EC2 \cite{url-amazon-ec2} or Google Compute Engine \cite{url-gce} provide convenient on-demand computational power while hiding most of details concerning resource management.
-Processing capabilities are quickly and conveniently accessible for every interested party.
+Processing capabilities are quickly and conveniently accessible to every interested party.
 
 Computational tasks require multiple types of resources to complete: CPU time, memory, I/O operations and network bandwith.
 Demand for these resources often vary in time and is unpredictable.
-For this reason, the data center that performs \emph{just one task at the time} are doomed to waste resources.
+For this reason, a data center that performs \emph{just one task at the time} would be doomed to waste resources.
 However, the co-existence of multiple tasks in the data center allows to compensate for the variable demand for resources by resource-aware scheduling.
 Such techniques are especially useful in (but not limited to) computationally-intensive applications, where the response time is not the primary concern.
 
-This thesis assumes the perspective of a data center owner, whose main goal is an \emph{efficient management of resources}.
+The first part of this thesis assumes the perspective of a data center owner, whose main goal is an \emph{efficient management of resources}.
 For example, processing speed can scale down to save energy, memory can be shared or distributed, and cooperating processes can migrate closer in the network to save bandwidth.
-In this thesis we focus on \emph{efficient usage of interconnecting network} in a data center.
+In the first part of this thesis, we focus on the last aspect and we show how it leads to
+\emph{efficient usage of interconnecting network} in a data center.
 Optimization of this resource is critical to perform efficient large-scale computations, as those involve multiple machines that cooperate over network.
+To this end, we will make use of a sophisticated control system, called \emph{virtualization}, which is a subject of the following section.
+
+In the second part, \todo{...}
 
 To perform any type of optimization, we need the possibility to alter certain aspects of the task operation.
 Generally such alternations are transparent, which means that those preserve the semantics of a computation.
 With wide range of possible alternations, we can provide better optimization techniques.
-In this thesis, we make use of a sophisticated control system, called a \emph{virtualization}, which is a subject of the following section.
+In this thesis, we make use of a sophisticated control system, called \emph{virtualization}, which is a subject of the following section.
+
+\maciek{To zdanie tu nie pasuje, ale chetnie bym o tym gdzies napisal}
+This is intertwined with a multitude of problems and requirements: security in resource-sharing scenarios, standarization and compatibility, automation, availability, extensibility and modularity, recovery, and many more.
+
 
 \section{Machine virtualization}
 
@@ -44,102 +52,107 @@ Such operating system, running on a virtual machine is called the \emph{guest
 operating system}. It operates in additon to the \emph{host operating
 system}, which operates directly on the physical hardware. 
 
-There are several mature virtualization solutions for data center usage: Xen
+\subsection{Machine migration}
+
+In a data center, the main purpose of virtualization is to provide the complete and non-restricted environment for the client that is isolated from the management software and other clients' tasks.
+The perspective of the guest operating system is restricted to such exposed virtual machine and is provided with an illusion of possesing the whole computer system.\todo{I think that this paragraph should be moved to ``machine virtualization''}
+
+
+Besides providing an abstraction layer, mature virtualization solutions suited for data center use such as Xen
 \cite{url-xen}, KVM \cite{url-kvm}, Hyper-V \cite{url-hyperv}, VMware ESXi
-\cite{url-vmware}. The perspective of the guest
-operating system is restricted to such exposed virtual machine and is provided
-with an illusion of possesing the whole computer system. The main features of
-virtualization in datacenter is \emph{to provide the complete and
-non-restricted environment} for the client that is isolated from the management
-software and other clients' tasks.
-
-Besides providing an abstraction layer, virtualization provides several control features.
-Absolute control over the underlying, virtual hardware of the guest operating system allows to suspend and resume the execution of the guest operating system at will.
+\cite{url-vmware} provide several control features.
+In particular, absolute control over the underlying virtual hardware allows to suspend and resume the execution of the guest operating system at will.
 Such functionality provides building blocks for the feature of \emph{migration}, which transfers the complete virtual machine to a different physical machine.
-Migration of a running virtual machine without shutting it down is called the \emph{teleportation}, and provides a powerful resource-management tool that is transparent to clients.
-Such mechanisms play an important role in load balancing in the data center and allows for sophisticated optimizations such as reducing network distance between communicating virtual machines.
+This is possible without shutting down the guest operating system, hence it provides a powerful resource-management tool that is transparent to clients.
+Such mechanisms play an important role in load balancing in the data center and allows for sophisticated optimizations such as \emph{reducing network distance between communicating virtual machines}.
 
-Data center consists of multiple virtual machines running on physical nodes
-that are connected by a physical network. Single virtual machine often provides
-insufficient resources for the client, as its resources are limited by resources
-available to its host. Data centers provide its resources to clients as a set
-of virtual machines connected by a network. The network that connects virtual
-machines is restricted and controlled in similar manner to hardware
-virtualization, and is called a \emph{virtual network}. Cooperating virtual
-machines are often refered to as a \emph{nodes} of a virtual network. To
-guarantee certain quality of service (\emph{QoS}), up-front bandwidth
-reservations are a requisite. However, the generality of performed calculations
-results in unpredictibility of communication patterns and poses a challenge in
-optimization of bandwidth reservations.
-
-Virtualization allows
-flexibility in renting infrastructure, and might offer savings in resource
-management. However, efficient use of resources requires sophisticated
-techniques to achieve its goal. In this thesis, we focus on using the tools
-provided by modern virtualization techologies for efficient usage of important
-resource in the data center -- the network bandwidth. Problem central to this
-thesis is stated as follows:
+Virtualization allows flexibility in renting infrastructure, and might offer savings in resource management.
+However, efficient use of resources requires sophisticated techniques to achieve its goal.
+In this thesis, we focus on migration capabilities provided by modern virtualization techologies for efficient usage of important resource in the data center -- the network bandwidth.
+The problem central to this thesis is stated as follows:
 
 \begin{center}
   \emph{How to assign virtual machines to physical machines to optimize network
   usage?}
 \end{center}
 
-We elaborate more in subsequent subsection.
+We elaborate more in the subsequent subsection.
 
-\section{Algorithmic aspects of the virtual machines embedding}
+\subsection{Virtual network embedding}
 
-To state optimization problems, we model certain aspects of data center operation.
-Physical components of a data center are often modelled in form of a graph called a \emph{substrate network}, in which vertices correspond to \emph{physical machines}, and edges correspond to \emph{interconnecting network}.
+Single virtual machine often provides insufficient resources for the client, as the resources of a virtual machine are limited by resources available to its host.
+Therefore, data centers provide its resources to clients as a set
+of virtual machines connected by a network.
+Collectively, the virtual machines with their interconnecting network are called a \emph{virtual network}, where the cooperating virtual machines are refered to as a \emph{nodes} of a virtual network.
+To guarantee certain quality of service (\emph{QoS}) for multitude of co-existing virtual networks, up-front bandwidth reservations are required.
+However, the generality of performed calculations results in unpredictibility of communication patterns and poses a challenge in optimization of bandwidth reservations.
+In this thesis, we provide algorithms for efficient management of network reservations without any assumptions about communication patterns.
+
+To measure the quality of resource management strategy, we state formal optimization problems that we specify in further sections.
+For now, we briefly sketch the combinatorial model of a data center.
+Physical components of a data center are often modelled in form of a graph called a \emph{substrate network}, in which vertices correspond to physical machines, and edges correspond to interconnecting network.
 Communication cost between pair of physical machines is proportional to edge-distance in substrate network (the number of \emph{hops} in the substrate network).
 Communication pattern among virtual machines is also modelled as a graph, called a \emph{communication graph}.
-In such settings, the communication among virtual machines running on certain physical machines is modelled as a \emph{graph embedding} of communication graph into a substrate network.
-In optimization of network usage, the objective function is the total cost of such embedding, measured in size of multiset of used edges of the host graph.
+In such settings, the communication among virtual machines running on certain physical machines can be viewed as a \emph{graph embedding} of communication graph into a substrate network~\cite{Goyal2008,gupta2001provisioning}.
+The objective is to find such embedding that locates closely the virtual machines that communicate often.
 
-In this thesis we consider substrate networks in form of a tree, which models closely the popular topology of a Fat-Tree, but fails to approximate some sophisticated topologies such as a Butterfly Topology.
-In the tree topology, we distinguish a specific class of physical machines that cannot host virtual machines, and their sole role is to transmit communication patterns.
-Machines that are able to host virtual machines are placed in leaves of the substrate graph.
-Figure \ref{fig:tree-topology} presents an example of tree topology graph.
+In this thesis we consider substrate networks in form of a tree, which models closely the popular Fat-Tree topology~\cite{fat-trees}.
+In this tree topology, only leaves can host virtual machines.
+The sole role of intermediate tree nodes is to transmit communication between leaves, see Figure~\ref{fig:tree-topology}.\todo{Remove circles, squares and communication}
 
 
-\begin{figure}[th]
+\begin{figure}[h]
 \centering
 \includegraphics[width=0.79\columnwidth]{figs/tree-topology.pdf}
-\caption{The model of typical data center.}\label{fig:tree-topology}
+\caption{The model of typical data center with tree-like network topology. We distinguish two types of tree nodes: the the intermediate nodes that transmit communication, and the physical machines, located at the leaves of a tree. Network links between nodes are depicted as solid lines.}\label{fig:tree-topology}
 \vspace{-1em}
 \end{figure}
 
-\section{Algorithmics aspects of network optimization}
+\section{Routing tables}
 
-TODO Tree Caching
+For this section, we shift our attention away from virtual network embeddings and focus on fundamental problem of \emph{packet forwarding}.
+Consider a network device that is responsible for transmitting packets such as router or switch.
+Such device physically connects parts of the network by the endpoints of the device, which are identified by the port number.
+Upon receiving a packet, the device forwards it to a specific port that corresponds to the part of the network, where the recipient of the packet lies.
+In its memory, the device keeps track of mapping the recipent's addresses to ports, called a \emph{forwarding table}.
 
-\section{Trash}
+The network device has finite memory, and in multiple scenarios the size of forwarding table exceeds the size of available memory.
+In such scenario, the packet still needs to reach its destination.
+The usual response is to broadcast the packet to all of its ports, which has negative effects on performance of the network, as excessive packets increase the chance of packet collision.
 
+Known solutions to increase performance of packet forwarding address the problem by compression of the forwarding table, which results in lower miss ratio.
+However, recent raise of centrally-managed networks called \emph{Software Defined Networking (SDN)} allowed new approaches to the problem.
+In SDN, the logic of network management is separated from the devices, whose sole responsibility is packet forwarding.
+Network management is accomplished by central component called the \emph{SDN Controller}, rather by distributed cooperation of network devices.
+The controller has the complete view of the network, which includes the full knowledge of network topology, that allows to produce complete forwarding table for each forwarding device.
+In such scenario, the forwarding device's memory acts as a cache for the forwarding table that is stored remotely at the controller.
+At the cache miss, the packet is forwarded to the controller, which performs two operations: (a) it properly forwards the packet to the receiver and (b) if the controller decides to do so, it updates the forwarding device's cache.
 
-\maciek{To zdanie tu nie pasuje, ale chetnie bym o tym gdzies napisal}
-This is intertwined with a multitude of problems and requirements: security in resource-sharing scenarios, standarization and compatibility, automation, availability, extensibility and modularity, recovery, and many more.
+In this thesis, we focus on the following problem:
+\begin{center}
+  \emph{How to efficiently manage the cache of forwarding devices?}
+\end{center}
 
-This computational paradigm shift is strongly connected with the advancements 
-in the underlying computational infrastructure, both in hardware and in software. 
-The processing capabilities of data centers 
-would not be possible without improvements in
-task isolation, resource sharing and transparent concurrency.
-\todo{To prawda, ale bardziej zależy nam na ułatwieniu samej optymalizacji zasobów}
+Cache management poses multiple challenges:
+\begin{itemize}
+  \item When the controller decides that the forwarding device's cache should contain a forwarding entry, which of cached entries to evict?
+  \item How to efficiently deal with changes in network topology?
+\end{itemize}
 
+Such applications are especially useful in Internet Exchange Points.
 
 \section{Contributions of this thesis and thesis organization}
 
 In this thesis we consider two scenarios regarding virtual machines embeddings:
 \begin{enumerate}
-  \item \emph{The static scenario}, where virtual machines are irrevocably assigned to their physical machines at the moment of creation of virtual nodes
-  \item \emph{The dynamic scenario}, where virtual machines can migrate between physical machines
+  \item \emph{The static scenario}, where virtual machines are irrevocably assigned to their physical machines at the moment of creation of virtual nodes.
+  \item \emph{The dynamic scenario}, where virtual machines can migrate between physical machines.
 \end{enumerate}
 
-In both scenarios we assume that the communication pattern among virtual nodes is not known.
+In both scenarios we assume that the communication pattern among virtual nodes is not known in advance.
 The static scenario, to guarantee certain quality of service (\emph{QoS}), we need to acquire network reservations for \emph{all} possible communication patterns among cooperating virtual machines.
 The combinatorial problem that we consider in the static scenario is essentially the minimum-cost embedding of a clique in a tree, enriched by certain extensions motivated by Map-Reduce applications.
-On the other hand, in the dynamic scenario, we rearrange the placement of virtual nodes in reply to changes in communication pattern.
-The migration cost and the communication costs need to be balanced, effectively stating a variant the classic online \emph{rent-or-buy} scenario.
+On the other hand, in the dynamic scenario, we rearrange the placement of virtual nodes in reply to changes in communication pattern, and we need to minimize the sum of migration and communication costs.
 
 \subsection{Contributions on Static Mapping}
 
@@ -216,5 +229,5 @@ Borodin book \cite{borodin-book}
 
 \section{Bibliographic notes}
 
-Parts of this thesis were co-published by the author of this thesis in the following conferences and journals: ICNP TODOCITE, ACM SPAA TODOCITE, DISC TODOCITE and Journal of Theoretical Computer Science TODOCITE.
+Parts of this thesis were co-published by the author of this thesis in the following conferences and journals: ICNP~2015~\cite{my-icnp}, DISC~2016~\cite{my-disc}, ACM~SPAA~2017~\cite{my-spaa}, and Journal of Theoretical Computer Science~\cite{my-tcs}.
 In addition, parts of this thesis were published in Alexandra Spyra's master thesis and Carlo Fuerst's doctorial thesis.
