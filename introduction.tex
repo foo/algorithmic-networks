@@ -26,23 +26,25 @@ For example, processing speed can scale down to save energy, memory can be share
 In the first part of this thesis, we focus on the last aspect and we show how it leads to
 \emph{efficient usage of interconnecting network} in a data center.
 Optimization of this resource is critical to perform efficient large-scale computations, as those involve multiple machines that cooperate over network.
-To this end, we will make use of a sophisticated control system, called \emph{virtualization}, which is a subject of the following section.
+To this end, we will make use of a sophisticated control system, called \emph{virtualization}, which is described in Section~\ref{sec:intro-machine-virtualization}
 
-In the second part, \todo{...}
 
-To perform any type of optimization, we need the possibility to alter certain aspects of the task operation.
-Generally such alternations are transparent, which means that those preserve the semantics of a computation.
-With wide range of possible alternations, we can provide better optimization techniques.
-In this thesis, we make use of a sophisticated control system, called \emph{virtualization}, which is a subject of the following section.
+In the second part of this thesis, we shift our attention away from virtual network embeddings and focus on fundamental aspects of \emph{packet transmission}.
+Growth of the Internet, witnessed in recent decades, lied emphasis on new aspects of packet transmission.
+In particular, packets travel across multiple networks to reach their destination.
+Single computer network is often connected with multiple adjacent networks, and at each intermediate network we need to determine the next network on the way of the packet.
+Virtual clusters described in the first part of this thesis further contribute to such view of the Internet.
 
-\maciek{To zdanie tu nie pasuje, ale chetnie bym o tym gdzies napisal}
-This is intertwined with a multitude of problems and requirements: security in resource-sharing scenarios, standarization and compatibility, automation, availability, extensibility and modularity, recovery, and many more.
-
+The fundamental operation of deciding, to which of adjacent networks to rely the packet is called a \emph{packet forwarding}.
+Packet forwarding becomes the crucial operation to optimize, especially in contact points among large networks.
+Physical components of the Internet that exchanges data on a large scale between large networks are called \emph{Internet exchange points (IXP)}.
+The second part of this thesis assumes the perspective of Internet exchange point owner, whose objective is to \emph{maximize the efficiency of packet forwarding}, see Section~\ref{sec:intro-packet-forwarding}.
 
 \section{Machine virtualization}
+\label{sec:intro-machine-virtualization}
 
 Techniques presented in this thesis rely upon logical isolation of a computation from the physical machine that performs the computation.
-This gives a possibility to manage the physical placement of a computation in a way that is transparent to the computation.
+This gives a possibility to manage the physical placement of a computation in a way that is transparent to the computation, and hence \todo{mozna przemieszczac zeby byly blisko siebie lub blisko danych z ktorych korzystaja}
 A particular piece of technology that provided the flexibility in placement of computations is \emph{virtualization}.
 
 Virtualization provides an abstraction layer for the underlying hardware of a computer system, called the \emph{virtual machine}.
@@ -108,13 +110,24 @@ The sole role of intermediate tree nodes is to transmit communication between le
 \vspace{-1em}
 \end{figure}
 
-\section{Routing tables}
+\section{Packet forwarding}
+\label{sec:intro-packet-forwarding}
 
 For this section, we shift our attention away from virtual network embeddings and focus on fundamental problem of \emph{packet forwarding}.
 Consider a network device that is responsible for transmitting packets such as router or switch.
 Such device physically connects parts of the network by the endpoints of the device, which are identified by the port number.
 Upon receiving a packet, the device forwards it to a specific port that corresponds to the part of the network, where the recipient of the packet lies.
 In its memory, the device keeps track of mapping the recipent's addresses to ports, called a \emph{forwarding table}.
+
+To .., we need to investigate the internal composition of a router.
+Routers have finite memory. TCAM memory.
+
+Router + PC that holds data. The memory of the router acts as a cache. PC can update. OpenFlow protocol.
+
+Cache miss of the packet: mechanics.
+
+
+
 
 The network device has finite memory, and in multiple scenarios the size of forwarding table exceeds the size of available memory.
 In such scenario, the packet still needs to reach its destination.
@@ -130,7 +143,7 @@ At the cache miss, the packet is forwarded to the controller, which performs two
 
 In this thesis, we focus on the following problem:
 \begin{center}
-  \emph{How to efficiently manage the cache of forwarding devices?}
+  \emph{How to efficiently manage the memory of forwarding devices?}
 \end{center}
 
 Cache management poses multiple challenges:
@@ -143,20 +156,24 @@ Such applications are especially useful in Internet Exchange Points.
 
 \section{Contributions of this thesis and thesis organization}
 
-In this thesis we consider two scenarios regarding virtual machines embeddings:
+In the first part of this thesis we consider two scenarios regarding virtual network embeddings:
 \begin{enumerate}
-  \item \emph{The static scenario}, where virtual machines are irrevocably assigned to their physical machines at the moment of creation of virtual nodes.
-  \item \emph{The dynamic scenario}, where virtual machines can migrate between physical machines.
+  \item \emph{The static scenario}, where virtual machines are irrevocably assigned to their physical machines at the moment of creation of virtual nodes (Section~\ref{sec:contributions-static-mapping}).
+  \item \emph{The dynamic scenario}, where virtual machines can migrate between physical machines (Section~\ref{sec:contributions-dynamic-mapping}).
 \end{enumerate}
-
 In both scenarios we assume that the communication pattern among virtual nodes is not known in advance.
 The static scenario, to guarantee certain quality of service (\emph{QoS}), we need to acquire network reservations for \emph{all} possible communication patterns among cooperating virtual machines.
 The combinatorial problem that we consider in the static scenario is essentially the minimum-cost embedding of a clique in a tree, enriched by certain extensions motivated by Map-Reduce applications.
 On the other hand, in the dynamic scenario, we rearrange the placement of virtual nodes in reply to changes in communication pattern, and we need to minimize the sum of migration and communication costs.
 
-\subsection{Contributions on Static Mapping}
+In the second part of this thesis we consider the problem of memory management of routing devices.
+Our approach is to develop a caching scenario, which we describe in Section~\ref{sec:contributions-packet-forwarding}.
+\todo{Popraw te dwa zdania}
 
-In Part I, we study the data-locality and replica aware virtual network embedding problems in datacenters.
+\subsection{Contributions on Static Mapping}
+\label{sec:contributions-static-mapping}
+
+In Chapter~\ref{ch:static-mapping}, we study the data-locality and replica aware virtual network embedding problems in datacenters.
 The model we consider is a variant of graph embedding problem, where the host graph is a tree, and a guest graph consists of union of a clique and a matching.
 We consider the wide range of possible extensions that model certain aspects of Map-Reduce applications, most notably:
 
@@ -197,28 +214,22 @@ widely used today~\cite{fattree}).
 \newpage
 
 \subsection{Contributions on Dynamic Mapping}
+\label{sec:contributions-dynamic-mapping}
 
 The model we consider is a variant of online graph clustering.
 Certain assumptions such as 1-level tree. Hierarchical structure modeled by hosting multiple vms on one pm.
 Competitive analysis.
 
+Sleator, Tarjan: list update \cite{competitive-analysis}
+Borodin book \cite{borodin-book}
+
+
 \subsection{Contributions on Memory Management in Network Devices}
-
-\todo{braaap}
-
-\subsection{Performance metrics}
-
-
-\maciek{Propose that this subsection is not needed. Methods of measuring the quality of results is already stated in contributions on static matching (for time and space)}
-
-Methods of Measuring the Quality of Results
-
-\emph{Online Algorithms and Competitive Analysis}
+\label{sec:contributions-packet-forwarding}
 
 Sleator, Tarjan: list update \cite{competitive-analysis}
 Borodin book \cite{borodin-book}
 
-\emph{Time and Space Complexity and NP-completeness}
 
 
 \section{Related Work}
