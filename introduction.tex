@@ -126,8 +126,13 @@ In the first part of this thesis we consider two scenarios regarding virtual net
 \end{enumerate}
 
 We investigate the static scenario in Chapter~\ref{ch:static-mapping}, and the dynamic scenario in Chapter~\ref{ch:dynamic-mapping}.
-\todo{relacja miedzy modelami}
+Although the problems are related by their practical motivations, their combinatorial structure differs substantially.
+The static scenario is not an offline version of the problem considered in the dynamic scenario.
 In both scenarios we assume that the communication pattern among virtual nodes is not known in advance.
+In the static scenario we reserve a portion of bandwidth between every pair of virtual nodes to allow for any possible communication pattern.
+On the other hand, in the dynamic scenario we react to changes in the communication pattern by migrating machines on-the-fly.
+In addition, the problem considered in the static scenario is enriched by certain important properties of batch-processing applications that operate in distributed file systems.
+
 
 \subsubsection{Static Mapping of Virtual Networks}
 \label{sec:contributions-static-mapping}
@@ -217,22 +222,24 @@ relative~\cite{faircloud,elasticswitch,seawall}
 or, as in the case of this thesis, \emph{absolute}~\cite{oktopus,secondnet,drl,gatekeeper,proteus} bandwidth reservations
 between the virtual machines.
 
-The most popular virtual network abstraction for batch-processing applications today is the \emph{virtual cluster},
-introduced in the Oktopus paper~\cite{oktopus}, and later studied by many others~\cite{talk-about,infocom16,ccr15emb,proteus}.
+In Chapter~\ref{ch:static-mapping} we study static virtual network embeddings.
+Our model is enriched by motivations that follow from batch-processing applications.
+The most popular virtual network abstraction for such applications today is the \emph{virtual cluster}~\cite{oktopus}, and later studied by many others~\cite{talk-about,infocom16,ccr15emb,proteus}.
 From a theoretical perspective, the virtual network embedding problem can be seen as a generalization
-of classic VPN graph embedding problems~\cite{Goyal2008,gupta2001provisioning},
-in the sense that in virtual network embedding problems, also the embedding endpoints are flexible. In this respect, the virtual network embedding problem can also be seen as a generalization of the
-classic NP-hard Minimum Linear Arrangement problem which asks for the
+of classic VPN graph embedding problems~\cite{Goyal2008,gupta2001provisioning}, which is a problem of finding a symmetric graph embedding with fixed endpoints.
+In virtual network embedding problems, the embedding endpoints are the subject to optimization.
+In this respect, the virtual network embedding problem can also be seen as related to
+classic NP-hard Minimum Linear Arrangement problem~\cite{mla,mla-survey} which asks for the
 embedding of guest graphs on a simple \emph{line topology} (rather than tree-like topologies as
-studied in this thesis)~\cite{mla,mla-survey}.
+studied in this thesis).
 
 
 
 
 %%%
-
-The model studied in Chapter~\ref{ch:dynamic-mapping}
-is related to online
+In Chapter~\ref{ch:dynamic-mapping} we study dynamic virtual network embeddings.
+The problem is to partition a dynamically changing graph into clusters (physical machines).
+The model is related to online
 paging~\cite{SleTar85,FKLMSY91,McGSle91,AcChNo00}, sometimes also referred to
 as online caching, where requests for data items (nodes) arrive over time and
 need to be served from a cache of finite capacity, and where the number of
@@ -241,9 +248,7 @@ finding a smart eviction strategy, such as Least Recently Used (LRU). In our
 setting, requests can be served remotely (i.e., without fetching the
 corresponding nodes to a single cluster). In this light, our model is more
 reminiscent of caching models \emph{with
-bypassing}~\cite{EpImLN11,EpImLN15,Irani02}. Nonetheless, we show that BRP is
-capable of emulating online paging.
-
+bypassing}~\cite{EpImLN11,EpImLN15,Irani02}.
 
 
 
@@ -271,9 +276,12 @@ With the growth of the Internet, the number of connected devices increases with 
 In effect, the size of forwarding table exceeds the amount of available TCAM memory in a typical router \todo{CITATION}.
 Sophisticated electronics circuits such as TCAM are very expensive in comparison to RAM.
 Typical operations performed on TCAM memory examine the whole contents stored in memory, which requires closely connected physical structure among memory cells -- as the result, it is expensive to expand available memory.
+
+Internet exchange points are located in the core of the Internet, and forward packets among large number of networks.
+Hence, their forwarding tables must contain the forwarding entries for all of them.
 In Figure~\ref{fig:bgp-entries}, we see the growth of the number of entries in the global forwarding table \cite{url-bgp-entries}.
-Routers in the core of the Internet have almost such size of their forwarding tables \todo{rozpisac}.
-\todo{This number is related to all possible networks}
+Size of forwarding tables of the routers in the core of the Internet are approaching such size.
+
 Limited size of memory and expanding size of the content to store brings new challenges in memory management of the routers.
 We elaborate further in the following section.
 
@@ -378,11 +386,11 @@ a~restricted set of cache locations.
 \section{Bibliographic notes and acknowledgements}
 
 The results of this thesis were co-published by the author of this thesis in various conferences and journals.
-Parts of Chapter~\ref{ch:static-mapping} appeared in the proceedings of IEEE International Conference on Network Protocols (ICNP) 2015~\cite{my-icnp},
-and in Journal of Theoretical Computer Science, vol. 697~\cite{my-tcs}.
-Some of the results from Chapter~\ref{ch:static-mapping} appeared in Carlo Fuerst's PhD thesis.
-Parts of Chapter~\ref{ch:dynamic-mapping} appeared in the proceedings of International Symposium on Distributed Computing (DISC) 2016~\cite{my-disc}.
-Parts of Chapter~\ref{ch:packet-forwarding} appeared in the proceedings of ACM Symposium on Parallelism in Algorithmics and Architectures (ACM~SPAA)~2017~\cite{my-spaa}.
-Preliminary results of Chapter~\ref{ch:packet-forwarding} appeared in Aleksandra Spyra's master thesis.
+Parts of Chapter~\ref{ch:static-mapping} appeared previously in the proceedings of IEEE International Conference on Network Protocols (ICNP) 2015~\cite{my-icnp},
+and in Theoretical Computer Science, vol. 697~\cite{my-tcs}.
+Some of the results from Chapter~\ref{ch:static-mapping} appeared in the PhD thesis of my co-author Carlo Fuerst.
+Parts of Chapter~\ref{ch:dynamic-mapping} appeared previously in the proceedings of International Symposium on Distributed Computing (DISC) 2016~\cite{my-disc}.
+Parts of Chapter~\ref{ch:packet-forwarding} appeared previously in the proceedings of ACM Symposium on Parallelism in Algorithmics and Architectures (ACM~SPAA)~2017~\cite{my-spaa}.
+Preliminary results from Chapter~\ref{ch:packet-forwarding} appeared in the master thesis of my co-author Aleksandra Spyra.
 
-In Figure~\ref{fig:tree-topology} we used icons made by Smashicons from www.flaticons.com.
+For some figures in this thesis, icons made by Smashicons from www.flaticons.com were used.
