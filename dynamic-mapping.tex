@@ -1,6 +1,6 @@
 \todo{Remove references to ``this paper''}
 
-\section{Introduction (TODO: CHANGE TITLE)}
+\section{Introduction}
 
 Graph partitioning problems, like minimum graph bisection or minimum balanced
 cuts, are among the most fundamental problems in theoretical computer science.
@@ -1261,4 +1261,66 @@ averaging argument, there exists $j \in \{1,2,3\}$, such that $\ONL(\sigma)
 2 \cdot \alpha$. This concludes the proof, as $2 \cdot \alpha$ becomes
 negligible as the length of $\sigma$ grows.
 \end{proof}
+
+\section{Related Work}
+\label{sec:related-work-dynamic}
+
+The static offline version of our problem, i.e., a problem variant where
+migration is not allowed, where all requests are known in advance, and where
+the goal is to find best node assignment to $\ell$ clusters, is known as the
+$\ell$-balanced graph partitioning problem. The problem is 
+NP-complete, and cannot even be approximated within any finite factor unless P
+= NP~\cite{AndRae06}. The static variant where $n/\ell = 2$ corresponds to a
+maximum matching problem, which is polynomial-time solvable. The static
+variant where $\ell = 2$ corresponds to the minimum bisection problem, which
+is already NP-hard~\cite{GaJoSt76}. Its approximation was studied in a long
+line of work~\cite{SarVaz95,ArKaKa99,FeKrNi00,FeiKra02,KraFei06,Raec08} and
+the currently best approximation ratio of $O(\log n)$ was given by
+R{\"{a}}cke~\cite{Raec08}. The $O(\log^{3/2} n)$-approximation given by
+Krauthgamer and Feige~\cite{KraFei06} can be extended to~general $\ell$, but
+the running time becomes exponential in~$\ell$.
+
+The inaproximability of the static variant for general values of $\ell$
+motivated research on the bicriteria variant, which can be seen as the offline
+counterpart of our cluster-size augmentation approach. Here, the~goal
+is~to~develop $(\ell,\delta)$-balanced graph partitioning, where the graph has
+to be partitioned into $\ell$ components of~size less than $\delta \cdot (n /
+\ell)$ and the cost of the cut is compared to the optimal (non-augmented)
+solution where all components are of size $n / \ell$. The variant where
+$\delta \geq 2$ was considered in
+\cite{LeMaTr90,SimTen97,EvNaRS00,EvNaRS99,KrNaSc09}. So far the best result is
+an $O(\!\sqrt{\log n \cdot \log \ell})$-approximation by Krauthgamer et
+al.~\cite{KrNaSc09}, which builds on ideas from the $O(\!\sqrt{\log
+n})$-approximation algorithm for balanced cuts by Arora et al.~\cite{ArRaVa09}.
+For smaller values of $\delta$, i.e., when $\delta = 1 + \eps$ with a fixed
+$\eps > 0$, Andreev and R{\"{a}}cke gave an $O(\log^{1.5} n / \eps^2)$
+approximation~\cite{AndRae06}, which was later improved to $O(\log n)$ by
+Feldmann and Foschini ~\cite{FelFos15}.
+
+The BRP problem considered in Chapter~\ref{ch:dynamic-mapping} was not previously studied. However,
+it bears some resemblance to the classic online problems; below we highlight
+some of them.
+
+The BRP problem is an example of a non-uniform problem~\cite{KaMaMO94}: the
+cost of changing the state is higher than the cost of serving a single
+request. This requires finding a~good trade-off between serving requests
+remotely (at a low but repeated communication cost) or migrating nodes into a
+single cluster (entailing a potentially high one-time cost). Many
+online problems exhibit this so called \emph{rent-or-buy} property, e.g., ski
+rental problem~\cite{KaMaMO94,LoPaRa08}, relaxed metrical task
+systems~\cite{BaChIn01}, file migration~\cite{BaChIn01,BiByMu17}, distributed
+data management~\cite{BaFiRa95,AwBaFi93,AwBaFi98}, or rent-or-buy network
+design~\cite{AwAzBa04,Umboh15,FeWiLe16}.
+
+There are two major differences between BRP and the problems listed above.
+First, these problems typically maintain some configuration of servers or
+bought infrastructure and upon a new request (whose cost typically depends on
+the distance to the infrastructure), decide about its reconfiguration (e.g.,
+server movement or purchasing additional links). In contrast, in our model,
+\emph{both} end-points of a communication request are subject to optimization.
+Second, in the BRP problem a request reveals only very limited information
+about the optimal configuration to serve it: There exist relatively long
+sequences of requests that can be served with zero cost from a fixed
+configuration. Not only can the set of such configurations be very large, but
+such configurations may also differ significantly from each other.
 
