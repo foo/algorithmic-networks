@@ -97,25 +97,6 @@ the augmented online algorithm is compared to the optimal offline algorithm
 with cluster capacity~$k$.
 \end{description}
 
-An online repartitioning algorithm has to cope with the following issues:
-
-\begin{description}
-
-\item[Serve remotely or migrate (``rent or buy'')?] For a brief communication
-pattern, it may not be worthwhile to collocate the nodes: the migration might
-be too large in comparison to communication costs.
-
-\item[Where to migrate, and what?]
-If an algorithm decides to collocate nodes $x$ and~$y$, the question becomes
-how. Should $x$ be migrated to the cluster holding $y$, $y$ to the one holding
-$x$, or should both nodes be migrated to a new cluster?
-
-\item[Which nodes to evict?]
-There may not exist sufficient space in the desired destination cluster. In
-this case, the~algorithm needs to decide which nodes to ``evict'' (migrate to
-other clusters), to free up space.
-
-\end{description}
 
 \section{A Simple Upper Bound}
 \label{sec:upper}

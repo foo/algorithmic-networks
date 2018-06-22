@@ -139,8 +139,6 @@ In addition, the problem considered in the static scenario is enriched by certai
 
 In the static scenario studied in Chapter~\ref{ch:static-mapping}, to guarantee certain quality of service (\emph{QoS}), we need to acquire network reservations for all pairs of cooperating virtual machines.
 The combinatorial problem that we consider in the static scenario is essentially a variant of the minimum-cost embedding of a clique (the communication graph) in a tree (the substrate network).
-We study the data-locality and replica aware virtual network embedding problems in datacenters\todo{To zdanie jest niejasne}.
-
 The model we consider is a variant of graph embedding problem, in which we embed the graph of network communication into a tree network.
 The scenario is designed to model certain aspects of MapReduce~\cite{mapreduce}, which is a predominant framework to perform large-scale, parallel data processing.
 We consider the wide range of possible extensions that model certain aspects of Map-Reduce applications, most notably:
@@ -194,8 +192,25 @@ A single physical machine hosts a fixed number of virtual machines.
 As we will see later, the model restricted to such networks is a variant of online graph clustering.
 
 
-The possibility to perform a migration uncovers new algorithmic challenges.
-\todo{Pytania z MODEL}
+The possibility to perform a migration uncovers algorithmic challenges:
+\begin{description}
+
+\item[Serve remotely or migrate (``rent or buy'')?] For a brief communication
+pattern, it may not be worthwhile to collocate the nodes: the migration might
+be too large in comparison to communication costs.
+
+\item[Where to migrate, and what?]
+If an algorithm decides to collocate nodes $x$ and~$y$, the question becomes
+how. Should $x$ be migrated to the cluster holding $y$, $y$ to the one holding
+$x$, or should both nodes be migrated to a new cluster?
+
+\item[Which nodes to evict?]
+There may not exist sufficient space in the desired destination cluster. In
+this case, the~algorithm needs to decide which nodes to ``evict'' (migrate to
+other clusters), to free up space.
+
+\end{description}
+
 In the considered model, every physical machine fully utilizes its processing capabilities --- it hosts maximum possible amount of virtual machines.
 Hence, the migration is not possible without the further reconfigurations: to respect physical machine capacity, we need to decide which virtual machines to swap.
 In Chapter~\ref{ch:dynamic-mapping}, we consider the resource-augmentation scenario, where we relax this assumption: the total hosting capacity of physical machines exceeds the total number of virtual machines.
@@ -364,8 +379,19 @@ the cache is not allowed unless some other items are cached (e.g., because of
 tree dependencies) was 
 not considered previously in the framework of competitive analysis.
 
+Other approaches for minimizing the number of stored rules were mostly based
+on \emph{rules compression (aggregation)}, where the set of rules was replaced
+by another equivalent and smaller set. Optimal aggregation of a fixed routing
+table can be achieved by dynamic
+programming~\cite{ortc,fib-compression-two-dimensional}, but the main
+challenge lies in balancing the achieved compression and the amount of changes
+to the routing table in the presence of \emph{updates} to this table. While
+many practical heuristics have been devised by the networking community for
+this problem~\cite{mms,fib-compression-fifa,fib-compression-globecom10,fib-compression-infocom13,fib-sigcomm,fib-compression-smalta,fib-compression-infocom10},
+worst-case analyses were presented only for some restricted
+scenarios~\cite{fib-icdcs,fib-sirocco}. Combining rules compression and rules
+caching is so far an unexplored area.
 
-\todo{Szkic paragrafu: Powyzej opisalem modele bez zaleznosci. Modele z zaleznosciami. Modele powstale z praktycznych motywacji fib: FIB caching, FIB aggregation -- wybierz ktore prace zacytowac. }
 
 \section{Bibliographic notes and acknowledgements}
 
