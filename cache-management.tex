@@ -1,8 +1,28 @@
-\todo{removed sections: acknowledgements}
+\section{Problem Definition}\label{sec:preliminaries}
 
-\section{Introduction}
+%In the classic online paging problem, items of some universe are requested by
+%a~processing entity (e.g., blocks of RAM are requested by the processor). To
+%speed up the access, computers use a faster memory, called
+%\emph{cache}, capable of accommodating $k$ such items. Upon a~request to a
+%non-cached item, the algorithm has to fetch it into the cache, paying a fixed
+%cost, while a request to a cached item is free. If the cache is full, the
+%algorithm has to free some space by evicting an arbitrary subset of items from
+%the cache.
+%
+%The paging problem is inherently online: the algorithm has to make decisions
+%what to evict from the cache without the knowledge of future requests; its
+%cost is compared to the cost of an optimal \emph{offline} solution and the
+%worst-case ratio of these two amounts is called \emph{competitive ratio}. The first
+%analysis of this basic problem in an online model was given over three
+%decades ago by Sleator and Tarjan~\cite{competitive-analysis}. The problem was later
+%considered in a~variety of flavors. In particular, some papers considered a
+%\emph{bypassing model}~\cite{caching-rejection-penalties,paging-irani}, where
+%item fetching is optional: the requested item can be served without being in
+%the cache, for another fixed cost (usually being at most the cost of item
+%fetching).
 
-
+In this chapter, we introduce a natural extension of an online paging problem, where
+items have inter-de\-pen\-den\-cies.
 In the classic online paging problem, items of some universe are requested by
 a~processing entity (e.g., blocks of RAM are requested by the processor). To
 speed up the access, computers use a faster memory, called
@@ -11,21 +31,10 @@ non-cached item, the algorithm has to fetch it into the cache, paying a fixed
 cost, while a request to a cached item is free. If the cache is full, the
 algorithm has to free some space by evicting an arbitrary subset of items from
 the cache.
+The model variant, where fetching is optional (the requested item can be served without being in the cache, incurring some fixed cost) is called a \emph{bypassing model}.
 
-The paging problem is inherently online: the algorithm has to make decisions
-what to evict from the cache without the knowledge of future requests; its
-cost is compared to the cost of an optimal \emph{offline} solution and the
-worst-case ratio of these two amounts is called \emph{competitive ratio}. The first
-analysis of this basic problem in an online model was given over three
-decades ago by Sleator and Tarjan~\cite{competitive-analysis}. The problem was later
-considered in a~variety of flavors. In particular, some papers considered a
-\emph{bypassing model}~\cite{caching-rejection-penalties,paging-irani}, where
-item fetching is optional: the requested item can be served without being in
-the cache, for another fixed cost (usually being at most the cost of item
-fetching).
 
-In this paper, we introduce a natural extension of this fundamental problem, where
-items have inter-de\-pen\-den\-cies. More precisely, we assume that the universe is
+In our model, we assume that the universe is
 an arbitrary (not necessarily binary) rooted tree $T$ and the requested items
 are its nodes. For any tree node $v$, $T(v) \subseteq T$ is a subtree rooted
 at $v$ containing $v$ and all its descendants. We require the following
@@ -45,10 +54,7 @@ where $\alpha \geq 1$ is an integer and a~parameter of the problem. Our goal
 is to minimize the overall cost of maintaining the cache and serving the
 requests.
 
-
-
-\section{Model}\label{sec:preliminaries}
-
+Now, we are ready to formalize the model.
 We denote the height of $T$ by $h(T)$. For any node $v$, $T(v)$ denotes the
 subtree of $T$ rooted at $v$ (containing~$v$ and all its descendants). A
 \emph{tree cap} rooted at $v$ is ``an~upper part'' of $T(v)$, i.e., it
@@ -123,155 +129,10 @@ changeset, no valid changeset satisfies saturation property.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 \section{Analysis of TC}
 \label{sec:analysis}
 
-Throughout the paper, we fix an input $I$, its partition into phases, and
-analyze both \ALGTC and \OPT on a~single fixed phase $P$. We denote the times at
-which $P$ starts and ends by $\beP$ and $\enP$, respectively, i.e., rounds in
-$P$ are numbered from $\beP+1$ to $\enP$. A proof of the following technical
-lemma follows by induction and is presented in 
-\lref[Appendix]{sec:proof_of_lemma_1}.
-
-
-\begin{lemma}
-\label{lem:no_over-requested_changesets}
-Fix any time $t > \beP$. For any valid changeset $X$ for $C_t$, it holds that
-$\cnt_t(X) \leq |X| \cdot \alpha$. If a~changeset $X$ is applied at time $t$,
-the following properties hold:
-\begin{enumerate}
-\item $X$ contains the node requested at round $t$, 
-\label{lemit:1}
-\item $\cnt_t(X) = |X| \cdot \alpha$, 
-\label{lemit:2}
-\item $\cnt_t(Y) < |Y| \cdot \alpha$ for any valid changeset $Y$ for~$C_{t+1}$
-(note that $C_{t+1}$ is the cache state right after application of $X$),
-\label{lemit:3}
-\item $X$ is a tree cap of a tree from $C_{t+1}$ if
-$X$ is positive and it is a~tree cap of a tree from $C_t$ if $X$ is
-negative.
-\label{lemit:4}
-\end{enumerate}
-\end{lemma}
-Before proving \lref[Lemma]{lem:no_over-requested_changesets}, 
-we present the following technical claim.
-
-
-\begin{claim}
-\label{cla:inductive_properties}
-For any phase $P$, the following invariants hold for any time $t > \beP$:
-\begin{enumerate}
-\item $\cnt_{t-1}(X) < |X| \cdot \alpha$ for a valid changeset $X$ for $C_t$,\hspace{-1em}
-\label{item:prop1}
-\item $\cnt_t(X) \leq |X| \cdot \alpha$ for a valid changeset $X$ for $C_t$,
-\label{item:prop2}
-\item any changeset $X$ with property $\cnt_t(X) = |X| \cdot \alpha$ contains 
-the node requested at round $t$.
-\label{item:propmid}
-\end{enumerate}
-\end{claim}
-
-\begin{proof}
-First observe that \lref[Invariant]{item:prop1} (for time $t$) along with the
-fact that round $t$ contains only one request immediately implies that
-$\cnt_t(X) \leq \cnt_{t-1}(X) + 1 \leq (|X| \cdot \alpha - 1) + 1 = |X|
-\cdot \alpha$, i.e., \lref[Invariant]{item:prop2} for time~$t$. Furthermore the equality may
-hold only for changesets containing the node requested at round $t$, which
-implies \lref[Invariant]{item:propmid} for time $t$.
-
-It remains to show that \lref[Invariant]{item:prop1} holds for any step $t >
-\beP$. It is trivially true for $t = \beP+1$ 
-as $\cnt_{t-1}(X) = 0$ then. Let $t+1$ be the earliest time in phase $P$ for
-which \lref[Invariant]{item:prop1} does not hold; we will then show a
-contradiction with the definition of \ALGTC or a contradiction with other
-Invariants at time $t$. That is, we assume that there exists a positive
-changeset $X$ for $C_{t+1}$ such that $\cnt_t(X) \geq |X| \cdot \alpha$ (the
-proof for a negative changeset is analogous). Note that \ALGTC must have
-performed an action (fetch or eviction) at time $t$ as otherwise $X$ would be
-also  a changeset for $C_t = C_{t+1}$ with $\cnt_t(X) \geq |X| \cdot \alpha$,
-which means that $X$ should have been applied by \ALGTC at time $t$. We consider
-two cases.
-
-If \ALGTC fetches a positive changeset $Y$ at time $t$, $C_{t+1} = C_t \sqcup Y$
-and $\cnt_t(Y) = |Y|\cdot\alpha$. Then, $Y \sqcup X$ is a changeset for $C_t$,
-and $\cnt_t(Y \sqcup X) \geq |Y \sqcup X| \cdot \alpha$. This contradicts
-the maximality property of set~$Y$ chosen at time~$t$ by~\ALGTC.
-
-If \ALGTC evicts a negative changeset $Y$ at time $t$, $C_{t+1} = C_t \setminus
-Y$. \lref[Invariant]{item:prop2} and the definition of \ALGTC implies $\cnt_t(Y) =
-|Y| \cdot \alpha$, and thus, by \lref[Invariant]{item:propmid}, $Y$ contains
-the node requested at round $t$. As $X \cap Y \subseteq C_t$, \mbox{$X \cap Y$} does
-not have any positive requests at time~$t$, and therefore $\cnt_t(X \setminus
-Y) = \cnt_t(X) \geq |X| \cdot \alpha \geq |X \setminus Y| \cdot \alpha$. By
-\lref[Invariant]{item:prop2}, $\cnt_t(X \setminus Y) \leq |X \setminus Y|
-\cdot \alpha$, and hence $\cnt_t(X \setminus Y) = |X \setminus Y| \cdot
-\alpha$. This contradicts \lref[Invariant]{item:propmid} as $X \setminus Y$
-cannot contain the node requested at round $t$ (because $Y$ contains this
-node).
-\end{proof}
-
-
-\begin{proof}[Proof of Lemma~\ref*{lem:no_over-requested_changesets}]
-The inequality $\cnt_t(X) \leq |X| \cdot \alpha$ is equivalent to
-\lref[Invariant]{item:prop2} of \lref[Claim]{cla:inductive_properties}.
-Assume now that $X$ is applied at time $t$. By the definition of \ALGTC,
-$\cnt_t(X) \geq |X| \cdot \alpha$, and thus $\cnt_t(X) = |X| \cdot \alpha$,
-i.e., \lref[Property]{lemit:2} follows. Then, \lref[Invariant]{item:propmid}
-of \lref[Claim]{cla:inductive_properties} implies \lref[Property]{lemit:1}.
-Finally, \lref[Invariant]{item:prop1} of
-\lref[Claim]{cla:inductive_properties} for time $t+1$ is equivalent to
-\lref[Property]{lemit:3}.
-
-To show \lref[Property]{lemit:4}, observe that the changeset $X$
-applied at time $t$ cannot be a disjoint union of two (or more) valid
-changesets $X_1$ and $X_2$. By \lref[Property]{lemit:2}, $|X| \cdot \alpha =
-\cnt_t(X) = \cnt_t(X_1) + \cnt_t(X_2)$. If $\cnt_t(X_1) < |X_1| \cdot \alpha$
-or $\cnt_t(X_2) < |X_2| \cdot \alpha$, then $\cnt_t(X_1) + \cnt_t(X_2) <
-(|X_1| + |X_2|) \cdot \alpha = |X| \cdot \alpha$, a contradiction. Therefore,
-$\cnt_t(X_1) = |X_1| \cdot \alpha$ and $\cnt_t(X_2) = |X_2| \cdot
-\alpha$. But then \lref[Invariant]{item:propmid} of
-\lref[Claim]{cla:inductive_properties} would imply that both $X_1$ and $X_2$
-contain a node requested at time $t$, which is a~contradiction as they are
-disjoint.
-
-Therefore, if $X$ is a positive changeset applied at $t$, then $X$ is a~single
-tree cap of a tree from subforest $C_{t+1}$, and likewise if $X$ is negative,
-then $X$ is a~single tree cap of a~tree from subforest $C_t$.
-\end{proof}
-
-\todo{Is the separation of the proof of the lemma clear enough? Is ``In the following'' clear?}
-In the following, we assume that no positive requests are given to nodes
-inside cache and no negative ones to nodes outside of it. (This does not
-change the behavior of \ALGTC and can only decrease the cost of \OPT.)
-
-For the sake of analysis, we assume that at time $\enP$, \ALGTC actually
-performs a cache fetch (exceeding the cache size limit) and then, at the same
-time instant, empties the cache. This replacement only increases the cost of
-\ALGTC. Let $k_P$ denote the number of nodes in the cache of $\ALGTC$ at $\enP$.
-In a finished phase, we measure it after the artificial fetch, but right
-before the final eviction, and thus $k_P \geq \kALG + 1$; in an unfinished
-phase $k_P \leq \kALG$.
-
-The crucial part of our analysis that culminates in
-\lref[Section]{sec:shifting} is the technique of shifting requests. Namely, we
-modify the input sequence by shifting requests up or down the tree, so that
-the resulting input sequence (i) is not harder for \OPT and (ii) is more
-structured: we may lower bound the cost of \OPT on each node separately and
-relate it to the cost of \ALGTC.
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-\section{Analysis of TC}
-\label{sec:analysis}
-
-Throughout the paper, we fix an input $I$, its partition into phases, and
+Throughout this chapter, we fix an input $I$, its partition into phases, and
 analyze both \ALGTC and \OPT on a~single fixed phase $P$. We denote the times at
 which $P$ starts and ends by $\beP$ and $\enP$, respectively, i.e., rounds in
 $P$ are numbered from $\beP+1$ to $\enP$. A proof of the following technical
@@ -596,8 +457,7 @@ time $t$. Our goal is to devise a shifting strategy, that will result in at
 least $\Omega(\sizetc(F^t)/h(T))$ nodes having $\alpha/2$ requests each. While
 this result may be suboptimal, deriving a shifting strategy for a~positive
 field that would have the same equal distribution guarantee as the one
-provided by \lref[Corollary]{cor:crucial_lemma_neg} is not possible 
-(the details are presented in the full version of the paper).
+provided by \lref[Corollary]{cor:crucial_lemma_neg} is not possible.
 
 First, we prove that from any node $v$ in the field, we can shift down a
 constant fraction of its requests within the field, distributing them to
@@ -1050,7 +910,7 @@ for finding set $|X_t|$ is $O(h(T) + \deg(T) \cdot |X_t|)$.
 
 \section{Conclusions}\label{sec:conclusion}
 
-This paper defines a novel variant of online paging which finds
+In this chapter we define a novel variant of online paging which finds
 applications in the context of IP routing networks where forwarding rules can
 be cached. We presented a deterministic online algorithm that achieves a
 provably competitive trade-off between the benefit of caching and update costs.

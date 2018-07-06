@@ -1,24 +1,6 @@
-\todo{Annotation: parts of this paper are shared with Carlo's thesis!}
+\section{Problem Definition}\label{sec:model}
 
-
-\section{Model}\label{sec:model}
-
-\todo{Embed reference in the right place}
-Figure~\ref{fig:overview} gives an overview of our model.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.79\columnwidth]{figs/static-mapping/data_locality_no_legend.pdf}
-\caption{Overview: a 9-server datacenter storing~$\tau=4$ different chunk
-types~$\{c_1,\ldots,c_4\}$ (depicted as \emph{circles}). The chunk replicas need to be selected and assigned to the two
- virtual machines~$v_1$ and~$v_2$; the virtual machines are depicted as \emph{squares}, and
- the network connecting them to chunks (at bandwidth~$\CostTrans$) is \emph{dashed}. In addition, the virtual machines are inter-connected among
- each other at bandwidth~$\CostCom$ (\emph{dotted}). The objective of the embedding algorithm is to minimize the overall bandwidth allocation
- (sum of \emph{dashed} and \emph{dotted} lines).}\label{fig:overview}
-\vspace{-1em}
-\end{figure}
-
-The model combines three components: (1) the substrate network (the servers
+As described informally in the introduction, the model combines three components: (1) the substrate network (the servers
 and the connecting physical network),
 (2) the input which needs to be processed (divided into data chunks), and
 (3) the virtual network (the virtual machines and the logical network connecting the machines to each other
@@ -62,6 +44,20 @@ network}, and to the second type of virtual network as the \emph{(node) inter-co
 is modeled as a complete network (a \emph{clique}). Concretely, we assume that an  active chunk
 is connected to its node at a minimal (guaranteed) bandwidth~$\CostTrans$, and a node is connected to any other node
 at minimal (guaranteed) bandwidth~$\CostCom$.
+Figure~\ref{fig:overview} gives an overview of our model.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.79\columnwidth]{figs/static-mapping/data_locality_no_legend.pdf}
+\caption{Overview: a 9-server datacenter storing~$\tau=4$ different chunk
+types~$\{c_1,\ldots,c_4\}$ (depicted as \emph{circles}). The chunk replicas need to be selected and assigned to the two
+ virtual machines~$v_1$ and~$v_2$; the virtual machines are depicted as \emph{squares}, and
+ the network connecting them to chunks (at bandwidth~$\CostTrans$) is \emph{dashed}. In addition, the virtual machines are inter-connected among
+ each other at bandwidth~$\CostCom$ (\emph{dotted}). The objective of the embedding algorithm is to minimize the overall bandwidth allocation
+ (sum of \emph{dashed} and \emph{dotted} lines).}\label{fig:overview}
+\vspace{-1em}
+\end{figure}
+
 
 \subsection{Optimization Objective}
 
@@ -86,7 +82,7 @@ In order to chart the landscape of the computational tractability and intractabi
 problem variants, we decompose our problem into its fundamental aspects, namely replica selection
 ($\RS$), multiple chunk assignment ($\MA$), flexible node placement ($\FP$), node interconnect ($\CC$),
 and bandwidth constraints ($\BW$), as described in the following. 
-In this paper, we will consider all possible 32 problem variants, where each of these five aspects
+In this chapter, we will consider all possible 32 problem variants, where each of these five aspects
 can either be enabled or disabled. 
 
 \textbf{\emph{Replica Selection ($\RS$).}} The first fundamental problem is replica selection:
@@ -146,7 +142,7 @@ Accordingly, we can reduce problem variant~$\RS+\MA+\CC +\BW$ (as well as all it
 to~$\RS+\MA+\BW$ (resp.~its subproblems).
 \end{obs}
 
-\subsection{Flow Algorithms ($\RS+\MA+\CC+\BW$)}\label{ssec:flow}
+\subsection{Flow Algorithms}\label{ssec:flow}
 
 
 \begin{figure}[t]
@@ -275,7 +271,7 @@ where~$U$ is the maximal link capacity; note that in networks with high capacity
 and uncapacitated networks, we can simply set~$U=\tau$.
 
 
-\subsection{Matching Algorithms ($\RS+\MA+\CC$ and~$\MA+\CC+\BW$)}\label{ssec:match}
+\subsection{Matching Algorithms}\label{ssec:match}
 
 
 \begin{figure}[t]
@@ -511,7 +507,7 @@ postprocessing step scales linearly with the number of edges in the substrate
 graph.
 
 
-\subsection{Dynamic Programming ($\MA+\FP+\CC+\BW$)}\label{ssec:dyn}
+\subsection{Dynamic Programming}\label{ssec:dyn}
 
 We now show how to solve the~$\MA+\FP+\CC+\BW$ problem variant
 in polynomial time.
@@ -706,7 +702,7 @@ a~$M \subseteq T$ which is \emph{perfect}, that is, a subset which covers all
 elements of~$X \cup Y \cup Z$ exactly once.
 
 
-\subsection{Hardness of Multi-Assignments ($\FP+\RS+\MA$)}\label{ssec:fprsma}
+\subsection{Hardness of Multi-Assignments}\label{ssec:fprsma}
 
 Our proof that~$\FP+\RS+\MA$ is NP-hard is based on the following main ideas.
 We encode a~$\TDM$ instance as an~$\FP+\RS+\MA$ instance as follows:
@@ -824,7 +820,7 @@ transportation).
 \end{proof}
 
 
-\subsection{Hardness of Inter-connects ($\FP+\RS+\CC$)}\label{ssec:fprscc}
+\subsection{Hardness of Inter-connects}\label{ssec:fprscc}
 
 
 Next, we prove that the joint optimization of node placement and replica selection
@@ -1026,18 +1022,19 @@ Formally, the construction of chunk types and replicas unfolds as follows:
   We call this set~$\UniqueE$.
 \end{enumerate}
 
-\paragraph{Tree}
-
-We construct the tree that has the following structure (see Figure~\ref{fig:red-ma}):
+\paragraph{Tree.}
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.99\columnwidth]{figs/static-mapping/overview}
-  \label{fig:red-ma}
   \vspace{-1em}
   \caption{Overview of the substrate network}
   \vspace{-1em}
+  \label{fig:red-ma2}
 \end{figure}
+
+
+We construct the tree that has the following structure (see Figure~\ref{fig:red-ma2}):
 
 \begin{enumerate}
   \item The physical network consists of two subtrees connected to the
@@ -1052,7 +1049,7 @@ We construct the tree that has the following structure (see Figure~\ref{fig:red-
   root and~$4\cdot(\deg(e)-1)+1$ leaves.
 \end{enumerate}
 
-\paragraph{Chunk Placement}
+\paragraph{Chunk Placement.}
 The chunks are placed as follows:
 \begin{enumerate}
   \item \emph{Chunks in the Matching Subtree:} In {\TripleGadget} of triple $\tau$ we put
@@ -1067,7 +1064,7 @@ The chunks are placed as follows:
  In total, we place $4\cdot (\deg(e) - 1) + 1$ replicas, one per each leaf of the gadget.
 \end{enumerate}
 
-\paragraph{Other properties of the instance}
+\paragraph{Other properties of the instance.}
 \begin{enumerate}
   \item \emph{Multiple assignment:} We set the multi-assignment factor to $m=4$.
   \item \emph{Number of nodes:} We set the number of nodes to spawn to
@@ -1501,68 +1498,79 @@ Using the properties of the substrate network, we perform the reduction in the f
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Summary of Results for Considered Variants (TODO: change title)}\label{sec:conclusion}
+\section{Summary}\label{sec:conclusion}
 
-At the heart of locality and replica aware virtual cluster embeddings lie fundamental algorithmic problems.
-This paper has shown that despite the
+In this chapter we have shown that despite the
 multiple dimensions of flexibility in terms of chunk assignment and node placement, 
 and despite the large scale of modern datacenters, 
 many problems can be solved efficiently. However, we have also
 shown that several embedding problems are NP-hard already in two-
-and three-level trees---a practically relevant result given today's datacenter topologies~\cite{fattree}).
-\begin{table}
-\tiny
-\bgroup
-\def\arraystretch{1.5}
-\begin{small}
-\begin{tabular}{|l|l|p{6.5cm}|}
-\hline
-\multirow{3}{*}{NP-hard} & 5 combinations & \mbox{$\RS+\MA+\FP+\CC+\BW$}\\
-\cline{2-3}
- & 4 combinations &  \mbox{$\RS+\MA+\FP+\CC$}; \mbox{$\RS+\MA+\FP+\BW$};
-\mbox{$\RS+\FP+\CC+\BW$} \\ \cline{2-3}
- & 3 combinations &\mbox{$\RS+\MA+\FP$};~\mbox{$\RS+\FP+\CC$} \\
- \hline
- \hline
-\multirow{3}{*}{Flow} & 4 combinations & \mbox{$\RS+\MA+\CC+\BW$} \\ \cline{2-3}
- & 3 combinations & \mbox{$\RS+\CC+\BW$}; \mbox{$\RS+\MA+\BW$}    \\ \cline{2-3}
- & 2 combinations &$\RS+\BW$ \\
- \hline
- \hline
-\multirow{3}{*}{DP} & 4 combinations & \mbox{$\MA+\FP+\CC+\BW$} \\ \cline{2-3}
- & 3 combinations &   \mbox{$\MA+\FP+\CC$};
-\mbox{$\MA+\FP+\BW$}; \mbox{$\FP+\CC+\BW$} \\ \cline{2-3}
- & 2 combinations & \mbox{$\MA+\FP$};~\mbox{$\FP+\CC$}; \\
- \hline
- \hline
-\multirow{3}{*}{Matching} &3 combinations&
-\mbox{$\RS+\MA+\CC$};~\mbox{$\MA+\CC+\BW$}  \\
-\cline{2-3}
- & 2 combinations & \mbox{$\RS+\MA$};
-\mbox{$\RS+\CC$}; \mbox{$\MA+\CC$};
-\mbox{$\MA+\BW$}; \mbox{$\CC+\BW$} \\ \cline{2-3}
-& 1 combinations & \mbox{$\RS$}; \mbox{$\MA$};
-\mbox{$\CC$}; \mbox{$\BW$}\\
- \hline
- \hline
- \multirow{3}{*}{0 Cost} & 3 combinations & \mbox{$\RS+\FP+\BW$}\\
-\cline{2-3}
- & 2 combinations & \mbox{$\RS+\FP$}; \mbox{$\FP+\BW$}\\ \cline{2-3}
- & 1 combinations & \mbox{$\FP$}\\
- \hline
-\end{tabular}
-\end{small}
-\caption{
-Fastest algorithms for different respective problem variants.
-}
-\vspace{-2em}
-\label{tab:summary}
-\egroup
-\end{table}
+and three-level trees---a practically relevant result given today's datacenter topologies~\cite{fattree}.
+
+
+%\begin{table}
+%\tiny
+%\bgroup
+%\def\arraystretch{1.5}
+%\begin{small}
+%\begin{tabular}{|l|l|p{6.5cm}|}
+%\hline
+%\multirow{3}{*}{NP-hard} & 5 combinations & \mbox{$\RS+\MA+\FP+\CC+\BW$}\\
+%\cline{2-3}
+% & 4 combinations &  \mbox{$\RS+\MA+\FP+\CC$}; \mbox{$\RS+\MA+\FP+\BW$};
+%\mbox{$\RS+\FP+\CC+\BW$} \\ \cline{2-3}
+% & 3 combinations &\mbox{$\RS+\MA+\FP$};~\mbox{$\RS+\FP+\CC$} \\
+% \hline
+% \hline
+%\multirow{3}{*}{Flow} & 4 combinations & \mbox{$\RS+\MA+\CC+\BW$} \\ \cline{2-3}
+% & 3 combinations & \mbox{$\RS+\CC+\BW$}; \mbox{$\RS+\MA+\BW$}    \\ \cline{2-3}
+% & 2 combinations &$\RS+\BW$ \\
+% \hline
+% \hline
+%\multirow{3}{*}{DP} & 4 combinations & \mbox{$\MA+\FP+\CC+\BW$} \\ \cline{2-3}
+% & 3 combinations &   \mbox{$\MA+\FP+\CC$};
+%\mbox{$\MA+\FP+\BW$}; \mbox{$\FP+\CC+\BW$} \\ \cline{2-3}
+% & 2 combinations & \mbox{$\MA+\FP$};~\mbox{$\FP+\CC$}; \\
+% \hline
+% \hline
+%\multirow{3}{*}{Matching} &3 combinations&
+%\mbox{$\RS+\MA+\CC$};~\mbox{$\MA+\CC+\BW$}  \\
+%\cline{2-3}
+% & 2 combinations & \mbox{$\RS+\MA$};
+%\mbox{$\RS+\CC$}; \mbox{$\MA+\CC$};
+%\mbox{$\MA+\BW$}; \mbox{$\CC+\BW$} \\ \cline{2-3}
+%& 1 combinations & \mbox{$\RS$}; \mbox{$\MA$};
+%\mbox{$\CC$}; \mbox{$\BW$}\\
+% \hline
+% \hline
+% \multirow{3}{*}{0 Cost} & 3 combinations & \mbox{$\RS+\FP+\BW$}\\
+%\cline{2-3}
+% & 2 combinations & \mbox{$\RS+\FP$}; \mbox{$\FP+\BW$}\\ \cline{2-3}
+% & 1 combinations & \mbox{$\FP$}\\
+% \hline
+%\end{tabular}
+%\end{small}
+%\caption{
+%Fastest algorithms for different respective problem variants.
+%}
+%\vspace{-2em}
+%\label{tab:summary}
+%\egroup
+%\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.69\columnwidth]{figs/static-mapping/venn_full2.pdf}
+\caption{Fastest algorithms for different respective problem variants. Variants depicted by solid black are NP-hard, and variants depicted by checked filling are trivially solvable. For the remainder of variants we provide the fastest algorithm determined by the key.}
+\vspace{-1em}
+\label{fig:venn_full}
+\end{figure}
+
+
 
 
 Our results are summarized in
-Table~\ref{tab:summary}.
+Figure~\ref{fig:venn_full}.
 One interesting takeaway from this figure regards
 the question which properties render the problem
 NP-hard. For instance, we see that,~$\BW$
