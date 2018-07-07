@@ -352,13 +352,18 @@ The TCAM memory is an associative memory storage with a variation of pattern-mat
 
 With the growth of the Internet, the number of connected networks increases with rapid progression, which often induces new forwarding rules to store.
 In effect, the size of forwarding table exceeds the amount of available TCAM memory in a typical router (the phenomenon called the TCAM exhaustion~\cite{tcam-exhaust}).
-Sophisticated electronics circuits such as TCAM are very expensive in comparison to RAM.
+Sophisticated electronics circuits such as TCAM are very expensive in comparison to RAM and
+power-hungry~\cite{tcam-expensive}.
 Typical operations performed on TCAM memory examine the whole contents stored in memory, which requires closely connected physical structure among memory cells --- as the result, it is expensive to expand available memory.
 
 Internet exchange points are located in the core of the Internet, and their routers forward packets among large number of networks.
 Hence, their forwarding tables usually contain forwarding entries for all of them.
 In Figure~\ref{fig:bgp-entries}, we see the growth of the number of entries in the global forwarding table \cite{url-bgp-entries}.
 Size of forwarding tables of the routers in the core of the Internet are approaching such size.
+Those routers have to store an~enormous number of forwarding rules: the
+number of rules has doubled in the last six years~\cite{bgp-routeviews} and
+the superlinear growth is likely to be sustained~\cite{steve-myth}.
+
 
 Limited size of memory and expanding size of the content to store brings new challenges in memory management of the routers.
 In the second part of this thesis, we investigate the following problem, using the tools provided by contemporary routers:
@@ -375,6 +380,22 @@ In the second part of this thesis, we investigate the following problem, using t
 \end{figure}
 
 \subsection{Caching of Forwarding Rules}
+
+A~solution, which could delay
+the need for expensive or impossible memory upgrades in routers, is to store
+only a subset of rules in the actual router and store all rules on a~secondary
+device (for example a commodity server with a large but slow
+memory)~\cite{cacheflow,route-caching-flat,prefix-caching,fib-caching-non-overlapping,fibium-zipf}.
+This solution is particularly attractive with the advent of Soft\-ware-Defined
+Network (SDN) technology, which allows to manage the expensive memory using a
+software controller~\cite{cacheflow,fibium-zipf}. In particular, our
+theoretical model can describe real-world architectures
+like~\cite{cacheflow,fibium-zipf},
+that is, our model formalizes the underlying operational
+problems of such architectures. Our 
+algorithm, when applied in the context of such architectures, can 
+hence be used to prolong the lifetime of IP routers.
+
 
 In the second part of this thesis, we consider the problem of memory management in routers.
 Modern routers consist of two logical components. Those two components use disjoint memory (often of distinct type) and disjoint processing units:
@@ -409,23 +430,77 @@ Immediate update might seem a rational strategy, but in scenarios with highly dy
 Premature update might result in the situation, where more time is spent alternating the cache configuration than processing packets (this is similar to \emph{thrashing} in virtual memory systems).
 
 In the traditional caching problem, the cache elements are independent: it is always feasible to pull in or out the elements of the cache regardless of cache configuration.
-However, forwarding rules exhibit hierarchical dependencies.
-Each rule apply to a range of adresses, and to find the best matching rule for a given address, one need to inspect the whole rule hierarchy that concerns that address.
-Narrower rule can exist in cache without the overlapping wider rule (as the latter is ignored as it is not the best match).
-However, the contrary is not true: without the narrower rule, one could mistakenly point the wider rule as the best matching rule, and the packet would be transmitted incorrectly.
-As a result, in considered scenario only certain cache configurations are feasible: for each rule in the cache, the overlapping narrower rules are present in the cache.
+
+Note that the technical feasibility of this solution heavily depends on the
+rule dependencies. In the most ubiquitous scenario, the rules are prefixes of
+IP addresses (they are bit strings). Whenever a packet arrives, the router
+follows a longest matching prefix (LMP) scheme: it searches for the rule that
+is a~prefix of the destination IP of the packet and among matching rules it
+chooses the longest one. In other words, if the prefixes corresponding to
+rules are stored in the tree\footnote{We do not have to assume that they are
+actually stored in a real tree; this tree is implicit in the LMP scheme.},
+then the tree is traversed from the root downwards, and the last found rule is
+used. This explains why we require the cached nodes to form a subforest:
+leaving a less specific rule on the router while evicting a more specific one
+(i.e., keeping a~tree node in cache while evicting its descendant) will result
+in a~situation where packets will be forwarded according to the less specific
+rule, and hence potentially exit through the wrong port. The LMP scheme also
+ensures that the described approach is implementable: one could simply add
+an~artificial rule at the tree root in the router (matching an empty prefix).
+This ensures that when no actual matching rule is found in the router (in the
+cache), the packet will be forwarded according to this artificial rule to the
+controller that stores all the rules and can handle all packets appropriately.
+
+Additionally, a rule may need to be updated. For example, due to a~change
+communicated by a dynamic routing protocol (e.g., BGP) the action defined by
+a~rule has to be modified. In either case, we have to update the rules at the
+controller: we assume that this cost is zero. (This cost is unavoidable for
+any algorithm, so such an assumption makes our problem only more difficult.)
+Furthermore, if the rule is also stored at the router, then we have to pay a~fixed
+cost of $\alpha$ for updating the router (see the remark for the cost of
+fetches and evictions). Such penalties can be easily simulated in our model:
+we issue a~sequence of $\alpha$ negative requests to the updated node.  It is
+straightforward to show that the costs in these two models can differ by a
+factor of at most $2$. For a~formal argument, see
+\lref[Appendix]{sec:bisimulation}.
+
+
 
 
 In contemporary networks, the control plane component can be physically separated from the forwarding plane, and to perform remote management over the network it uses protocols such as OpenFlow~\cite{openflow}.
 In such scenario, excessive cache updates cause not only delay in packet processing, but also cause congestion in the network between the forwarding component and the control component.
 
-\subsection{Our Contributions}
-
-\todo{Za krotka sekcja our contributions}
-
 Caching scenarios are best expressed and analysed in online settings.
 Similarly to Chapter~\ref{ch:dynamic-mapping}, we use the competitive analysis to determine the performance of our strategy~\cite{borodin-book}.
 In this thesis, we consider the variant of caching with dependencies among cached elements motivated by the structure of forwarding table.
+
+
+\subsection{Our Contributions}
+
+%We initiate the study of a natural new caching with bypassing problem which
+%allows to account for tree-dependencies among items. The problem finds
+%immediate applications, e.g., in IP routing and software-defined networking
+%(see \lref[Section]{sec:motivation}).
+%
+%In particular, we consider the online tree caching problem within the resource
+%augmentation paradigm: we assume that cache sizes of the online algorithm
+%($\kALG$)  and the optimal offline algorithm ($\kOPT$) may differ. We assume
+%$\kALG \geq \kOPT$ and let $R = \kALG/(\kALG-\kOPT+1)$.
+
+In \lref[Section]{sec:algo}, we present an elegant deterministic online
+algorithm~\ALG for this problem. While our algorithm is simple, its analysis
+presented in \lref[Section]{sec:analysis} requires several non-trivial
+insights into the problem. In particular, we rigorously prove that \ALG is
+$O(h(T) \cdot R)$-competitive, where $h(T)$ is the height of tree~$T$. That
+is, we show that there exists a constant~$\beta$, such that $\ALG(I) \leq
+O(h(T) \cdot R) \cdot \OPT(I) + \beta$ for any input $I$. Note that this
+result is optimal up to the factor~$O(h(T))$: in
+\lref[Appendix]{sec:lower-bound-on-the-problem}, we show that the lower
+bound~$R$ for the paging problem~\cite{competitive-analysis} implies an
+$\Omega(R)$ lower bound for our problem for any $\alpha \geq 1$. Finally, in
+\lref[Section]{sec:implementing_counters}, we show that \ALG can be
+implemented efficiently.
+
 
 \subsection{Related Work}
 
@@ -457,6 +532,17 @@ worst-case analyses were presented only for some restricted
 scenarios~\cite{fib-icdcs,fib-sirocco}. Combining rules compression and rules
 caching is so far an unexplored area.
 
+
+So far, the papers on IP rule caching avoided dependencies either assuming
+that rules do not overlap (a~tree has a single level)~\cite{route-caching-flat} 
+or by preprocessing the tree, so that the rules become
+non-overlapping~\cite{prefix-caching,fib-caching-non-overlapping}.
+Unfortunately, this could lead to a large inflation of the routing table. A
+notable exception is a recent solution called CacheFlow~\cite{cacheflow}. The
+CacheFlow model supports dependencies even in the form of directed acyclic
+graphs. However, CacheFlow was evaluated only experimentally, and no
+worst-case guarantees were given on the overall cost of caching. Our work
+provides theoretical foundations for respecting tree dependencies.
 
 
 

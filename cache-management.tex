@@ -930,16 +930,17 @@ problems~\cite{young-paging-greedy-dual,generalized-caching-optimal,generalized-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Minimizing Forwarding Tables Using Tree Caching}
+
+\section{Cache Updates with Fixed Cost}
 \label{sec:bisimulation}
+
 
 In this section, we present a formal argument showing why we can use any
 $q$-competitive online algorithm $A_T$ for the tree caching problem to obtain
-a $2 q$-competitive online algorithm~$A$ that minimizes forwarding tables.
+a $2 q$-competitive online algorithm~$A$ for the tree caching problem with updates with fixed cost $\alpha$.
 
 Namely, we take any input $I$ for the latter problem and create, in online
-fashion, an input $I_T$ for the tree caching problem in a way described in
-\lref[Section]{sec:motivation}.
+fashion, an input $I_T$ for the tree caching problem.
 For any solution for $I_T$, we may replay its actions (fetches and evictions)
 on~$I$ and vice versa. However, there is one place, where these solutions 
 may have different costs. Recall that an update of a~rule stored at node~$v$
