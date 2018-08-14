@@ -1,3 +1,159 @@
+\section{Packet forwarding}
+
+In the second part of this thesis, we consider the fundamental problem of \emph{packet forwarding}.
+We focus on a single router, that physically connects different networks and is responsible for passing packets between them.
+Upon receiving a data packet, the router forwards it to a~specific output port leading to a neighbouring network.
+To choose the appropriate port, the router stores of a \emph{forwarding table}, which consists of rules describing how to map the packet destination addresses to appropriate ports.
+
+Certain routers (e.g. in Internet exchange points) are located near the core of the Internet, and forward packets among large number of networks.
+Hence, their forwarding tables usually contain forwarding entries for all of them.
+In Figure~\ref{fig:bgp-entries}, we see the growth of the number of entries in the global forwarding table \cite{url-bgp-entries}.
+Size of forwarding tables of the routers in the core of the Internet are approaching such size.
+Those routers have to store an~enormous number of forwarding rules: the
+number of rules has doubled in the last six years~\cite{bgp-routeviews} and
+the superlinear growth is likely to be sustained~\cite{steve-myth}.
+
+It is worth noting that networks can be either physical or virtual.
+The concept of virtual networks described in Part~\ref{pt:virtual-networks} contributes immensely to partition of the Internet into subnetworks, and to growth of forwarding tables.
+
+
+The router maintains the forwarding table in its memory.
+Only a small restricted set of operations is performed on such memory: lookups and updates.
+Nowadays, routers perform milions of lookup operations and thousands updates (see, e.g. a raport~\cite{bgp-updates}), and the utilizing specialized hardware is crucial for the efficiency of packet forwarding.
+Hence, instead of relying on the general-purpose memory such as RAM (where lookup operation is costly), the specialized memory units such as TCAM~\cite{tcam-memory} are utilized.
+The TCAM memory is an associative memory storage with a variation of pattern-matching lookup that closely matches the way the forwarding rules are used.
+
+With the growth of the Internet, the number of connected networks increases with rapid progression, which often induces new forwarding rules to store.
+In effect, the size of forwarding table exceeds the amount of available TCAM memory in a typical router (the phenomenon called the TCAM exhaustion~\cite{tcam-exhaust}).
+Sophisticated electronics circuits such as TCAM are very expensive and power-hungry~\cite{tcam-expensive} in comparison to RAM.
+Moreover, typical operations performed on TCAM memory examine the whole contents stored in memory, which requires closely connected physical structure among memory cells --- as the result, it is expensive to expand available memory.
+
+Limited size of memory and expanding size of the content to store brings new challenges in memory management of the routers.
+In the second part of this thesis, we investigate the following problem, using the tools provided by contemporary routers:
+\begin{center}
+  \emph{How to efficiently manage the memory of forwarding devices?}
+\end{center}
+
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.59\columnwidth]{figs/bgp-entries.png}
+\caption{The number of entries in the global forwarding table. The global forwarding table is built upon the informations exchanged via Border Gateway Protocol. The graph presents the growth of the global forwarding table from 1988 to 2018.}\label{fig:bgp-entries}
+\end{figure}
+
+\section{Caching of Forwarding Rules}
+
+A~solution, which could delay
+the need for expensive or impossible memory upgrades in routers, is to store
+only a subset of rules in the actual router and store all rules on a~secondary
+device (for example a commodity server with a large but slow
+memory)~\cite{cacheflow,route-caching-flat,prefix-caching,fib-caching-non-overlapping,fibium-zipf}.
+%This solution is particularly attractive with the advent of Soft\-ware-Defined
+%Network (SDN) technology, which allows to manage the expensive memory using a
+%software controller~\cite{cacheflow,fibium-zipf}.
+In particular, our
+theoretical model can describe real-world architectures
+like~\cite{cacheflow,fibium-zipf},
+that is, our model formalizes the underlying operational
+problems of such architectures. Our 
+algorithm, when applied in the context of such architectures, can 
+hence be used to prolong the lifetime of IP routers.
+
+
+In the second part of this thesis, we consider the problem of memory management in routers.
+Modern routers consist of two logical components. Those two components use disjoint memory (often of distinct type) and disjoint processing units:
+\begin{enumerate}
+  \item The forwarding plane, which  contains forwarding table described in the previous section, and performs the actual packet transmission according to the forwarding table.
+  \item The control plane, which is responsible for reflecting the network topology in the forwarding table.
+\end{enumerate}
+
+The forwarding component has finite memory, and in multiple scenarios the size of forwarding table exceeds the size of available memory.
+One of the solutions is to store only a part of a~forwarding table on the forwarding device, that acts as a cache for the complete forwarding table that is stored in the control plane, see Figure~\ref{fig:router}.
+However, this might result in the situation, where the forwarding device do not posess sufficient information to proceed (\emph{a cache miss}).
+
+Even upon the cache miss, the packet still needs to reach its destination.
+The common way to handle the situation is to redirect the packet to the control plane component, which posseses the complete forwarding table.
+However, the packet cannot be forwarded by the control plane, hence it is supplemented with forwarding informations and sent back to the forwarding plane.
+The forwarding device overrides the usual procedure of forwarding table lookup, and instead it uses the supplemented information to forward the packet.
+
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.5\columnwidth]{figs/router5.pdf}
+\caption{We propose a caching scenario, where the limited memory of a router stores a portion of the~forwarding table. The complete forwarding table is stored at the controller.}\label{fig:router}
+\end{figure}
+
+
+
+
+Upon the forwarding table cache miss, the control plane may decide to update the cached portion of the forwarding table that resides in the forwarding component.
+Standard caching-related problems arise, such as: which entry to evict to provide space to store the new entry.
+Immediate update might seem a rational strategy, but in scenarios with highly dynamic networks that rearrange often, it might be beneficial to delay the update.
+Premature update might result in the situation, where more time is spent alternating the cache configuration than processing packets (this is similar to \emph{thrashing} in virtual memory systems).
+
+In the traditional caching problem, the cache elements are independent: it is always feasible to pull in or out the elements of the cache regardless of cache configuration.
+
+Note that the technical feasibility of this solution heavily depends on the
+rule dependencies. In the most ubiquitous scenario, the rules are prefixes of
+IP addresses (they are bit strings). Whenever a packet arrives, the router
+follows a longest matching prefix (LMP) scheme: it searches for the rule that
+is a~prefix of the destination IP of the packet and among matching rules it
+chooses the longest one. In other words, if the prefixes corresponding to
+rules are stored in the tree\footnote{We do not have to assume that they are
+actually stored in a real tree; this tree is implicit in the LMP scheme.},
+then the tree is traversed from the root downwards, and the last found rule is
+used. This explains why we require the cached nodes to form a subforest:
+leaving a less specific rule on the router while evicting a more specific one
+(i.e., keeping a~tree node in cache while evicting its descendant) will result
+in a~situation where packets will be forwarded according to the less specific
+rule, and hence potentially exit through the wrong port. The LMP scheme also
+ensures that the described approach is implementable: one could simply add
+an~artificial rule at the tree root in the router (matching an empty prefix).
+This ensures that when no actual matching rule is found in the router (in the
+cache), the packet will be forwarded according to this artificial rule to the
+controller that stores all the rules and can handle all packets appropriately.
+
+%Additionally, a rule may need to be updated. For example, due to a~change
+%communicated by a dynamic routing protocol (e.g., BGP) the action defined by
+%a~rule has to be modified. In either case, we have to update the rules at the
+%controller: we assume that this cost is zero. (This cost is unavoidable for
+%any algorithm, so such an assumption makes our problem only more difficult.)
+%Furthermore, if the rule is also stored at the router, then we have to pay a~fixed
+%cost of $\alpha$ for updating the router (see the remark for the cost of
+%fetches and evictions). Such penalties can be easily simulated in our model:
+%we issue a~sequence of $\alpha$ negative requests to the updated node.  It is
+%straightforward to show that the costs in these two models can differ by a
+%factor of at most $2$. For a~formal argument, see
+%\lref[Appendix]{sec:bisimulation}.
+
+
+
+
+In contemporary networks, the control plane component can be physically separated from the forwarding plane, and to perform remote management over the network it uses protocols such as OpenFlow~\cite{openflow}.
+In such scenario, excessive cache updates cause not only delay in packet processing, but also cause congestion in the network between the forwarding component and the control component.
+
+Our formal model is a novel variant of competitive paging, a~classic online
+problem.
+Caching scenarios are best expressed and analysed in online settings.
+Similarly to Chapter~\ref{ch:dynamic-mapping}, we use the competitive analysis to determine the performance of our strategy~\cite{borodin-book}.
+In this thesis, we consider the variant of caching with dependencies among cached elements motivated by the structure of forwarding table.
+In the framework of the competitive analysis, the paging problem was
+first analyzed  by Sleator and Tarjan~\cite{competitive-analysis}, who presented $k$-competitive algorithms (where $k$ is the cache size) and a matching lower-bound.
+The simple paging problem was later generalized to allow different fetching
+costs (weighted paging)~\cite{double-coverage,young-paging-greedy-dual} and
+additionally different item sizes (file caching)~\cite{young-paging-landlord},
+with the same competitive ratio.
+%Asymptotically same results can be achieved
+%when bypassing is allowed (see \cite{caching-rejection-penalties,paging-irani}
+%and references therein).
+To the best of our knowledge, the variant of caching, where fetching items to
+the cache is not allowed unless some other items are cached (e.g., because of 
+tree dependencies) was 
+not considered previously in the framework of competitive analysis.
+
+
+
+
 \section{Problem Definition}\label{sec:preliminaries}
 
 %In the classic online paging problem, items of some universe are requested by
@@ -137,7 +293,7 @@ analyze both \ALGTC and \OPT on a~single fixed phase $P$. We denote the times at
 which $P$ starts and ends by $\beP$ and $\enP$, respectively, i.e., rounds in
 $P$ are numbered from $\beP+1$ to $\enP$. A proof of the following technical
 lemma follows by induction and is presented in 
-\lref[Appendix]{sec:proof_of_lemma_1}.
+\lref{sec:proof_of_lemma_1}.
 
 
 \begin{lemma}
@@ -735,6 +891,96 @@ all phases of $I$ yields $\ALGTC(I) \leq O(R) \cdot \OPT(I) + O(h(T) \cdot \kALG
 \cdot \alpha)$.
 \end{proof}
 
+\section{No over-requested changesets}
+\label{sec:proof_of_lemma_1}
+
+Before proving \lref[Lemma]{lem:no_over-requested_changesets}, 
+we present the following technical claim.
+
+
+\begin{claim}
+\label{cla:inductive_properties}
+For any phase $P$, the following invariants hold for any time $t > \beP$:
+\begin{enumerate}
+\item $\cnt_{t-1}(X) < |X| \cdot \alpha$ for a valid changeset $X$ for $C_t$,\hspace{-1em}
+\label{item:prop1}
+\item $\cnt_t(X) \leq |X| \cdot \alpha$ for a valid changeset $X$ for $C_t$,
+\label{item:prop2}
+\item any changeset $X$ with property $\cnt_t(X) = |X| \cdot \alpha$ contains 
+the node requested at round $t$.
+\label{item:propmid}
+\end{enumerate}
+\end{claim}
+
+\begin{proof}
+First observe that \lref[Invariant]{item:prop1} (for time $t$) along with the
+fact that round $t$ contains only one request immediately implies that
+$\cnt_t(X) \leq \cnt_{t-1}(X) + 1 \leq (|X| \cdot \alpha - 1) + 1 = |X|
+\cdot \alpha$, i.e., \lref[Invariant]{item:prop2} for time~$t$. Furthermore the equality may
+hold only for changesets containing the node requested at round $t$, which
+implies \lref[Invariant]{item:propmid} for time $t$.
+
+It remains to show that \lref[Invariant]{item:prop1} holds for any step $t >
+\beP$. It is trivially true for $t = \beP+1$ 
+as $\cnt_{t-1}(X) = 0$ then. Let $t+1$ be the earliest time in phase $P$ for
+which \lref[Invariant]{item:prop1} does not hold; we will then show a
+contradiction with the definition of \ALG or a contradiction with other
+Invariants at time $t$. That is, we assume that there exists a positive
+changeset $X$ for $C_{t+1}$ such that $\cnt_t(X) \geq |X| \cdot \alpha$ (the
+proof for a negative changeset is analogous). Note that \ALG must have
+performed an action (fetch or eviction) at time $t$ as otherwise $X$ would be
+also  a changeset for $C_t = C_{t+1}$ with $\cnt_t(X) \geq |X| \cdot \alpha$,
+which means that $X$ should have been applied by \ALG at time $t$. We consider
+two cases.
+
+If \ALG fetches a positive changeset $Y$ at time $t$, $C_{t+1} = C_t \sqcup Y$
+and $\cnt_t(Y) = |Y|\cdot\alpha$. Then, $Y \sqcup X$ is a changeset for $C_t$,
+and $\cnt_t(Y \sqcup X) \geq |Y \sqcup X| \cdot \alpha$. This contradicts
+the maximality property of set~$Y$ chosen at time~$t$ by~\ALG.
+
+If \ALG evicts a negative changeset $Y$ at time $t$, $C_{t+1} = C_t \setminus
+Y$. \lref[Invariant]{item:prop2} and the definition of \ALG implies $\cnt_t(Y) =
+|Y| \cdot \alpha$, and thus, by \lref[Invariant]{item:propmid}, $Y$ contains
+the node requested at round $t$. As $X \cap Y \subseteq C_t$, \mbox{$X \cap Y$} does
+not have any positive requests at time~$t$, and therefore $\cnt_t(X \setminus
+Y) = \cnt_t(X) \geq |X| \cdot \alpha \geq |X \setminus Y| \cdot \alpha$. By
+\lref[Invariant]{item:prop2}, $\cnt_t(X \setminus Y) \leq |X \setminus Y|
+\cdot \alpha$, and hence $\cnt_t(X \setminus Y) = |X \setminus Y| \cdot
+\alpha$. This contradicts \lref[Invariant]{item:propmid} as $X \setminus Y$
+cannot contain the node requested at round $t$ (because $Y$ contains this
+node).
+\end{proof}
+
+
+\begin{proof}[Proof of Lemma~\ref*{lem:no_over-requested_changesets}]
+The inequality $\cnt_t(X) \leq |X| \cdot \alpha$ is equivalent to
+\lref[Invariant]{item:prop2} of \lref[Claim]{cla:inductive_properties}.
+Assume now that $X$ is applied at time $t$. By the definition of \ALG,
+$\cnt_t(X) \geq |X| \cdot \alpha$, and thus $\cnt_t(X) = |X| \cdot \alpha$,
+i.e., \lref[Property]{lemit:2} follows. Then, \lref[Invariant]{item:propmid}
+of \lref[Claim]{cla:inductive_properties} implies \lref[Property]{lemit:1}.
+Finally, \lref[Invariant]{item:prop1} of
+\lref[Claim]{cla:inductive_properties} for time $t+1$ is equivalent to
+\lref[Property]{lemit:3}.
+
+To show \lref[Property]{lemit:4}, observe that the changeset $X$
+applied at time $t$ cannot be a disjoint union of two (or more) valid
+changesets $X_1$ and $X_2$. By \lref[Property]{lemit:2}, $|X| \cdot \alpha =
+\cnt_t(X) = \cnt_t(X_1) + \cnt_t(X_2)$. If $\cnt_t(X_1) < |X_1| \cdot \alpha$
+or $\cnt_t(X_2) < |X_2| \cdot \alpha$, then $\cnt_t(X_1) + \cnt_t(X_2) <
+(|X_1| + |X_2|) \cdot \alpha = |X| \cdot \alpha$, a contradiction. Therefore,
+$\cnt_t(X_1) = |X_1| \cdot \alpha$ and $\cnt_t(X_2) = |X_2| \cdot
+\alpha$. But then \lref[Invariant]{item:propmid} of
+\lref[Claim]{cla:inductive_properties} would imply that both $X_1$ and $X_2$
+contain a node requested at time $t$, which is a~contradiction as they are
+disjoint.
+
+Therefore, if $X$ is a positive changeset applied at $t$, then $X$ is a~single
+tree cap of a tree from subforest $C_{t+1}$, and likewise if $X$ is negative,
+then $X$ is a~single tree cap of a~tree from subforest $C_t$.
+\end{proof}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -908,29 +1154,6 @@ for finding set $|X_t|$ is $O(h(T) + \deg(T) \cdot |X_t|)$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\section{Conclusions}\label{sec:conclusion}
-
-In this chapter we define a novel variant of online paging which finds
-applications in the context of IP routing networks where forwarding rules can
-be cached. We presented a deterministic online algorithm that achieves a
-provably competitive trade-off between the benefit of caching and update costs.
-
-It is worth noting that, in the offline setting, choosing the best static cache 
-in the presence of only positive requests is known as a~\emph{tree sparsity}
-problem and can be solved in $O(|T|^2)$ time~\cite{tree-sparsity}.
-
-We believe that our work opens interesting directions for future research.
-Most importantly, it will be interesting to study the optimality of the
-derived result; we conjecture that the true competitive ratio does not 
-depend on the tree height. In particular, primal-dual approaches that were
-successfully applied for other caching
-problems~\cite{young-paging-greedy-dual,generalized-caching-optimal,generalized-caching-bansal} may turn out to be useful also for the considered variant. 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 \section{Cache Updates with Fixed Cost}
 \label{sec:bisimulation}
 
@@ -1020,3 +1243,26 @@ problem that enforces the competitive ratio  $R = \kALG/(\kALG-\kOPT+1)$
 \cite{competitive-analysis} immediately implies the lower bound of $\Omega(R)$
 on the competitive ratio for the tree caching problem.
 \end{proof}
+
+\section{Conclusions}\label{sec:conclusion-caching}
+
+In this chapter we define a novel variant of online paging which finds
+applications in the context of IP routing networks where forwarding rules can
+be cached. We presented a deterministic online algorithm that achieves a
+provably competitive trade-off between the benefit of caching and update costs.
+
+It is worth noting that, in the offline setting, choosing the best static cache 
+in the presence of only positive requests is known as a~\emph{tree sparsity}
+problem and can be solved in $O(|T|^2)$ time~\cite{tree-sparsity}.
+
+We believe that our work opens interesting directions for future research.
+Most importantly, it will be interesting to study the optimality of the
+derived result; we conjecture that the true competitive ratio does not 
+depend on the tree height. In particular, primal-dual approaches that were
+successfully applied for other caching
+problems~\cite{young-paging-greedy-dual,generalized-caching-optimal,generalized-caching-bansal} may turn out to be useful also for the considered variant. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

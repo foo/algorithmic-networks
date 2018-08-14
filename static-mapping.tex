@@ -55,7 +55,6 @@ types~$\{c_1,\ldots,c_4\}$ (depicted as \emph{circles}). The chunk replicas need
  the network connecting them to chunks (at bandwidth~$\CostTrans$) is \emph{dashed}. In addition, the virtual machines are inter-connected among
  each other at bandwidth~$\CostCom$ (\emph{dotted}). The objective of the embedding algorithm is to minimize the overall bandwidth allocation
  (sum of \emph{dashed} and \emph{dotted} lines).}\label{fig:overview}
-\vspace{-1em}
 \end{figure}
 
 
@@ -149,7 +148,6 @@ to~$\RS+\MA+\BW$ (resp.~its subproblems).
 \centering
 \includegraphics[width=0.49\columnwidth]{figs/static-mapping/venn_flow.pdf}
 \caption{Variants solved by flow approach.}
-\vspace{-1em}
 \label{fig:venn_flow}
 \end{figure}
 
@@ -213,12 +211,11 @@ capacity due to~$\CC$.
 
 \begin{figure}
 \centering
-\includegraphics[width=0.45\columnwidth]{figs/static-mapping/flow_ma_cv}
+\includegraphics[width=0.4\columnwidth]{figs/static-mapping/flow_ma_cv}
 \caption{Example of flow construction: Problem instance with two nodes, four chunk
 types, and two replicas per type. The min-cost-max-flow
 is indicated by the dashed lines: each line represents one unit of flow.
 }
-\vspace{-1em}
 \label{fig:flow_construction}
 \end{figure}
 
@@ -278,7 +275,6 @@ and uncapacitated networks, we can simply set~$U=\tau$.
 \centering
 \includegraphics[width=0.49\columnwidth]{figs/static-mapping/venn_matching.pdf}
 \caption{Variants solved by matching approaches.}
-\vspace{-1em}
 \label{fig:venn_match}
 \end{figure}
 This section presents faster algorithms to solve 
@@ -535,7 +531,7 @@ node interconnect sum up to~$20 \cdot \CostCom$.
 \includegraphics[width=0.49\columnwidth]{figs/static-mapping/venn_dp.pdf}
 \caption{Variants solved by dynamic programming approach.}
 \vspace{-1em}
-\label{fig:venn_flow}
+\label{fig:venn_dp}
 \end{figure}
 
 Figure~\ref{fig:dynamic_motivation} \emph{(right)} shows a different node
@@ -987,8 +983,7 @@ As a way to deal with replication, we use the families of chunk types using the 
 We extend the construction of a gadget for chunk type with redundancy, by incorporating the fact that the multi-assignment factor is $4$.
 For the construction to remain correct given such a multi-assignment factor, we introduce further chunks types with one chunk replica to place in the chunk gadget and use the excessive $3$ data processing capacities.
 
-\textbf{Construction.}
-For arbitrary instance~$I_{\TDPM}$ of~$\TDM$ we construct a~$\RS(2)+\MA(4)+\FP$ instance~$I_{\VCEMB}$ the way described in the remainder of this section.
+\textbf{Construction.} For an arbitrary instance~$I_{\TDPM}$ of~$\TDM$ we construct a~$\RS(2)+\MA(4)+\FP$ instance~$I_{\VCEMB}$ the way described in the remainder of this section.
 Let $k = |X|=|Y|=|Z|$.
 
 By $T$ we denote the set of all triples of $I_{\TDPM}$, and let $t = |T|$.
@@ -1026,10 +1021,8 @@ Formally, the construction of chunk types and replicas unfolds as follows:
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.99\columnwidth]{figs/static-mapping/overview}
-  \vspace{-1em}
-  \caption{Overview of the substrate network}
-  \vspace{-1em}
+  \includegraphics[width=0.9\columnwidth]{figs/static-mapping/overview}
+  \caption{Overview of the substrate network.}
   \label{fig:red-ma2}
 \end{figure}
 
@@ -1227,7 +1220,7 @@ Additional nodes do not interfere with the rest of the construction, as we provi
 
 \noindent \textbf{Construction.}
 
-For arbitrary instance~$I_{\TDPM}$ of~$\TDM$ we construct a~$\RS(2)+\FP+\CC+\BW$ instance~$I_{\VCEMB}$ the way described in the remainder of this section.
+For an arbitrary instance~$I_{\TDPM}$ of~$\TDM$ we construct a~$\RS(2)+\FP+\CC+\BW$ instance~$I_{\VCEMB}$ the way described in the remainder of this section.
 Let $k = |X|=|Y|=|Z|$.
 By $T$ we denote the set of all triples of $I_{\TDPM}$, and let $t = |T|$.
 For each $e\in X\cup Y\cup Z$, by $T_e$ we denote the set of all triples that contain element $e$.
@@ -1257,17 +1250,16 @@ chunk types called \emph{unique chunks}. We
 refer to the set of unique chunks by~$U$.
 \end{enumerate}
 
-\emph{The substrate network.}
-We construct the tree that has the following structure (see Figure~\ref{fig:red-cc}):
-
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.99\columnwidth]{figs/static-mapping/overview2}
-  \label{fig:red-cc}
-  \vspace{-1em}
-  \caption{Overview of the substrate network}
-  \vspace{-1em}
+  \includegraphics[width=0.9\columnwidth]{figs/static-mapping/overview2}
+  \caption{Overview of the substrate network.}
+  \label{fig:overview2}
 \end{figure}
+
+
+\emph{The substrate network.}
+We construct the tree that has the following structure (see Figure~\ref{fig:overview2}):
 
 \begin{enumerate}
   \item The physical network consists of three subtrees connected to
@@ -1395,7 +1387,7 @@ constructed subtree.
 
 
 \begin{lemma}
-  In $S_{\VCEMB}$ the number of nodes spawned in Element Gadget of
+  In the solution $S_{\VCEMB}$, the number of nodes spawned in Element Gadget of
   element~$e$ is~$\deg(e)-1$.
   \label{lem:bandwidth3}
 \end{lemma}
@@ -1498,7 +1490,7 @@ Using the properties of the substrate network, we perform the reduction in the f
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Summary}\label{sec:conclusion}
+\section{Summary}\label{sec:conclusion-static}
 
 In this chapter we have shown that despite the
 multiple dimensions of flexibility in terms of chunk assignment and node placement, 
@@ -1576,7 +1568,6 @@ problem NP-hard.
 \centering
 \includegraphics[width=0.69\columnwidth]{figs/static-mapping/venn_full2.pdf}
 \caption{Fastest algorithms for different respective problem variants. Variants depicted by solid black are NP-hard, and variants depicted by checked filling are trivially solvable. For the remainder of variants we provide the fastest algorithm determined by the key.}
-\vspace{-1em}
 \label{fig:venn_full}
 \end{figure}
 

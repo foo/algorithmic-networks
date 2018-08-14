@@ -6,7 +6,7 @@ across $\ell$~clusters, each of size~$k$. We call two nodes~$u,v\in V$
 \emph{collocated} if they are in the same cluster.
 
 An input to the problem is a sequence of communication requests $\sigma =
-(u_1,v_1),$ $(u_2,v_2), (u_3,v_3), \ldots$, where pair $(u_t,v_t)$ means that
+(u_1,v_1),$ $(u_2,v_2),$ $(u_3,v_3), \ldots$, where pair $(u_t,v_t)$ means that
 nodes exchange a fixed amount of data. For succinctness of later descriptions,
 we assume that a request $(u_t,v_t)$ occurs at time $t \geq 1$. At any time~$t
 \geq 1$, an online algorithm needs to serve the~communication
@@ -67,7 +67,7 @@ with cluster capacity~$k$.
 \label{sec:upper}
 
 As a warm-up and to present the model, we start with a straightforward $O(k^2
-\cdot \ell^2)$-competitive deterministic algorithm \DET. At any time, \DET
+\cdot \ell^2)$-com\-pe\-ti\-ti\-ve deterministic algorithm \DET. At any time, \DET
 serves a request, adjusts its internal structures (defined below)
 accordingly and then possibly migrates nodes. \DET operates in phases, and each
 phase is analyzed separately. The first phase starts with the first request.
@@ -395,8 +395,8 @@ at the beginning of an input sequence.
 
 \begin{lemma}
 \label{lem:opt_recursive_bound}
-For any non-trivial component $c$, it holds that $\OPT(c) \geq (|Y_c| - 1)
-\cdot \alpha - \sum_{b \in S(c)} (|Y_b| - 1) \cdot \alpha$.
+For any non-trivial component $c$, it holds that
+$$\OPT(c) \geq (|Y_c| - 1)\cdot \alpha - \sum_{b \in S(c)} (|Y_b| - 1) \cdot \alpha\enspace.$$
 \end{lemma}
 
 \begin{proof}
@@ -510,7 +510,7 @@ remain unchanged.
 \begin{lemma}
 \label{lem:crep_mig}
 For any input $\sigma$, with $(2+\eps)$-augmentation, 
-$\CREPmig(\sigma) \leq (1+4/\eps) \cdot \alpha \cdot \sum_{m \in M(\sigma)} \size(m)$.
+$$\CREPmig(\sigma) \leq (1+4/\eps) \cdot \alpha \cdot \sum_{m \in M(\sigma)} \size(m)\enspace.$$
 \end{lemma}
 
 \begin{proof}
@@ -615,9 +615,9 @@ merge actions that led to the creation of the eventually deleted component.
 \begin{lemma}
 \label{lem:bounding_merges}
 For any input $\sigma$, it holds that 
-$\sum_{m \in M(\sigma)} \size(m) 
+$$\sum_{m \in M(\sigma)} \size(m) 
 	\leq \sum_{c \in \del(\sigma)} |c| \cdot \log k +
-	\sum_{c \in \final(\sigma)} |c| \cdot \log |c|$,
+	\sum_{c \in \final(\sigma)} |c| \cdot \log |c|\enspace,$$
 where all logarithms are binary.
 \end{lemma}
 

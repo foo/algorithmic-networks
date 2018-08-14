@@ -5,7 +5,6 @@
 
 \usepackage{graphicx}
 \usepackage[ruled,vlined,commentsnumbered]{algorithm2e}
-\usepackage{hyperref}
 \usepackage[shortlabels]{enumitem}
 \usepackage[utf8]{inputenc}
 \usepackage{comment}
@@ -15,6 +14,11 @@
 \usepackage{xcolor}
 \usepackage{float}
 \usepackage[font=footnotesize,labelfont=bf]{caption}
+
+\usepackage{url}
+\usepackage{breakurl}
+\usepackage[breaklinks]{hyperref}
+\def\UrlBreaks{\do\/\do-}
 
 \usepackage{indentfirst}
 
@@ -53,7 +57,7 @@
 
 \part{Managing Resources in Routers}
 
-\chapter{Optimizing Routing Tables}
+\chapter{Caching of Routing Tables}
 \label{ch:packet-forwarding}
 
 \input{cache-management}
