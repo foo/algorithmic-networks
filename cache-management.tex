@@ -1,48 +1,4 @@
-\section{Packet forwarding}
-
-In the second part of this thesis, we consider the fundamental problem of \emph{packet forwarding}.
-We focus on a single router, that physically connects different networks and is responsible for passing packets between them.
-Upon receiving a data packet, the router forwards it to a~specific output port leading to a neighbouring network.
-To choose the appropriate port, the router stores of a \emph{forwarding table}, which consists of rules describing how to map the packet destination addresses to appropriate ports.
-
-Certain routers (e.g. in Internet exchange points) are located near the core of the Internet, and forward packets among large number of networks.
-Hence, their forwarding tables usually contain forwarding entries for all of them.
-In Figure~\ref{fig:bgp-entries}, we see the growth of the number of entries in the global forwarding table \cite{url-bgp-entries}.
-Size of forwarding tables of the routers in the core of the Internet are approaching such size.
-Those routers have to store an~enormous number of forwarding rules: the
-number of rules has doubled in the last six years~\cite{bgp-routeviews} and
-the superlinear growth is likely to be sustained~\cite{steve-myth}.
-
-It is worth noting that networks can be either physical or virtual.
-The concept of virtual networks described in Part~\ref{pt:virtual-networks} contributes immensely to partition of the Internet into subnetworks, and to growth of forwarding tables.
-
-
-The router maintains the forwarding table in its memory.
-Only a small restricted set of operations is performed on such memory: lookups and updates.
-Nowadays, routers perform milions of lookup operations and thousands updates (see, e.g. a raport~\cite{bgp-updates}), and the utilizing specialized hardware is crucial for the efficiency of packet forwarding.
-Hence, instead of relying on the general-purpose memory such as RAM (where lookup operation is costly), the specialized memory units such as TCAM~\cite{tcam-memory} are utilized.
-The TCAM memory is an associative memory storage with a variation of pattern-matching lookup that closely matches the way the forwarding rules are used.
-
-With the growth of the Internet, the number of connected networks increases with rapid progression, which often induces new forwarding rules to store.
-In effect, the size of forwarding table exceeds the amount of available TCAM memory in a typical router (the phenomenon called the TCAM exhaustion~\cite{tcam-exhaust}).
-Sophisticated electronics circuits such as TCAM are very expensive and power-hungry~\cite{tcam-expensive} in comparison to RAM.
-Moreover, typical operations performed on TCAM memory examine the whole contents stored in memory, which requires closely connected physical structure among memory cells --- as the result, it is expensive to expand available memory.
-
-Limited size of memory and expanding size of the content to store brings new challenges in memory management of the routers.
-In the second part of this thesis, we investigate the following problem, using the tools provided by contemporary routers:
-\begin{center}
-  \emph{How to efficiently manage the memory of forwarding devices?}
-\end{center}
-
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.59\columnwidth]{figs/bgp-entries.png}
-\caption{The number of entries in the global forwarding table. The global forwarding table is built upon the informations exchanged via Border Gateway Protocol. The graph presents the growth of the global forwarding table from 1988 to 2018.}\label{fig:bgp-entries}
-\end{figure}
-
-\section{Caching of Forwarding Rules}
-
+In this chapter, we propose a novel solution for management of growing set of forwarding rules.
 A~solution, which could delay
 the need for expensive or impossible memory upgrades in routers, is to store
 only a subset of rules in the actual router and store all rules on a~secondary
@@ -200,7 +156,7 @@ $T$}, i.e., a union of disjoint subtrees of~$T$.  We call this problem
 \emph{online tree caching}.
 
 Furthermore, we assume a bypassing model and distinguish between two types of
-requests: a request can be either \emph{positive} or \emph{negative}. The
+requests: a~request can be either \emph{positive} or \emph{negative}. The
 positive requests correspond to ``normal'' requests known from caching
 problems: we pay~$1$ if the node is not cached; for a negative request, we pay
 $1$ if the corresponding request is cached. After serving the request, we may
@@ -254,14 +210,14 @@ such fetch or eviction.
 
 More concretely, \ALGTC operates in multiple phases. The first phase starts at time $0$.
 \ALGTC starts each phase with the empty cache and proceeds as follows. Within a
-phase, every node keeps a counter, which is initially zero. If at round~$t$ it
+phase, every node keeps a~counter, which is initially zero. If at round~$t$ it
 pays~$1$ for serving the request, it increments its counter. Whenever a node
 is fetched or evicted from the cache, its counter is reset to zero. Note that
 this implies that the counter of $v$ is equal to the number of negative
 (positive) requests to $v$ since its last fetching to the cache (eviction from
 the cache). For a~set $A \subseteq T$, we denote the sum of all counters in
 $A$ at time $t$ by $\cnt_t(A)$. At time~$t$, \ALGTC verifies whether
-there exists a valid changeset $X$, such that
+there exists a~valid changeset $X$, such that
 \begin{itemize}
 \item \emph{(saturation property)} $\cnt_t(X) \geq |X| \cdot \alpha$ and
 \item \emph{(maximality property)} $\cnt_t(Y) < |Y| \cdot \alpha$ for any valid
@@ -532,7 +488,7 @@ cap $D$ of $X_t$.
 \end{corollary} 
 
 Informally speaking, the corollary above states that the average amount of
-requests in a positive field is \emph{at least as large at the top of the
+requests in a~positive field is \emph{at least as large at the top of the
 field as at its bottom}. For a negative field this relation is reversed.
 
 
@@ -633,7 +589,7 @@ nodes of $T(v)$ get $\alpha / 2$ requests each.
 We order the nodes $u_1, u_2, \ldots u_{|T(v) \cap X_t|}$ of $T(v) \cap X_t$,
 so that $\last_{u_i}(t) \leq \last_{u_{i+1}}(t)$ for all $i$. In case of a
 tie, we place nodes that are closer to $v$ first. Note that this linear
-ordering is an extension of the partial order defined by the tree: the parent
+ordering is an~extension of the partial order defined by the tree: the parent
 of a~node cannot be evicted later than the node itself (otherwise the cache
 would cease to be a subforest of $T$). In particular, it holds that $u_1 = v$.
 
@@ -925,7 +881,7 @@ It remains to show that \lref[Invariant]{item:prop1} holds for any step $t >
 as $\cnt_{t-1}(X) = 0$ then. Let $t+1$ be the earliest time in phase $P$ for
 which \lref[Invariant]{item:prop1} does not hold; we will then show a
 contradiction with the definition of \ALG or a contradiction with other
-Invariants at time $t$. That is, we assume that there exists a positive
+Invariants at time $t$. That is, we assume that there exists a~positive
 changeset $X$ for $C_{t+1}$ such that $\cnt_t(X) \geq |X| \cdot \alpha$ (the
 proof for a negative changeset is analogous). Note that \ALG must have
 performed an action (fetch or eviction) at time $t$ as otherwise $X$ would be
@@ -994,9 +950,8 @@ performed efficiently. In particular, in the following two subsections, we
 will prove the following theorem.
 
 \begin{theorem}
-\ALGTC can be implemented using $O(|T|)$ additional memory, so that to make a
-decision at time~$t$, it performs $O(h(T) + \max \{ h(T), \degree(T) \} \cdot |X_t|)$ operations,
-where $\degree(T)$ is a maximum node degree in $T$ and 
+\ALGTC can be implemented using $O(|T|)$ additional memory, so that to make a~decision at time~$t$, it performs $O(h(T) + \max \{ h(T), \degree(T) \} \cdot |X_t|)$ operations,
+where $\degree(T)$ is a~maximum node degree in $T$ and 
 $X_t$ is the changeset applied at time $t$ ($|X_t| = 0$ if no changeset is
 applied). 
 \end{theorem}
@@ -1173,7 +1128,7 @@ in~$I_T$. It is then possible that an algorithm for $I_T$ modifies the cache
 is called \emph{canonical}.
 
 To alleviate this issue, we first note that any algorithm $B$ for $I_T$ can be
-transformed into a canonical solution $B'$ by postponing all cache modifications
+transformed into a~canonical solution $B'$ by postponing all cache modifications
 that occur during some chunk to the time right after it. Such a transformation
 may increase the cost of a~solution on a~chunk at most by $\alpha$ and such an
 increase occurs only when $B$ modifies a cache within this chunk. Hence, the

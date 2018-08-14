@@ -41,7 +41,7 @@ In order to ensure a predictable application performance, both the connection to
 as well as the interconnection between the nodes may have to ensure certain
 minimal bandwidth guarantees; we will refer to the first type of virtual network as the \emph{(chunk) access
 network}, and to the second type of virtual network as the \emph{(node) inter-connect}; the latter
-is modeled as a complete network (a \emph{clique}). Concretely, we assume that an  active chunk
+is modeled as a~complete network (a \emph{clique}). Concretely, we assume that an  active chunk
 is connected to its node at a minimal (guaranteed) bandwidth~$\CostTrans$, and a node is connected to any other node
 at minimal (guaranteed) bandwidth~$\CostCom$.
 Figure~\ref{fig:overview} gives an overview of our model.
@@ -61,12 +61,12 @@ types~$\{c_1,\ldots,c_4\}$ (depicted as \emph{circles}). The chunk replicas need
 \subsection{Optimization Objective}
 
 Our goal is to develop algorithms which 
-accept and embed a request
-whenever this is possible, and minimize the \emph{resource footprint}: the amount of resources which have to be dedicated to a request, in order to realize its guarantees.
+accept and embed a~request
+whenever this is possible, and minimize the \emph{resource footprint}: the amount of resources which have to be dedicated to a~request, in order to realize its guarantees.
 Essentially, the footprint captures the overall resource allocation, and is the most common objective function considered in the literature (a.k.a.~as the min-sum objective guarantee)
 \cite{fischer-survey}.
 
-Formally, let~$\dist(v,\achunk)$ denote the distance (in the underlying physical network~$\Tree$) between a node~$v$ and
+Formally, let~$\dist(v,\achunk)$ denote the distance (in the underlying physical network~$\Tree$) between a~node~$v$ and
 its assigned (active) chunk replica~$\achunk$, and let~$\dist(v_1,v_2)$ denote the distance between the two nodes~$v_1$ and~$v_2$.
 We define the \emph{footprint}~$\Cost(v)$ of a node~$v$ as follows:
 $$
@@ -154,7 +154,7 @@ to~$\RS+\MA+\BW$ (resp.~its subproblems).
 
 We first present an algorithm to solve the~$\RS+\MA+\CC+\BW$ problem.
 Recall that in this problem variant,
-we are given a set of redundant chunks ($\RS$) and a set of
+we are given a~set of redundant chunks ($\RS$) and a~set of
 nodes
 (the \emph{nodes})
 at fixed locations (no~$\FP$). The number of chunk types is larger than the number
@@ -289,7 +289,7 @@ as matching approaches.
 
 Let us first consider the~$\RS+\MA+\CC$ variant.
 Recall that in this problem,
-we are given a set of redundant chunks ($\RS$) and a set of nodes
+we are given a~set of redundant chunks ($\RS$) and a~set of nodes
 at fixed locations. The number of chunk types is larger than the number
 of nodes ($\MA$), and each node needs to be connected
 to its chunks as well as to other nodes ($\CC$).
@@ -694,7 +694,7 @@ X \times Y \times Z$, and $t=|T|$.  Set~$M \subseteq T$ is a 3-dimensional match
 if and only if, for any two distinct triples~$t_1=(x_1, y_1, z_1) \in M$
 and~$t_2=(x_2, y_2, z_2) \in M$, it holds that~$x_1\neq x_2$,~$y_1\neq
 y_2$, and~$z_1\neq z_2$. Our goal is to decide if we can construct
-a~$M \subseteq T$ which is \emph{perfect}, that is, a subset which covers all
+a~$M \subseteq T$ which is \emph{perfect}, that is, a~subset which covers all
 elements of~$X \cup Y \cup Z$ exactly once.
 
 
@@ -750,7 +750,7 @@ exactly one replica.
 \item \emph{Other properties:} We set the number of to-be-embedded nodes to~$k$,
 $\CostTrans$ to~$1$, and the number of chunk slots in each node to the multi-assignment factor
 $\MaFactor=3$.
-We use a threshold~$\Thr= 4
+We use a~threshold~$\Thr= 4
 \cdot k$.
 \end{itemize}
 
@@ -766,13 +766,12 @@ exactly once. This instance only has one solution:~$M =
 
 To construct the corresponding instance~$I'$ of~$\FP+\RS+\MA$, we
 create a gadget for each triple in~$T$. For each variable which occurs in a
-triple, the corresponding gadget contains a chunk of the
+triple, the corresponding gadget contains a~chunk of the
 type of the variable. The triple
 $(x_2, y_1, z_2)$ of the instance is represented by the middle gadget in
 Figure~\ref{fig:fprsma}. The objective of~$I'$ is to spawn~$k=2$ nodes,
 with the smallest possible footprint. If the total footprint is at most $4\cdot k$, we can construct a solution to~$I$ from the solution to~$I'$.
-The footprint consists of the costs which occur when a node is embedded in a
-gadget, and the three chunks of that gadget which are assigned to that node: one of
+The footprint consists of the costs which occur when a node is embedded in a~gadget, and the three chunks of that gadget which are assigned to that node: one of
 the chunks is collocated with the node, the other two have to be transferred
 via two hops, inflicting unitary costs on each hop.
 \begin{figure}[t]
@@ -797,7 +796,7 @@ $\FP+\RS+\MA$ is NP-hard.
 Let~$I$ be an instance of~$\TDM$ and let~$I'$ be an instance of
 $\FP+\RS+\MA$ constructed as described above. We prove that~$I'$ has a solution of cost~$\leq \Thr$ if ($\Rightarrow$) and only if
 ($\Leftarrow$)
-$I$ has a matching of size~$k$.
+$I$ has a~matching of size~$k$.
 
 ($\Rightarrow$) Let us take a feasible solution to~$\TDM$. We place a node in every
 gadget that corresponds to the chosen triples. In each of the corresponding
@@ -842,7 +841,7 @@ chunk replicas placed in the same way.
 be converted into solutions for the 3-DM problem. We use the cost threshold
 $\Thr =  6 \cdot k + 18 \cdot
 (k - 1) \cdot k$, to verify whether a solution achieves this, transforming
-$\FP+\RS+\CC$ into a decision problem. A detailed explanation of this value can
+$\FP+\RS+\CC$ into a decision problem. A~detailed explanation of this value can
 be found in the proof of Theorem~\ref{theorem:fp_rs_cc}.
 \item We set the access cost~$\CostTrans$ to a chunk replica to a high value~$W$. This will force
 nodes to be collocated with the replica. One example of sufficient
@@ -887,7 +886,7 @@ Let~$I$ be an instance of~$\TDM$ and let~$I'$ be an instance of
 $\FP+\RS+\CC$ constructed as described above.
 We prove that~$I'$ has solution of cost~$\leq \Thr$ if ($\Rightarrow$) and only if
 ($\Leftarrow$)
-$I$ has a solution.
+$I$ has a~solution.
 
 ($\Rightarrow$) In order to compute a solution
 for~$I'$ given a solution for~$I$, we proceed as follows.
@@ -1211,7 +1210,7 @@ As we further see in Lemma~\ref{lem:bandwidth1}, such bandwidth constraint in fo
 To see this, consider a simple example: regardless of the bandwidth constraint on the uplink of the subtree, capacities are not exceeded in at least two scenarios: with all $m$ nodes spawned in the subtree, and with $0$ nodes spawned in the subtree.
 More precisely, bandwidth constraints in such form excludes configurations with number of nodes between $k$ and $m-k$.
 
-However, we are interested only in lower-bounding the number of nodes to spawn in a subtree, and in fact the upper-bound on the number of nodes is only a liability.
+However, we are interested only in lower-bounding the number of nodes to spawn in a~subtree, and in fact the upper-bound on the number of nodes is only a liability.
 We make sure that the upper-bound on the number of nodes is always satisfied by artificially increasing the number of total nodes to be spawned.
 In this way the upper-bound on number of nodes always exceeds the number of leaves of any subtree in which we would like to have $k$ nodes spawned, see Lemmas~\ref{lem:bandwidth2} and \ref{lem:bandwidth3}.
 Additional nodes do not interfere with the rest of the construction, as we provide unique chunks for them to process.

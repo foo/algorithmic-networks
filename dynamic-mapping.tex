@@ -12,8 +12,7 @@ we assume that a request $(u_t,v_t)$ occurs at time $t \geq 1$. At any time~$t
 \geq 1$, an online algorithm needs to serve the~communication
 request~$(u_t,v_t)$. Right before serving the request, the online algorithm
 can repartition the nodes into new clusters. We assume that
-a~communication request between two collocated nodes costs 0. The cost of a
-communication request between two nodes located in different clusters is
+a~communication request between two collocated nodes costs 0. The cost of a~communication request between two nodes located in different clusters is
 normalized to~1, and the cost of migrating a node from one cluster to another
 is~$\alpha \geq 1$, where $\alpha$ is a parameter (an integer). For any
 algorithm \ALG, we denote its total cost (consisting of communication plus
@@ -118,11 +117,10 @@ by the first observation, it is at most $\binom{k \cdot \ell}{2}
 for the last one), it holds that $\DET(P) = O(k^2 \cdot \ell^2 \cdot \alpha)$.
 
 Now we lower-bound the cost of \OPT on any phase $P$ but the last one. If \OPT
-performs a node swap in $P$, it pays $2 \alpha$. Otherwise its assignment of
+performs a~node swap in $P$, it pays $2 \alpha$. Otherwise its assignment of
 nodes to clusters is fixed throughout $P$. Recall that at the end of $P$, \DET
 failed to reorganize the nodes. This means that for any static mapping of the
-nodes to clusters (in particular the one chosen by \OPT), there will be a
-saturated intra-cluster edge. The communication cost over such an~edge incurred
+nodes to clusters (in particular the one chosen by \OPT), there will be a~saturated intra-cluster edge. The communication cost over such an~edge incurred
 by \OPT is at least $\alpha$ (it can be also strictly greater than~$\alpha$ as
 the edge weight only counts the communication requests paid by \DET).
 
@@ -211,7 +209,7 @@ arbitrarily. Weights of all intra-$S$ edges are reset to zero, and thus
 intra-component edge weights are always zero. A mergeable set $S$ induces
 a~sequence of $|S|-1$ \emph{merge actions}:
 \CREP iteratively replaces two arbitrary components 
-from~$S$ by a component being their union (this constitutes a single merge
+from~$S$ by a component being their union (this constitutes a~single merge
 action).
 
 \item \emph{Delete action.} If the component resulting from merge action(s)
@@ -248,7 +246,7 @@ We may assume that $c_x$ and $c_y$ are in different clusters as otherwise
 then $c_x$ is migrated to this cluster. Otherwise, \CREP finds a cluster that
 has at~most $k$ nodes, and moves both $c_x$ and $c_y$ there. We call the
 corresponding actions \emph{component migrations}. By an~averaging argument,
-there always exists a cluster that has at most $k$ nodes, and hence, with
+there always exists a~cluster that has at most $k$ nodes, and hence, with
 $(2+\eps)$-augmentation, component migrations are always feasible.
 
 
@@ -794,7 +792,7 @@ modification allows for a more streamlined analysis and is local: before and
 after the modification, \GREEDY performs a migration and right after that
 it resets weight $w(x,y)$ to zero.
 
-We split processing of a communication request $(x,y)$ into three stages. In
+We split processing of a~communication request $(x,y)$ into three stages. In
 the first stage, \OPT performs an~arbitrary number of migrations. In the
 second stage, weight $w(x,y)$ is increased accordingly and both \OPT and
 \GREEDY serve the request. It is possible that the weight increase triggers a
@@ -1146,8 +1144,7 @@ sequence $\sigma$ of an~arbitrary length, such that $\ONL(\sigma) \geq
 Now we present $k$ offline algorithms $\OFF_1, \OFF_2, \ldots, \OFF_k$, such
 that, neglecting an initial node reorganization that they will perform before
 the input sequence starts, the sum of their total costs on $\sigma$ is exactly
-$|\sigma|$. Toward this end, for any $j \in \{0,\ldots,k-1\}$, we define a
-set~$\cut(j) = \{ e_j, e_{j+k}, e_{j+2k},
+$|\sigma|$. Toward this end, for any $j \in \{0,\ldots,k-1\}$, we define a~set $\cut(j) = \{ e_j, e_{j+k}, e_{j+2k},
 \ldots, e_{j+(\ell-1)\cdot k} \}$. For any~$j$, set $\cut(j)$ defines a
 natural partitioning of all nodes into clusters, each containing $k$ nodes.
 Before processing $\sigma$, the algorithm $\OFF_j$ first migrates its nodes
