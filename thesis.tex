@@ -20,9 +20,13 @@
 \usepackage[breaklinks]{hyperref}
 \def\UrlBreaks{\do\/\do-}
 
+\usepackage{afterpage}
 \usepackage{indentfirst}
 
 \usepackage[margin=1in,bottom=1.2in]{geometry}
+
+
+
 \linespread{1.2}
 
 \input{macros}
@@ -34,6 +38,10 @@
 
 \begin{document}
 \maketitle
+
+\newpage
+\thispagestyle{empty}
+\mbox{}
 
 \tableofcontents
 

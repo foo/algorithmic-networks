@@ -1,22 +1,4 @@
-In this chapter, we propose a novel solution for management of growing set of forwarding rules.
-A~solution, which could delay
-the need for expensive or impossible memory upgrades in routers, is to store
-only a subset of rules in the actual router and store all rules on a~secondary
-device (for example a commodity server with a large but slow
-memory)~\cite{cacheflow,route-caching-flat,prefix-caching,fib-caching-non-overlapping,fibium-zipf}.
-%This solution is particularly attractive with the advent of Soft\-ware-Defined
-%Network (SDN) technology, which allows to manage the expensive memory using a
-%software controller~\cite{cacheflow,fibium-zipf}.
-In particular, our
-theoretical model can describe real-world architectures
-like~\cite{cacheflow,fibium-zipf},
-that is, our model formalizes the underlying operational
-problems of such architectures. Our 
-algorithm, when applied in the context of such architectures, can 
-hence be used to prolong the lifetime of IP routers.
-
-
-In the second part of this thesis, we consider the problem of memory management in routers.
+In the second part of this thesis, we consider the problem of memory management in a single router.
 Modern routers consist of two logical components. Those two components use disjoint memory (often of distinct type) and disjoint processing units:
 \begin{enumerate}
   \item The forwarding plane, which  contains forwarding table described in the previous section, and performs the actual packet transmission according to the forwarding table.
