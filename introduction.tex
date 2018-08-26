@@ -249,20 +249,28 @@ generate large amounts of network traffic~\cite{orchestra,talk-about,amazonbw},
 and over the last years, several systems have been proposed which provide
 a provable network performance, also in shared cloud environments, by supporting
 relative~\cite{faircloud,elasticswitch,seawall}
-or, as in the case of this thesis, \emph{absolute}~\cite{oktopus,secondnet,drl,gatekeeper,proteus} bandwidth reservations
+or, as in the case of this thesis, absolute~\cite{oktopus,secondnet,drl,gatekeeper,proteus} bandwidth reservations
 between the virtual machines.
 
 \medskip
 
-In Chapter~\ref{ch:static-mapping}, we study static virtual network embeddings.
-Our model is enriched by motivations that follow from batch-processing applications~\cite{mapreduce}.
-The most popular virtual network abstraction for such applications today is the \emph{virtual cluster}~\cite{oktopus}, later studied by many others~\cite{talk-about,infocom16,ccr15emb,proteus}.
-From a theoretical perspective, the virtual network embedding problem can be seen as a generalization
-of classic VPN graph embedding problems~\cite{Goyal2008,gupta2001provisioning}. VPN problem requires finding a graph embedding with fixed endpoints, while in virtual network embedding problems studied in this thesis, the embedding endpoints are subject to optimization.
+In Chapter~\ref{ch:static-mapping}, we study virtual network embeddings.
+The most popular virtual network abstraction for batch-processing applications~\cite{mapreduce} today is the \emph{virtual cluster}~\cite{oktopus}, later studied by many others~\cite{talk-about,infocom16,ccr15emb,proteus}.
+The virtual network embedding problem is related to classic VPN graph embedding problems~\cite{Goyal2008,gupta2001provisioning}.
+The VPN problem is NP-hard, and is constant-factor approximable even for assymmetric traffic demands~\cite{vpn-apx}.
+The VPN problem requires finding a graph embedding with fixed endpoints, while in virtual network embedding problems studied in this thesis, the embedding endpoints are subject to optimization.
 In this respect, the virtual network embedding problem can also be seen as related to
-classic Minimum Linear Arrangement problem~\cite{mla-schmoys} which asks for the
+classic Minimum Linear Arrangement problem~\cite{ord-prob,ord-prob2} which asks for the
 embedding of guest graphs on a simple \emph{line topology} (rather than tree-like topologies as
 studied in this thesis).
+
+We consider a variant of virtual network embedding enriched by motivations that follow from batch-processing applications.
+Existing virtual cluster embedding algorithms often ignore a crucial dimension of the problem, namely data locality:
+the input to a batch-processing application such as MapReduce is typically stored in a distributed,
+and sometimes redundant, file system. Since moving
+data is costly, an embedding algorithm should be data locality aware,
+and allocate computational resources close to the data; in case of redundant storage, the algorithm should also optimize the replica selection.
+Note that our variant is not strictly a generalization of a virtual network embedding, as we took simplifing assumptions about the traffic demands.
 
 \medskip
 
@@ -285,12 +293,11 @@ counterpart of our cluster-size augmentation approach. Here, the~goal
 is~to~develop $(\ell,\delta)$-balanced graph partitioning, where the graph has
 to be partitioned into $\ell$ components of~size less than $\delta \cdot (n /
 \ell)$ and the cost of the cut is compared to the optimal (non-augmented)
-solution where all components are of size~$n / \ell$. The variant where
+solution where all components are of size at most $k$. The variant where
 $\delta \geq 2$ was considered in
 \cite{LeMaTr90,SimTen97,EvNaRS00,EvNaRS99,KrNaSc09}. So far, the best result is
 an $O(\!\sqrt{\log n \cdot \log \ell})$-approximation by Krauthgamer et
-al.~\cite{KrNaSc09}, which builds on ideas from the $O(\!\sqrt{\log
-n})$-approximation algorithm for balanced cuts by Arora et al.~\cite{ArRaVa09}.
+al.~\cite{KrNaSc09}.
 
 Our model is related to online
 paging~\cite{SleTar85,FKLMSY91,McGSle91,AcChNo00}, sometimes also referred to
@@ -303,9 +310,8 @@ corresponding nodes to a single cluster). In this light, our model is more
 reminiscent of caching models \emph{with
 bypassing}~\cite{EpImLN11,EpImLN15,Irani02}. As a side result, we show that our problem is
 capable of emulating online paging.
-
-There is a major difference between the dynamic embedding problem and the caching problems.
-These problems typically maintain some configuration of servers or
+There is a major difference between the caching problems and online partition problems.
+The caching problems typically maintain some configuration of servers or
 bought infrastructure and upon a new request (whose cost typically depends on
 the distance to the infrastructure), decide about its reconfiguration (e.g.,
 server movement or purchasing additional links). In contrast, in our model,
