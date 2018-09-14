@@ -1207,4 +1207,12 @@ negligible as the length of $\sigma$ grows.
 
 \section{Conclusions}\label{sec:conclusion-dynamic}
 
-\todo{TODO: empty}
+In this chapter we introduced a formal model for studying a placement of communicating virtual machines in a data center.
+For this model, we proposed and analysed an algorithm that uses minimal resource augmentation to structure groups of communicating virtual machines in a way that guarantees efficiency of moving the group to a different physical machine.
+This approach limits the total number of virtual machines in the data center in favor of reducing network usage by allowing efficient reconfiguration of interacting virtual machines.
+From the theoretical point of view, we designed the algorithm for the resource augmented scenario with competitive ratio $O(k\log k)$ (where $k$ is the capacity of a physical cluster), and we provided a lower-bound of $\Omega(k)$ for the competitive ratio of any deterministic algorithm that holds even in resource-augmented scenario.
+The disparity between the performance of the algorithm and the lower bound encourages future research on improving either one of those.
+
+In our model, we assumed a simplified view of a data center, in particular we neglect the substrate network topology, by assuming that the distance among all physical machines is equal.
+Capturing real-world data center topologies can lead to more network-efficient virtual machine placement.
+It would be vital to either focus on a specific topology (such as e.g. a Fat Tree), or to develop a general solution for arbitrary metric.
