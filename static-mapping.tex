@@ -5,40 +5,39 @@ While nodes of a virtual network can be placed at any feasible physical machine 
 Placing nodes closely to eachother reduces network latency and bandwidth reservations in the data center.
 In this chapter, we investigate mapping a virtual network onto the physical infrastructure: a~task of assigning the nodes of a virtual network to physical machines in a network-efficient way.
 \todo{worker in the intro}
-
+\todo{czy wprowadzam transport cost?}
 
 \section{Problem Definition}\label{sec:model}
 
 As described informally in the introduction, the model combines three components: (1) the substrate network (the servers
 and the connecting physical network),
-(2) the data needs to be processed (divided into data chunks), and
-(3) the virtual network (the virtual machines and the logical network connecting the machines to each other
-as well as to the chunks).
+(2) the virtual network (the virtual machines and the logical network connecting the machines to each other
+as well as to the chunks), and (3) the data needs to be processed (divided into data chunks).
 
 \parag{The Substrate Network.} The substrate network (also known as the \emph{host graph}) represents the physical resources:
 a set~$S$ of~$n_S=|S|$ servers interconnected by a network consisting of a set~$R$ of routers (or switches)
-and a set~$E$ of (symmetric) links. We will often refer to the elements in~$S\cup R$
-as the \emph{vertices}. We will assume that the inter-connecting network forms an arbitrary tree,
+and a set~$E$ of (symmetric) links. We often refer to the elements in~$S\cup R$
+as the \emph{vertices}. We assume that the inter-connecting network forms an arbitrary tree (\maciek{rooted?}),
 where the servers are located at the tree leaves and routers at inner nodes.
 Each server~$s\in S$ can host a certain number
 of virtual machines (available server capacity~$\capacity(s)$), and each link~$e\in E$ has a certain bandwidth
 capacity~$\capacity(e)$.
-
-\parag{The Data.} The to be processed data constitutes the input to the batch-processing application.
-The data is stored in a distributed filesystem in the data-center; this spatial distribution is given and not subject to optimization.
-The input data consists of~$\tau$ different \emph{chunks}~$\achunk_1, \ldots, \achunk_{\ChunkType}$,
-where each chunk~$\achunk_i$ can have~$r_i\geq 1$ instances (or replicas)~$\achunk_{i}^{(1)},\ldots, \achunk_{i}^{(r_i)}$,
- stored at different servers. A single server may host multiple chunks.
-It is sufficient to process one replica, and we will sometimes refer to this
-replica as the \emph{active} (or selected) replica.
 
 \parag{The Virtual Network.} The virtual network consists of a set~$\VirtualNodes$ of~$n_V=|\VirtualNodes|$ virtual machines,
 henceforth often simply called \emph{nodes}.
 Each node~$v \in \VirtualNodes$ can be placed (or, synonymously, \emph{embedded}) on an arbitrary server; this placement is a subject
 to optimization.
 
+\parag{The Data.} The to be processed data constitutes the input to the batch-processing application.
+The data is stored in a distributed filesystem spread across the servers; this spatial distribution is given and not subject to optimization.
+The input data consists of~$\tau$ different \emph{chunks}~$\achunk_1, \ldots, \achunk_{\ChunkType}$,
+where each chunk~$\achunk_i$ can have~$r_i\geq 1$ instances (replicas)~$\achunk_{i}^{(1)},\ldots, \achunk_{i}^{(r_i)}$,
+ stored at different servers. A single server may host multiple chunks.
+It is sufficient to process one replica, and we sometimes refer to this
+replica as the \emph{active} (or selected) replica.
+
 Depending on the available capacity~$\capacity(s)$ of server~$s$, multiple nodes may be hosted on~$s$.
-We will denote the server~$s$ hosting node~$v$ by~$\pi(v)=s$.
+We denote the server~$s$ hosting node~$v$ by~$\pi(v)=s$.
 Since these nodes process the input data, they need to be assigned and connected to the
 chunks. Concretely, for each chunk type~$\achunk_i$, exactly one
 replica~$\achunk_{i}^{(j)}$ must be processed by exactly one node~$v$;
@@ -47,7 +46,7 @@ $\mu$ denotes the assignment of chunks to nodes.
 
 In order to ensure a predictable application performance, both the connection to the chunks
 as well as the interconnection between the nodes may have to ensure certain
-minimal bandwidth guarantees; we will refer to the first type of virtual network as the \emph{(chunk) access
+minimal bandwidth guarantees; we refer to the first type of virtual network as the \emph{(chunk) access
 network}, and to the second type of virtual network as the \emph{(node) inter-connect}; the latter
 is modeled as a~complete network (a \emph{clique}). Concretely, we assume that an  active chunk
 is connected to its node at a minimal (guaranteed) bandwidth~$\CostTrans$, and a node is connected to any other node
@@ -60,73 +59,65 @@ Figure~\ref{fig:overview} gives an overview of our model.
 \caption{Overview: a 9-server datacenter storing~$\tau=4$ different chunk
 types~$\{c_1,\ldots,c_4\}$ (depicted as \emph{circles}). The chunk replicas need to be selected and assigned to the two
  virtual machines~$v_1$ and~$v_2$; the virtual machines are depicted as \emph{squares}, and
- the network connecting them to chunks (at bandwidth~$\CostTrans$) is \emph{dashed}. In addition, the virtual machines are inter-connected among
- each other at bandwidth~$\CostCom$ (\emph{dotted}). The objective of the embedding algorithm is to minimize the overall bandwidth allocation
- (sum of \emph{dashed} and \emph{dotted} lines).}\label{fig:overview}
+ the network connecting them to chunks (using bandwidth~$\CostTrans$) is \emph{dashed}. In addition, the virtual machines are inter-connected among
+ each other using bandwidth~$\CostCom$ (\emph{dotted}). The objective of the embedding algorithm is to minimize the overall bandwidth allocation.}\label{fig:overview}
 \end{figure}
 
 
 \subsection{Optimization Objective}
 
-Our goal is to develop algorithms which 
-accept and embed a~request
-whenever this is possible, and minimize the \emph{resource footprint}: the amount of resources which have to be dedicated to a~request, in order to realize its guarantees.
-Essentially, the footprint captures the overall resource allocation, and is the most common objective function considered in the literature (a.k.a.~as the min-sum objective guarantee)
-\cite{fischer-survey}.
-
+Our goal is to design algoriths that minimize the resource \emph{footprint}, the most common objective function considered in the literature \cite{fischer-survey}.
 Formally, let~$\dist(v,\achunk)$ denote the distance (in the underlying physical network~$\Tree$) between a~node~$v$ and
-its assigned (active) chunk replica~$\achunk$, and let~$\dist(v_1,v_2)$ denote the distance between the two nodes~$v_1$ and~$v_2$.
+its assigned (active) chunk replica~$\achunk$, and let~$\dist(v_1,v_2)$ denote the distance between the two nodes~$v_1$ and~$v_2$ \maciek{(we use the hop count and dist interchangeably)?}.
 We define the \emph{footprint}~$\Cost(v)$ of a node~$v$ as follows:
 $$
-\Cost(v) = \sum_{\achunk\in \mu(v)} \CostTrans \cdot \dist(v,\achunk) \underbrace{+ \frac{1}{2} \cdot \sum_{v' \in \VirtualNodes\setminus\{v\}} \CostCom \cdot \dist(v,v')}_{\text{only for inter-connect}},
+\Cost(v) = \underbrace{\sum_{\achunk\in \mu(v)} \CostTrans \cdot \dist(v,\achunk)}_{chunk access network} +  \underbrace{\frac{1}{2} \cdot \sum_{v' \in \VirtualNodes\setminus\{v\}} \CostCom \cdot \dist(v,v')}_{\text{node inter-connect}},
 $$
- where~$\mu(v)$ is the set of chunks assigned to~$v$. Our goal is to minimize the overall footprint
-$\Cost=\sum_{v\in V} \Cost(v)$.
+where~$\mu(v)$ is the set of chunks assigned to~$v$. Our goal is to minimize the overall resource footprint $\Cost=\sum_{v\in V} \Cost(v)$.
+
+\maciek{Tu info o constraintach: co najwyzej $cap(s)$ node w serwerze; respect all the links}
 
 \subsection{Problem Decomposition}
 
 In order to chart the landscape of the computational tractability and intractability of different
-problem variants, we decompose our problem into its fundamental aspects, namely replica selection
-($\RS$), multiple chunk assignment ($\MA$), flexible node placement ($\FP$), node interconnect ($\CC$),
+problem variants, we decompose our problem into its fundamental aspects, namely multiple chunk assignment ($\MA$),
+replica selection ($\RS$), flexible node placement ($\FP$), node interconnect ($\CC$),
 and bandwidth constraints ($\BW$), as described in the following. 
 In this chapter, we will consider all possible 32 problem variants, where each of these five aspects
 can either be enabled or disabled. 
 
-\parag{Replica Selection ($\RS$).} The first fundamental problem is replica selection:
-if the input data is stored redundantly, the algorithm has the freedom to choose a replica
-for each chunk type, and assign it to a virtual machine (i.e., \emph{node}).
-In the following, we will refer to a scenario
-with redundant chunks by~$\RS$; in the~$\RS$-only scenario, the number of chunk types
-is equal to the number of nodes. Otherwise, we will add the~$+\MA$ property discussed next.
-
 \parag{Multiple Assignment ($\MA$).}
-If the number of chunk types~$\tau$ is larger than the number of nodes,
-each node needs to be assigned multiple chunks. We will refer to such a scenario by~$\MA$. 
-Since all nodes are identical and no additional information regarding the chunks is available at request time, we assume that each node will process an identical integer number of chunks~$\MaFactor = \tau / n_V$. 
+In most applications, the number of chunks~$\tau$ is larger than the number of nodes, and the objective is to assign multiple chunks to each node.
+We investigate assignments that balances chunks among nodes, i.e. where the number of chunks is divisible by the number of nodes, and each node processes an identical integer number of chunks~$\MaFactor = \tau / n_V$.
+We refer to such scenario as $\MA$.
+In the problem variant without $\MA$, each node has exactly one chunk assigned.
 
+\parag{Replica Selection ($\RS$).}
+Distributed filesystems often utilize data redundancy for corruption detection and correction.
+A redundant data chunk has multiple \emph{replicas}, often stored on different physical machines.
+For each data chunk, it is sufficient to process only one of its replicas.
+By $\RS$ we denote the flexibility of choosing which replica of each data chunk to process
+In the problem variant without $\RS$, a node needs to access the singular location where the assigned chunk resides.
 
-\parag{Flexible Placement ($\FP$).} %The third fundamental degree of freedom, besides replica selection and assignment,
-While the nodes are placed a priori in some cases, the node placement (or
-synonymously: \emph{embedding}) of nodes on physical servers can also be
-subject to optimization. We will refer to this degree of freedom by FP.
+\parag{Flexible Placement ($\FP$).}
+In most applications, nodes of virtual network are indifferent to their physical placement.
+By $\FP$ we denote the flexibility of assignment of nodes to physical machines.
+In the problem variant without $\FP$, the assignment of nodes to physical machines is given as an input.
 
-\parag{Node Interconnect ($\CC$).} We distinguish between scenarios
-where bandwidth needs to be reserved
-both from each node to its assigned chunks as well as to the other nodes
-(i.e.,~$\CostTrans>0$ and~$\CostCom>0$), and
- scenarios where only the (chunk) access network requires bandwidth reservation (i.e.,~$\CostTrans>0$ and~$\CostCom=0$).
- We will refer to the former scenario
-where bandwidth needs to be reserved also for the inter-connect, by~$\CC$. 
-The node interconnect is modelled as a complete graph, to account for the all to all communication patterns of batch processing applications such as MapReduce.
-
+\parag{Node Interconnect ($\CC$).}
+In multiple computational tasks, it is sufficient to process data chunks independently of eachother.
+However, more often the result of processing the individual chunks is combined afterwards.
+By $\CC$ we refer to the latter scenario, where the computation requires the nodes to cooperate.
+We investigate the scenario, where we reserve a bandwidth of volume $\CostCom$ between each pair of nodes, i.e. the node interconnect is modelled as a complete graph, to account for the all-to-all communication patterns of batch processing applications such as MapReduce.
+In the problem variant without $\CC$, we optimize only the cost of transporting chunks to nodes.
 
 \parag{Bandwidth Capacities ($\BW$).}
 We distinguish between an uncapacitated and a capacitated scenario where the links
 of the substrate network come with bandwidth
-constraints, and will refer to the bandwidth-constrained version by~$\BW$; the capacity of servers
-(the number of nodes which can be hosted concurrently) is always limited.
+constraints, and will refer to the bandwidth-constrained version by~$\BW$.
 Note that capacity constraints introduce infeasible problem instances, where it is impossible to
-allocate sufficient resources to satisfy an embedding request.
+allocate sufficient resources to embed the virtual network.
+In the problem variant without $\BW$, each link has infinite capacity.
 
 \section{Polynomial-Time Algorithms}\label{sec:poly}
 
