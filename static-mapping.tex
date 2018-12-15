@@ -83,12 +83,12 @@ In order to chart the landscape of the computational tractability and intractabi
 problem variants, we decompose our problem into its fundamental aspects, namely multiple chunk assignment ($\MA$),
 replica selection ($\RS$), flexible node placement ($\FP$), node interconnect ($\CC$),
 and bandwidth constraints ($\BW$), as described in the following. 
-In this chapter, we will consider all possible 32 problem variants, where each of these five aspects
+In this chapter, we consider all possible $32$ problem variants, where each of these five aspects
 can either be enabled or disabled. 
 
 \parag{Multiple Assignment ($\MA$).}
 In most applications, the number of chunks~$\tau$ is larger than the number of nodes, and the objective is to assign multiple chunks to each node.
-We investigate assignments that balances chunks among nodes, i.e. where the number of chunks is divisible by the number of nodes, and each node processes an identical integer number of chunks~$\MaFactor = \tau / n_V$.
+We investigate assignments that balances chunks among nodes, i.e. where the number of chunks is divisible by the number of nodes, and each node processes an identical integer number of chunks~$\MaFactor = \tau / n_V$, and we refer to $\MaFactor$ as the multi-assignment factor.
 We refer to such scenario as $\MA$.
 In the problem variant without $\MA$, each node has exactly one chunk assigned.
 
@@ -140,7 +140,7 @@ Accordingly, we can reduce problem variant~$\RS+\MA+\CC +\BW$ (as well as all it
 to~$\RS+\MA+\BW$ (resp.~its subproblems).
 \end{obs}
 
-\subsection{Flow Algorithms}\label{ssec:flow}
+\subsection{Flow-based Algorithm}\label{ssec:flow}
 
 
 \begin{figure}[t]
@@ -151,7 +151,7 @@ to~$\RS+\MA+\BW$ (resp.~its subproblems).
 \end{figure}
 
 
-We first present an algorithm to solve the~$\RS+\MA+\CC+\BW$ problem.
+We first present an algorithm to solve the~$\RS+\MA+\CC+\BW$ variant.
 Recall that in this problem variant,
 we are given a~set of redundant chunks ($\RS$) and a~set of
 nodes
@@ -160,9 +160,6 @@ at fixed locations (no~$\FP$). The number of chunk types is larger than the numb
 of nodes ($\MA$), and each node needs to be connected
 to its selected chunks as well as to other nodes ($\CC$), while respecting
 capacity constraints ($\BW$).
-Our goal is to minimize the resource footprint~$\Cost$, consisting
-of the bandwidth reservations in the (chunk) access network and the (node)
-inter-connect.
 As we will see in the following, we can use a flow approach to solve this
 problem variant.
 
@@ -177,17 +174,17 @@ an artificial graph~$\Tree^*$, extending the substrate network~$\Tree$ and
 normalizing bandwidth capacities, as follows. For~$\Tree^*$,
 we normalize the bandwidth of~$\Tree$ to integer multiples of~$\CostTrans$,
 i.e., for each link~$e\in E(\Tree)$, we set its new
-capacity in~$\Tree^*$ to~$\lfloor\capacity(e)/\CostTrans\rfloor$.
+capacity in~$\Tree^*$ to~$\lfloor\capacity(e)/\CostTrans\rfloor$.\todo{font?}
 After this normalization, we extend the topology~$\Tree$ by
-introducing an artificial vertex for each chunk type. These artificial
-vertices are connected to each leaf (i.e., server) in~$\Tree$ where a replica
+introducing an artificial vertex for each of $\tau$ chunks. Each of these artificial
+vertices is connected to each leaf (i.e., server) in~$\Tree$ where a replica
  of the respective chunk type is located,
 connecting the replica of the respective chunk type by a link of capacity~$1$. In
 addition, we create a
 \emph{super-source}~$\Source$, and connect it to each of the artificial chunk
-type vertices (with a link of capacity 1). Moreover, we create an artificial \emph{super-sink}~$\Sink$ and
+type vertices (with a link of capacity~$1$). Moreover, we create an artificial \emph{super-sink}~$\Sink$ and
 connect it to every leaf containing at least one node; the link capacity represents
-the number of nodes~$x$ hosted on this server, times the multi-assignment factor
+the number of nodes~$x$ hosted on this server times the multi-assignment factor
 $\MaFactor$.
 We additionally assign the following costs to edges of~$\Tree^*$:
 every edge of the original substrate network costs one unit, and all other artificial edges
