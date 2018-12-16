@@ -1,15 +1,13 @@
 In large-scale batch-processing systems such as MapReduce~\cite{mapreduce}, multiple physical machines cooperate to processes large quantities of data stored in the data center in a distributed manner.
-For a certain computational task, one spawns an adequate number of worker to process the data, whose task is to select its data portion, and process it, and aggregate the result by cooperation with other workers.
+For a certain computational task, one spawns an adequate number of workers to process the data, whose task is to select its data portion, and process it, and aggregate the result by cooperation with other workers.
 Workers establish a network connection called a virtual network, formed to peform a given computational task, and in such setting the worker is referred to as a node of a virtual network.
-While nodes of a virtual network can be placed at any feasible physical machine in the data center, the performance of the processing is heavily influenced by their placement.
+While nodes of a virtual network can be placed at~any feasible physical machine in the data center, the performance of the processing is heavily influenced by their placement.
 Placing nodes closely to eachother reduces network latency and bandwidth reservations in the data center.
-In this chapter, we investigate mapping a virtual network onto the physical infrastructure: a~task of assigning the nodes of a virtual network to physical machines in a network-efficient way.
-\todo{worker in the intro}
-\todo{remove chunk type}
+In this chapter, we investigate mapping a virtual network onto the physical infrastructure: a~task of assigning the nodes of a virtual network to~physical machines in a network-efficient way.
 
 \section{Problem Definition}\label{sec:model}
 
-As described informally in the introduction, the model combines three components: (1) the substrate network (the servers
+As described informally in the introduction (see Section~\ref{sec:virt_net_emb}), the model combines three components: (1)~the~substrate network (the servers
 and the connecting physical network),
 (2) the virtual network (the virtual machines and the logical network connecting the machines to each other
 as well as to the chunks), and (3) the data needs to be processed (divided into data chunks).
@@ -17,7 +15,7 @@ as well as to the chunks), and (3) the data needs to be processed (divided into 
 \parag{The Substrate Network.} The substrate network (also known as the \emph{host graph}) represents the physical resources:
 a set~$S$ of~$n_S=|S|$ servers interconnected by a network consisting of a set~$R$ of routers (or switches)
 and a set~$E$ of (symmetric) links. We often refer to the elements in~$S\cup R$
-as the \emph{vertices}. We assume that the inter-connecting network forms an arbitrary tree (\maciek{rooted?}),
+as the \emph{vertices}. We assume that the inter-connecting network forms an arbitrary rooted tree,
 where the servers are located at the tree leaves and routers at inner nodes.
 Each server~$s\in S$ can host a certain number
 of virtual machines (available server capacity~$\capacity(s)$), and each link~$e\in E$ has a certain bandwidth
@@ -38,8 +36,8 @@ replica as the \emph{active} (or selected) replica.
 
 Depending on the available capacity~$\capacity(s)$ of server~$s$, multiple nodes may be hosted on~$s$.
 We denote the server~$s$ hosting node~$v$ by~$\pi(v)=s$.
-Since these nodes process the input data, they need to be assigned and connected to the
-chunks. Concretely, for each chunk type~$\achunk_i$, exactly one
+Since these nodes process the input data, they need to be assigned a chunk and connected to active replica.
+Concretely, for each chunk~$\achunk_i$, exactly one
 replica~$\achunk_{i}^{(j)}$ must be processed by exactly one node~$v$;
 which replica~$\achunk_{i}^{(k)}$ is chosen is subject to optimization, and
 $\mu$ denotes the assignment of chunks to nodes.
@@ -56,8 +54,7 @@ Figure~\ref{fig:overview} gives an overview of our model.
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.79\columnwidth]{figs/static-mapping/data_locality_no_legend.pdf}
-\caption{Overview: a 9-server datacenter storing~$\tau=4$ different chunk
-types~$\{c_1,\ldots,c_4\}$ (depicted as \emph{circles}). The chunk replicas need to be selected and assigned to the two
+\caption{Overview: a 9-server datacenter storing~$\tau=4$ different chunks~$\{c_1,\ldots,c_4\}$ (depicted as \emph{circles}). The replicas need to be selected and assigned to the two
  virtual machines~$v_1$ and~$v_2$; the virtual machines are depicted as \emph{squares}, and
  the network connecting them to chunks (using bandwidth~$\CostTrans$) is \emph{dashed}. In addition, the virtual machines are inter-connected among
  each other using bandwidth~$\CostCom$ (\emph{dotted}). The objective of the embedding algorithm is to minimize the overall bandwidth allocation.}\label{fig:overview}
@@ -68,14 +65,16 @@ types~$\{c_1,\ldots,c_4\}$ (depicted as \emph{circles}). The chunk replicas need
 
 Our goal is to design algoriths that minimize the resource \emph{footprint}, the most common objective function considered in the literature \cite{fischer-survey}.
 Formally, let~$\dist(v,\achunk)$ denote the distance (in the underlying physical network~$\Tree$) between a~node~$v$ and
-its assigned (active) chunk replica~$\achunk$, and let~$\dist(v_1,v_2)$ denote the distance between the two nodes~$v_1$ and~$v_2$ \maciek{(we use the hop count and dist interchangeably)?}.
+its assigned (active) replica~$\achunk$, and let~$\dist(v_1,v_2)$ denote the distance between the two nodes~$v_1$ and~$v_2$.
 We define the \emph{footprint}~$\Cost(v)$ of a node~$v$ as follows:
 $$
-\Cost(v) = \underbrace{\sum_{\achunk\in \mu(v)} \CostTrans \cdot \dist(v,\achunk)}_{chunk access network} +  \underbrace{\frac{1}{2} \cdot \sum_{v' \in \VirtualNodes\setminus\{v\}} \CostCom \cdot \dist(v,v')}_{\text{node inter-connect}},
+\Cost(v) = \underbrace{\sum_{\achunk\in \mu(v)} \CostTrans \cdot \dist(v,\achunk)}_{\text{chunk access network}} +  \underbrace{\frac{1}{2} \cdot \sum_{v' \in \VirtualNodes\setminus\{v\}} \CostCom \cdot \dist(v,v')}_{\text{node inter-connect}},
 $$
-where~$\mu(v)$ is the set of chunks assigned to~$v$. Our goal is to minimize the overall resource footprint $\Cost=\sum_{v\in V} \Cost(v)$.
+where~$\mu(v)$ is the set of chunks assigned to~$v$.
+Our goal is to minimize the overall resource footprint $\Cost=\sum_{v\in V} \Cost(v)$.
 
-\maciek{Tu info o constraintach: co najwyzej $cap(s)$ node w serwerze; respect all the links}
+The solution must obey the capacity of the substrate network: (1) the total number of nodes hosted at each server $s$ must not excced $\capacity(s)$, and (2) the total bandwidth allocated at each link $e$ must not exceed its capacity $\capacity(e)$.
+Finally, the solution must assign every chunk to some node, i.e. $\bigcup_v \mu(v) = \{ c_1, \ldots, c_{\tau} \}$.
 
 \subsection{Problem Decomposition}
 
@@ -156,7 +155,7 @@ Recall that in this problem variant,
 we are given a~set of redundant chunks ($\RS$) and a~set of
 nodes
 (the \emph{nodes})
-at fixed locations (no~$\FP$). The number of chunk types is larger than the number
+at fixed locations (no~$\FP$). The number of chunks may be larger than the number
 of nodes ($\MA$), and each node needs to be connected
 to its selected chunks as well as to other nodes ($\CC$), while respecting
 capacity constraints ($\BW$).
@@ -172,15 +171,15 @@ an artificial graph~$\Tree^*$, extending the substrate network~$\Tree$ and
 normalizing bandwidth capacities, as follows. For~$\Tree^*$,
 we normalize the bandwidth of~$\Tree$ to integer multiples of~$\CostTrans$,
 i.e., for each link~$e\in E(\Tree)$, we set its new
-capacity in~$\Tree^*$ to~$\lfloor\capacity(e)/\CostTrans\rfloor$.\todo{font?}
+capacity in~$\Tree^*$ to~$\lfloor\capacity(e) / \CostTrans\rfloor$.
 After this normalization, we extend the topology~$\Tree$ by
 introducing an artificial vertex for each of $\tau$ chunks. Each of these artificial
 vertices is connected to each leaf (i.e., server) in~$\Tree$ where a replica
- of the respective chunk type is located,
-connecting the replica of the respective chunk type by a link of capacity~$1$. In
+ of the respective chunk is located,
+connecting the replica by a link of capacity~$1$. In
 addition, we create a
 \emph{super-source}~$\Source$, and connect it to each of the artificial chunk
-type vertices (with a link of capacity~$1$). Moreover, we create an artificial \emph{super-sink}~$\Sink$ and
+vertices (with a link of capacity~$1$). Moreover, we create an artificial \emph{super-sink}~$\Sink$ and
 connect it to every leaf containing at least one node; the link capacity represents
 the number of nodes~$x$ hosted on this server times the multi-assignment factor
 $\MaFactor$.
@@ -199,8 +198,8 @@ Exemplary problem instance is presented in Figure~\ref{fig:flow_construction}.
 \caption{An example of the extended substrate
 network~$\Tree^*$: The sink~$\Sink$ is connected to the two leaves, which host the
 nodes. The artificial nodes are depicted below the leaves, are labeled with
-their respective chunk types (e.g.,~$\achunk_1$), and are connected to the source
-$\Source$ as well as to the leaves which contain replicas of their chunk type.
+their respective chunks (e.g.,~$\achunk_1$), and are connected to the source
+$\Source$ as well as to the leaves which contain replicas of their chunk.
 The
 maximum flow with minimal costs is indicated by the dashed lines: each line
 represents one unit of flow. The dotted lines indicate links which have reduced
@@ -240,12 +239,12 @@ representing matched chunk-node pairs:
 The assignment can be obtained by decomposing the flow allocated in the
 original substrate network. In order to identify a matched chunk-node pair,
 we take an~arbitrary (loop-free) path~$p$ carrying a flow of value at least~$1$ from~$\Source$ to~$\Sink$:
-the first hop represents the chosen chunk type, the second hop the chosen
+the first hop represents the chosen chunk, the second hop the chosen
 replica, and the last but one hop represents the server: we will assign
 the replica to an arbitrary unused node on this server.
 Having found this pair, we reduce the flow
 along the path~$p$ by one unit.
-We continue the pairing process until every chunk type is assigned.
+We continue the pairing process until every chunk is assigned.
 
 \parag{Analysis.}
 The runtime of our algorithm consists of four parts: construction of~$\Tree^*$,
@@ -276,7 +275,7 @@ introduced above.
 Let us first consider the~$\RS+\MA+\CC$ variant.
 Recall that in this problem,
 we are given a~set of redundant chunks ($\RS$) and a~set of nodes
-at fixed locations (no $\FP$). The number of chunk types may be larger than the number
+at fixed locations (no $\FP$). The number of chunks may be larger than the number
 of nodes ($\MA$), and each node needs to be connected
 to its chunks as well as to other nodes ($\CC$).
 
@@ -310,10 +309,10 @@ an instance where two nodes are
 cloned into~$\MaFactor = 2$ nodes each,
 resulting in a total of four nodes in
 the matching problem representation.
-The two replicas of each chunk type are
-aggregated into a single chunk type vertex~$\achunk_j$  in the matching problem;
-this gives a total of four chunk type vertices in the matching graph. The costs
-on the links between all clones of a specific vertex and a chunk type are set to
+The two replicas of each chunk are
+aggregated into a single chunk vertex~$\achunk_j$  in the matching problem;
+this gives a total of four chunk vertices in the matching graph. The costs
+on the links between all clones of a specific vertex and a chunk are set to
 the minimum distance. We can observe this for instance at the edges connecting
 the two clones of~$\VirtualNode_1$ to~$\achunk_2$: both weights are 0.
 }
@@ -410,7 +409,7 @@ children's sets,
 and since each vertex can only be the child of one vertex,
 the amortized runtime per vertex is constant; and hence the overall
 runtime~$\mathcal{O}(n_S)$. The sum of all remove operations, is equal to
-the number of chunk types~$\mathcal{O}(\ChunkType)$.
+the number of chunks~$\mathcal{O}(\ChunkType)$.
 Hence the overall complexity of this construction amounts to
 $\mathcal{O}(n_S + \ChunkType)$.
 
@@ -427,7 +426,7 @@ $\VmChunkAssignment$ on the uplink of~$\Tree'$ is~$|x-y\cdot\MaFactor|\cdot
 \label{lemma:uplink}
 \end{lemma}
 \begin{proof}
-In case the number of chunk types equals the processing capacities of the
+In case the number of chunks equals the processing capacities of the
 nodes in the given subtree,
 the bandwidth allocation inflicted by the chunk access network on the uplink can
 be
@@ -616,7 +615,7 @@ resulting in an overall complexity of~$\mathcal{O}(n_S \cdot n_V^2)$.
 The runtime to binarize~$\Tree$ is asymptotically negligible.
 
 
-\subsection{Simple Problems}
+\subsection{Simple Variants}
 
 \begin{figure}
 \centering
@@ -627,8 +626,7 @@ The runtime to binarize~$\Tree$ is asymptotically negligible.
 
 
 For the sake of completeness, we also observe that there are
-several problems which
-allow for a trivial solution. Concretely, problems with~$\FP$
+several variants that adimit a trivial solution. Concretely, problems with~$\FP$
 plus any combination of
 $\RS$ and~$\BW$ (but without~$\MA$ and~$\CC$) can easily be solved by
 mapping
@@ -683,10 +681,10 @@ We encode a~$\TDM$ instance as an~$\FP+\RS+\MA$ instance as follows:
 
  \begin{itemize}
  \item For every element in the universe~$X\cup Y\cup
- Z$, we create a chunk type. Intuitively, in~$\TDM$,
+ Z$, we create a chunk. Intuitively, in~$\TDM$,
  each element must be covered, which corresponds to the requirement
  of~$\FP+\RS+\MA$
- that each chunk type is processed.
+ that each chunk is processed.
 
  \item We will encode each triple as gadget with three leaves in
  a substrate tree~$\Tree$. The three leaves are close to each
@@ -721,7 +719,7 @@ child of the root. The gadget is of height 2,
 and has the following form:
 The gadget of each triple consists of an inner node (a router) and three leaves.
 \item \emph{Chunks and chunk replicas:} For each element in~$X$,~$Y$ and~$Z$,
- we create a chunk type
+ we create a chunk
 ($3 \cdot k$ in total). Every gadget contains three chunk replicas,
 corresponding to the elements of the triple. Each leave in a gadget, contains
 exactly one replica.
@@ -784,7 +782,7 @@ gadget that corresponds to the chosen triples. In each of the corresponding
 gadgets, we match every chunk to the node in this gadget. This
 solution has
 cost exactly~$\Thr$. As every element of the universe is covered, every
-chunk type is processed.
+chunk is processed.
 
 ($\Leftarrow$) Let us take a solution to~$\FP+\RS+\MA$ of cost at most$\Thr$. We
 choose triples that correspond to gadgets where there are nodes. Since
@@ -851,7 +849,7 @@ Consider any pair of nodes
 communicating over the
 inter-connect; due to our construction, the communication cost
 for each such pair is either
-2 hops (if they belong to the same gadget) or 4 hops (if they belong
+$2$ hops (if they belong to the same gadget) or $4$ hops (if they belong
 to different gadgets).
 The lemma then follows from the observation that~$\Thr$
 is chosen such that it is never possible to distribute nodes
@@ -892,7 +890,7 @@ Summing up over all~$k$ gadgets, we get exactly~$\Thr$.
 we can exploit Lemma~\ref{lemma:helper} to construct a solution for~$I$.
 We know that in any solution of cost at most~$\Thr$,
 $k$ gadgets contain exactly 3 nodes. These gadgets correspond to a valid
-3D Perfect Matching: exactly one replica of every chunk type is processed and
+3D Perfect Matching: exactly one replica of every chunk is processed and
 hence every element is covered exactly once.
 \end{proof}
 
@@ -901,7 +899,7 @@ hence every element is covered exactly once.
 We have seen that replica selection flexibilities can render embeddings computationally hard.
 We will now provide a more detailed look at this hardness result
 and explore the minimal requirements for rendering replica selection hard.
-In particular, we will show that already two replicas for each chunk type are sufficient to
+In particular, we will show that already two replicas for each chunk are sufficient to
 introduce intractability.
 
 Namely, we provide the NP-hardness results for two restricted variants of Virtual Cluster Embedding (Sections~\ref{ap:tworep-ma} and \ref{ap:tworep-ni}).
@@ -919,7 +917,7 @@ Introducing bandwidth constraints allows to control the number of nodes spawning
 
 We now show that the 2-replica selection problem is even NP-hard
 without capacity constraints.  In particular, we consider the problem
-variant~$\RS(2)+\MA(4)+\FP$ with at most two replicas of each chunk type and assignment factor
+variant~$\RS(2)+\MA(4)+\FP$ with at most two replicas of each chunk and assignment factor
 four. There are no capacity constraints on links.
 
 Our construction consists of two major modifications to hardness result without replication factor restrictions (for that result, refer to Section~\ref{ssec:fprsma}).
@@ -946,22 +944,22 @@ To prove this fact, we use the property of the comb that the leaves are highly s
 Next, we claim that the number of nodes spawned in $P_1$ (resp. $P_2$) is $n_1$ (resp. $n_2$).
 To see this, consider any imbalance of the number of spawned nodes; notice that some chunks in the underpopulated comb are processed outside of their $P_i$ subtree, resulting in the solution that exceeds the threshold.
 
-\parag{Families of chunk types.} The second tool that we introduce allows us to express the redundancy of chunks without actually replicating chunks more than two-fold.
+\parag{Families of chunks.} The second tool that we introduce allows us to express the redundancy of chunks without actually replicating chunks more than two-fold.
 For simplicity of introduction, we consider the scenario with no multi-assignment.
-For each chunk type $c$ with redundancy, we count the number of occurrences of replicas of such a chunk in the tree, and name it $r_c$.
-We replace the chunk type $c$ with $r$ chunk types, which we call the family $F_c$ of that chunk type.
-For each occurrence of replica of $c$, we replace it with a replica of any chunk type from the family (without repetitions).
+For each chunk $c$ with redundancy, we count the number of occurrences of replicas of such a chunk in the tree, and name it $r_c$.
+We replace the chunk $c$ with $r$ chunks, which we call the family $F_c$ of that chunk.
+For each occurrence of replica of $c$, we replace it with a replica of any chunk from the family (without repetitions).
 To this point, the redundancy factor was reduced from $r_c$ to $1$.
-Now, we construct the gadget $G_c$ for chunk type $c$, which consists of $r_c$ leaves, each hosting the second replica of each chunk type from family $F_c$.
+Now, we construct the gadget $G_c$ for chunk $c$, which consists of $r_c$ leaves, each hosting the second replica of each chunk from family $F_c$.
 We use the technique of unique chunks on the comb to constraint the number of nodes in $G_c$ to be exactly $r_c - 1$.
 We provide necessary additional $r_c-1$ nodes to be placed.
-Hence, exactly $1$ node is placed on a chunk type of family $F_c$ outside the gadget $G_c$, and exactly $r_c-1$ nodes cover the remaining $r_c-1$ chunk types inside gadget $G_c$.
-All chunk types are processed, the replication factor is reduced to $2$, and the size of construction grows polynomially.
+Hence, exactly $1$ node is placed on a chunk of family $F_c$ outside the gadget $G_c$, and exactly $r_c-1$ nodes cover the remaining $r_c-1$ chunks inside gadget $G_c$.
+All chunks are processed, the replication factor is reduced to $2$, and the size of construction grows polynomially.
 
 \parag{Introduction to the reduction.} As we already stated, we modify the construction from Section~\ref{ssec:fprsma}.
-As a way to deal with replication, we use the families of chunk types using the unique chunks on the comb.
-We extend the construction of a gadget for chunk type with redundancy, by incorporating the fact that the multi-assignment factor is $4$.
-For the construction to remain correct given such a multi-assignment factor, we introduce further chunks types with one chunk replica to place in the chunk gadget and use the excessive $3$ data processing capacities.
+As a way to deal with replication, we use the families of chunks using the unique chunks on the comb.
+We extend the construction of a gadget for chunk with redundancy, by incorporating the fact that the multi-assignment factor is $4$.
+For the construction to remain correct given such a multi-assignment factor, we introduce further chunks with one chunk replica to place in the chunk gadget and use the excessive $3$ data processing capacities.
 
 \parag{Construction.} For an arbitrary instance~$\ITDPM$ of~$\TDM$ we construct a~$\RS(2)+\MA(4)+\FP$ instance~$\IVCEMB$ the way described in the remainder of this section.
 Let $k = |X|=|Y|=|Z|$.
@@ -972,25 +970,25 @@ Let $\deg(e) = |T_e|$, and note that $\sum_e \deg(e) = 3\cdot t$.
 
 We proceed with the construction as follows.
 
-\paragraph{Chunk types and replicas}
+\paragraph{Chunks and replicas}
 
-We construct three sets of chunk types.
+We construct three sets of chunks.
 The first set corresponds to elements of the universe (that is, $X\cup Y\cup Z$).
-The construction of such chunk types is similar to construction of chunk types in Section~\ref{ssec:fprsma}, but to take into consideration the restricted replication factor, we construct the familiy of chunk types (as described in the introduction to this section).
-Namely, for each element of universe $e$, we construct as many chunk types as there are occurences of $e$ in triples of $\ITDPM$.
-Each such chunk type has exactly two replicas.
+The construction of such chunks is similar to construction of chunks in Section~\ref{ssec:fprsma}, but to take into consideration the restricted replication factor, we construct the familiy of chunks (as described in the introduction to this section).
+Namely, for each element of universe $e$, we construct as many chunks as there are occurences of $e$ in triples of $\ITDPM$.
+Each such chunk has exactly two replicas.
 
-The other two sets of chunk types has one replica, therefore those are called called \emph{unique} chunks.
+The other two sets of chunks has one replica, therefore those are called called \emph{unique} chunks.
 We construct two types of unique chunks, distinguished by a different role in the construction.
-For unique chunks we simply co-notate the chunk type with chunk replica.
+For unique chunks we simply co-notate the chunk with chunk replica.
 
-Formally, the construction of chunk types and replicas unfolds as follows:
+Formally, the construction of chunks and replicas unfolds as follows:
 \begin{enumerate}
-  \item For each triple $\tau \in T$, we construct $3$ chunk types, with two replicas each.
-  We construct different chunk types for each triple $\tau$, which contain element $e$ (in total $\deg(e)$ chunk types).
+  \item For each triple $\tau \in T$, we construct $3$ chunks, with two replicas each.
+  We construct different chunks for each triple $\tau$, which contain element $e$ (in total $\deg(e)$ chunks).
   We refer to those replicas by $ch_1(e, \tau)$ and $ch_2(e, \tau)$.
   In total we construct $2\cdot \sum_e\deg(e) = 6\cdot t$ chunk replicas.
-  \item We construct~$k$ additional chunk types named
+  \item We construct~$k$ additional chunks named
   ~$u_1, \ldots, u_k$ with one replica each.
   \item For each element~$e\in X\cup Y\cup Z$,
   we construct additional~$3\cdot(\deg(e) - 1)$ chunks, with one replica each.
@@ -1151,7 +1149,7 @@ Hence, exactly $k$ \TripleGadgets{} are active.
     gadget, which are not yet matched in any {\TripleGadget}.
   \end{enumerate}
 
-  We can observe that every chunk type was processed, exactly $k + \sum_e(\deg(e) - 1)$ nodes are spawned, and each of the nodes process exactly $4$ chunk replicas.
+  We can observe that every chunk was processed, exactly $k + \sum_e(\deg(e) - 1)$ nodes are spawned, and each of the nodes process exactly $4$ chunk replicas.
   To see that indeed the produced solution do not exceed the threshold $\Thr$, we sum up the total transportation cost.
   The $k$ nodes placed in \TripleGadgets{} have $1$ free match and $2$ neighbouring matches to chunk replicas within the \TripleGadget{}, and $1$ long match of cost $4$ (to some \UnqGadget{}).
   The remaining $\Vms-k$ nodes placed in the \CoverSubtree{} have $1$ free match and $3$ neighbouring matches.
@@ -1183,7 +1181,7 @@ First, given a solution $\STDPM$ to $\ITDPM$, we construct a solution $\SVCEMB$ 
 This part is the easier of the two, and mainly consists of placing nodes in Triple Gadgets for triples chosen in $\STDPM$.
 
 In the second stage, given $\SVCEMB$, we construct the $\STDPM$.
-Again, we use the technique that we call ``families of chunk types'', which was introduced in previous section.
+Again, we use the technique that we call ``families of chunks'', which was introduced in previous section.
 The main technical difficulty lies in controlling the number of nodes that are spawned in certain parts of (asymmetric) tree.
 To guantee the desired number of spawned nodes, we use the bandwidth constraints.
 Namely, if the number of nodes to be spawned in a subtree is $k$, we set the bandwidth constraints on the uplink of the subtree to $k\cdot (m - k)$, where $m$ is the total number of machines to spawn in the instance.
@@ -1207,25 +1205,25 @@ Let $\deg(e) = |T_e|$, and note that $\sum_e \deg(e) = 3\cdot t$.
 
 We proceed with the construction as follows.
 
-\emph{Chunk Types.}
-We construct two sets of chunk types.
+\emph{Chunks.}
+We construct two sets of chunks.
 The first set corresponds to elements of the universe (that is, $X\cup Y\cup Z$).
-The construction of such chunk types is similar to construction of chunk types in Section~\ref{ssec:fprscc}, but to take into consideration the restricted replication factor, we construct the familiy of chunk types (as described in the introduction to this section).
-Namely, for each element of universe $e$, we construct as many chunk types as there are occurences of $e$ in triples of $\ITDPM$.
-Each such chunk type has exactly two replicas.
+The construction of such chunks is similar to construction of chunks in Section~\ref{ssec:fprscc}, but to take into consideration the restricted replication factor, we construct the familiy of chunks (as described in the introduction to this section).
+Namely, for each element of universe $e$, we construct as many chunks as there are occurences of $e$ in triples of $\ITDPM$.
+Each such chunk has exactly two replicas.
 
-The other set of chunk types has one replica, therefore those are called called \emph{unique} chunks.
-For unique chunks we simply co-notate the chunk type with chunk replica.
+The other set of chunks has one replica, therefore those are called called \emph{unique} chunks.
+For unique chunks we simply co-notate the chunk with chunk replica.
 
-Formally, the construction of chunk types and replicas unfolds as follows:
+Formally, the construction of chunks and replicas unfolds as follows:
 \begin{enumerate}
-  \item For each triple $\tau \in T$, we construct $3$ chunk types, with two replicas each.
-  We construct different chunk types for each triple $\tau$, which contain element $e$ (in total $\deg(e)$ chunk types).
+  \item For each triple $\tau \in T$, we construct $3$ chunks, with two replicas each.
+  We construct different chunks for each triple $\tau$, which contain element $e$ (in total $\deg(e)$ chunks).
   We refer to those replicas by $ch_1(e, \tau)$ and $ch_2(e, \tau)$.
   In total we construct $2\cdot \sum_e\deg(e) = 6\cdot t$ chunk replicas.
   \item Additionally, we construct
 $\max\{3\cdot t + 3\cdot k + 1, \sum_e(2\cdot \deg(e)-1)\}$
-chunk types called \emph{unique chunks}. We
+chunks called \emph{unique chunks}. We
 refer to the set of unique chunks by~$U$.
 \end{enumerate}
 
@@ -1331,8 +1329,7 @@ constructed subtree.
 
 \begin{obs}
   In every feasible solution we have exactly~$|U|$ nodes spawned in a
-  {\UnqSubtree} (no chunk transportation is allowed, and every chunk
-  type must be processed).
+  {\UnqSubtree} (no chunk transportation is allowed, and every chunk must be processed).
   \label{obs:unq-full}
 \end{obs}
 
@@ -1454,15 +1451,15 @@ Using the properties of the substrate network, we perform the reduction in the f
   node placed in it: this node contains the chunk replica that is
   processed in the {\MatchSubtree}.
   It is easy to see that~$\SVCEMB$ has cost exactly~$\Thr$ and no
-  bandwidth constraint is violated. Each chunk type is processed.
+  bandwidth constraint is violated. Each chunk is processed.
 
   ($\Rightarrow$) Let's take any feasible solution~$\SVCEMB$ to~$\IVCEMB$ and
   produce a solution~$\STDPM$ to~$\ITDPM$ by taking triples that correspond
   to active triple gadgets. Using Lemma~\ref{lem:full-or-empty}, we
   conclude that there are exactly~$k$ active triple gadgets. By
-  feasibility of~$\STDPM$, we know that each chunk type is
+  feasibility of~$\STDPM$, we know that each chunk is
   processed. From Lemma~\ref{lem:bandwidth3}, we know that out
-  of~$\deg(e)$ chunk types that correspond to~$e\in X\cup Y\cup Z$,
+  of~$\deg(e)$ chunks that correspond to~$e\in X\cup Y\cup Z$,
   exactly one is processed in the {\MatchSubtree}, hence each
   element of~$X\cup Y\cup Z$ is matched.
 \end{proof}
