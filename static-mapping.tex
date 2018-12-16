@@ -5,7 +5,7 @@ While nodes of a virtual network can be placed at any feasible physical machine 
 Placing nodes closely to eachother reduces network latency and bandwidth reservations in the data center.
 In this chapter, we investigate mapping a virtual network onto the physical infrastructure: a~task of assigning the nodes of a virtual network to physical machines in a network-efficient way.
 \todo{worker in the intro}
-\todo{czy wprowadzam transport cost?}
+\todo{remove chunk type}
 
 \section{Problem Definition}\label{sec:model}
 
@@ -164,9 +164,7 @@ As we will see in the following, we can use a flow approach to solve this
 problem variant.
 
 
-
-
-\parag{Construction of Artificial Graph.}
+\parag{Construction of the Artificial Graph.}
 In order to solve the~$\RS+\MA+\CC+\BW$ problem,
 we first remove the~$\CC$ property using Observation~\ref{obs:nofp}.
 We then construct
@@ -189,13 +187,16 @@ $\MaFactor$.
 We additionally assign the following costs to edges of~$\Tree^*$:
 every edge of the original substrate network costs one unit, and all other artificial edges
 cost nothing.
-
 A solution to the~$\RS+\MA+\BW$ problem can now be computed
-from a solution to the \emph{Min-Cost-Max-Flow} problem between super-source
+from a solution to the \emph{min-cost~max-flow} problem between super-source
 $\Source$ and
 super-sink~$\Sink$ on the artificial graph~$\Tree^*$.
+Exemplary problem instance is presented in Figure~\ref{fig:flow_construction}.
 
-\parag{Example.} Figure~\ref{fig:flow_construction} shows an example of the extended substrate
+\begin{figure}
+\centering
+\includegraphics[width=0.5\columnwidth]{figs/static-mapping/flow_ma_cv}
+\caption{An example of the extended substrate
 network~$\Tree^*$: The sink~$\Sink$ is connected to the two leaves, which host the
 nodes. The artificial nodes are depicted below the leaves, are labeled with
 their respective chunk types (e.g.,~$\achunk_1$), and are connected to the source
@@ -203,46 +204,42 @@ $\Source$ as well as to the leaves which contain replicas of their chunk type.
 The
 maximum flow with minimal costs is indicated by the dashed lines: each line
 represents one unit of flow. The dotted lines indicate links which have reduced
-capacity due to~$\CC$.
-
-\begin{figure}
-\centering
-\includegraphics[width=0.4\columnwidth]{figs/static-mapping/flow_ma_cv}
-\caption{Example of flow construction: Problem instance with two nodes, four chunk
-types, and two replicas per type. The min-cost-max-flow
-is indicated by the dashed lines: each line represents one unit of flow.
-}
+capacity due to~$\CC$.}
+%\caption{Example of flow construction: Problem instance with two nodes, four chunk
+%types, and two replicas per type. The min-cost-max-flow
+%is indicated by the dashed lines: each line represents one unit of flow.
+%}
 \label{fig:flow_construction}
 \end{figure}
 
 \parag{Algorithm.}
 Our algorithm to solve~$\RS+\MA+\CC+\BW$ consists of three parts:
-\emph{First}, we construct the normalized and extended graph~$\Tree^*$
+First, we construct the normalized and extended graph~$\Tree^*$
 described above and compute
 a min-cost-max-flow solution, e.g.,
 using~\cite{mincostmaxflow-1,mincostmaxflow-2}.
-\emph{Second}, we have to \emph{round} the resulting, possibly fractional flow, to
+Second, we have to \emph{round} the resulting, possibly fractional flow, to
 integer values. Due to the \emph{integrality theorem}~\cite{flow-book},
 there always exists an optimal integer solution on graphs with integer capacities.
 However, while algorithms like the successive shortest path algorithm~\cite{successive_shortest_path_complexity}
-directly give us such an integral solution (in polynomial time), the fastest min-cost-max-flow algorithms (e.g., based on double-scaling
+directly give us such an integral solution (in polynomial time), the fastest min-cost~max-flow algorithms (e.g., based on double-scaling
 methods~\cite{mincostmaxflow-1} or minimum mean-cost cycle
 algorithms~\cite{mincostmaxflow-2}, may yield fractional solutions
 which need to be rounded to integral solutions (of the same cost).
 In order to compute integral solutions, we proceed as follows: we iteratively
 pick an arbitrary (loop-free) path
 currently having a fractional allocation of value~$f$ ($f>0$), and distribute its flow~$f$
-among all other fractional paths of the same length; due to the optimality of the fractional solution
+among all other fractional paths of the same length\todo{opisz dokladniej}; due to the optimality of the fractional solution
 and due to the integrality theorem, such paths must always exist. After distributing this flow,
 the total allocation on this path will be 0, and we have increased the number of
 integer paths by at least one. We proceed until we constructed the perfect
 matching.
-\emph{Third}, given an integer min-cost-max-flow solution, we need to decompose
+Third, given an integer min-cost-max-flow solution, we need to decompose
 the integer flow into the paths
 representing matched chunk-node pairs:
 The assignment can be obtained by decomposing the flow allocated in the
 original substrate network. In order to identify a matched chunk-node pair,
-we take an arbitrary (loop-free) path~$p$ carrying a flow of value ~$\geq 1$ from~$\Source$ to~$\Sink$:
+we take an~arbitrary (loop-free) path~$p$ carrying a flow of value at least~$1$ from~$\Source$ to~$\Sink$:
 the first hop represents the chosen chunk type, the second hop the chosen
 replica, and the last but one hop represents the server: we will assign
 the replica to an arbitrary unused node on this server.
@@ -251,12 +248,9 @@ along the path~$p$ by one unit.
 We continue the pairing process until every chunk type is assigned.
 
 \parag{Analysis.}
-The correctness of our approach follows from our construction
-of~$\Tree^*$, using integer capacities (in our case~$\lfloor\capacity(e)/\CostTrans\rfloor$),
-and the fact that cost optimal integral solutions always exist~\cite{flow-book}.
 The runtime of our algorithm consists of four parts: construction of~$\Tree^*$,
 computation of the min-cost-max-flow, flow rounding, and decomposition. The
-dominant term in the asymptotic runtime is the flow computation.
+dominant term in the asymptotic runtime is the flow computation\todo{upewnij sie}.
 Using the state-of-the-art min-cost-max-flow
 algorithms~\cite{mincostmaxflow-1,mincostmaxflow-2}
 we get a runtime of~$\mathcal{O}(n_S^2 \cdot \log\log \min \{U,\tau\})$
@@ -264,7 +258,7 @@ where~$U$ is the maximal link capacity; note that in networks with high capacity
 and uncapacitated networks, we can simply set~$U=\tau$.
 
 
-\subsection{Matching Algorithms}\label{ssec:match}
+\subsection{Matching Algorithms for $\RS+\MA+\CC$}\label{ssec:match}
 
 
 \begin{figure}[t]
@@ -277,20 +271,14 @@ This section presents faster algorithms to solve
 the two problem variants
 $\RS+\MA+\CC$ and~$\MA+\CC+\BW$ which can also be solved with the flow approach
 introduced above.
-In general, we refer to the algorithms presented in this section
-as matching approaches.
 
-
-\subsubsection{$\RS+\MA+\CC$}
 
 Let us first consider the~$\RS+\MA+\CC$ variant.
 Recall that in this problem,
 we are given a~set of redundant chunks ($\RS$) and a~set of nodes
-at fixed locations. The number of chunk types is larger than the number
+at fixed locations (no $\FP$). The number of chunk types may be larger than the number
 of nodes ($\MA$), and each node needs to be connected
 to its chunks as well as to other nodes ($\CC$).
-Our goal is to minimize the resource footprint~$\Cost$, consisting
-of the bandwidth reservations in the access network and the inter-connect.
 
 \parag{Algorithm.} Due to Observation~\ref{obs:nofp},~$\RS+\MA+\CC$ degenerates to~$\RS+\MA$.
 In order to solve the~$\RS+\MA$ problem variant,
@@ -300,30 +288,24 @@ $\VirtualNodes$ of nodes and
 the set of chunks.
 Concretely, we clone each node~$\MaFactor$ times,
 as each node needs to process
-$\MaFactor$ chunk types, and we collect all copies of a given chunk type in a
+$\MaFactor$ chunks, and we aggregate all replicas of a given chunk in a
 single %$\ChunkType$
-``super-node''. We connect each node to all chunk types using the
-\emph{lowest hop count} to one of the copies as the cost metric (the link weight).
-On the resulting bipartite graph, we can now compute a \emph{Minimum Weight
-Perfect
-Matching}~\cite{gabow_scaling_algorithm}:
+``super-vertex''.
+For each node $v$ and chunk $c$, we connect $v$ and super-vertex $c$ with the link of cost $\min_i \dist(v,c^{(i)})$, i.e. the cost of reaching the closest replica.
+On the resulting bipartite graph, we compute a \emph{minimum weight
+perfect
+matching}~\cite{gabow_scaling_algorithm}:
 the resulting matching describes the optimal assignment of chunks to nodes.
+Exemplary problem instance is presented in Figure~\ref{fig:matching}.
+
+
 \begin{figure}
 \includegraphics[width = 0.49\columnwidth]{figs/static-mapping/model_ma_r_cv_boxes}
 \hfill
 \includegraphics[width =0.49\columnwidth]{figs/static-mapping/matching}
 \caption{The~$\RS+\MA$ problem on the \emph{left} is converted into a
-matching problem on the \emph{right}. Since each node has to process two
-chunks, the
-nodes are replicated in the matching representation. The two replicas of each
-chunk type are represented by a single node, and all edges connecting to this
-node have a weight according to the shorter distance to one of the replicas.
-This is visualized for~$\achunk_2$.}
-\label{fig:matching}
-\end{figure}
-
-\parag{Example.} Before analyzing our algorithm, let us consider a small example.
-Figure~\ref{fig:matching} illustrates
+  matching problem on the \emph{right}.
+The figure illustrates
 an instance where two nodes are
 cloned into~$\MaFactor = 2$ nodes each,
 resulting in a total of four nodes in
@@ -334,22 +316,23 @@ this gives a total of four chunk type vertices in the matching graph. The costs
 on the links between all clones of a specific vertex and a chunk type are set to
 the minimum distance. We can observe this for instance at the edges connecting
 the two clones of~$\VirtualNode_1$ to~$\achunk_2$: both weights are 0.
+}
+\label{fig:matching}
+\end{figure}
 
 \parag{Analysis.}
-The correctness of our algorithm follows from the construction and the optimal
-solution of the minimum matching.
 The runtime consists of two parts: the construction of the matching graph and
 the actual matching computation. The constructed graph consists of
-$\MaFactor \cdot n_V \cdot \ChunkType$
+$\MaFactor \cdot n_V \cdot \ChunkType = \tau^2$
 many edges,
 and for each edge we need to compute its cost, i.e., the shortest distance
-which in a tree can be computed in time~$n_S$; thus, the overall construction time
+which in a tree can be computed in time~$\O(n_S)$; thus, the overall construction time
 is
 $\mathcal{O}(n_S \cdot \tau^2)$.
-The state of the art algorithm to compute matchings are based on scaling techniques~\cite{scale-match}.
+The state-of-the-art algorithm to compute matchings are based on scaling techniques~\cite{scale-match}.
 The runtime translates to
 $\mathcal{O}(\tau^{5/2}\cdot \log(\tau\cdot n_S))$; recall that~$\tau = \MaFactor\cdot n_V$.
-
+\todo{Porownaj z flow, kiedy ktore jest lepsze}
 
 
 
