@@ -12,7 +12,7 @@ This led to a shift of computations to large-scale remote facilites that contain
 Performing computations in these external data centers provides the impression of unlimited computational power on demand, and is called the \emph{cloud computing}.
 
 The demand for outsourcing computations to the cloud created a whole market for such services.
-Modern suppliers of processing power such as Microsoft Azure \cite{url-azure}, Amazon Elastic Cloud Computing EC2 \cite{url-amazon-ec2} or Google Compute Engine \cite{url-gce} provide convenient on-demand computational power while hiding most of details concerning resource management.
+Modern suppliers of processing power such as Microsoft Azure \cite{url-azure}, Amazon Web Services \cite{url-amazon-ec2} or Google Compute Engine \cite{url-gce} provide convenient on-demand computational power while hiding most of details concerning resource management.
 Processing capabilities are quickly and conveniently accessible to every interested party.
 
 Computational tasks require multiple types of resources to complete: CPU time, memory, I/O operations and network bandwith.
@@ -36,11 +36,10 @@ The transmitted data is split into portions called packets, which are sent indep
 A~single network is usually connected with multiple adjacent networks, and at each intermediate network, a bordering router needs to determine the next router on the way of the packet.
 To this end, such device directs packets based on the set of its forwarding rules, each corresponding to some network.
 The number of forwarding rules stored in core Internet routers is almost as numerous as the total number of networks, which leads to enormous forwarding tables to manage.
-We investigate the increasingly common scenario, where the number of rules exceeds the available memory capacity.
 
 The second part of this thesis assumes the perspective of an Internet Service Provider (ISP) that owns and maintains the connecting physical infrastructure, such as routers.
 Typically, routers located near the core of the Internet, e.g., in top-tier networks owned by large ISP, store a sizeable number of forwarding rules, and this number continues to grow with the size of the Internet.
-As the size of forwarding tables grows, it inevitably exceeds the available memory of the router.
+As the size of forwarding tables grows, it inevitably \emph{exceeds the available memory of the router}.
 One of the goals of the ISP is to utilize existing devices in the most efficient way and to delay the need for an upgrade.
 The obvious but expensive solution is to provide additional memory for the device.
 We focus on an alternative approach, where the router continues to operate with insufficient memory to store the whole forwarding table.
@@ -127,19 +126,19 @@ In particular, the static scenario is not an offline version of the problem cons
 In both cases, we assume that the communication pattern among virtual nodes is not known in advance.
 In the static scenario, we reserve a~portion of a~bandwidth between every pair of virtual nodes to allow for any possible communication pattern.
 On the other hand, in the dynamic scenario, we react to changes in the communication pattern by migrating machines on the fly.
-In addition, the problem considered in the static scenario is enriched by certain important properties of batch-processing applications that use distributed file systems.
+In addition, the problem considered in the static scenario is enriched to model the needs of batch-processing applications that use distributed file systems.
 
 
 \subsubsection{Static Mapping of Virtual Networks}
 \label{sec:contributions-static-mapping}
 
-In the static scenario studied in Chapter~\ref{ch:static-mapping}, to guarantee certain quality of service (\emph{QoS}), we need to acquire network reservations for all pairs of cooperating virtual machines.
-The combinatorial problem that we consider in the static scenario is essentially a variant of the minimum-cost embedding of a clique (the communication graph) in a tree (the substrate network).
+In the static scenario studied in Chapter~\ref{ch:static-mapping}, to guarantee certain quality of service (\emph{QoS}), we acquire network reservations for all pairs of cooperating virtual machines.
+The combinatorial problem that we consider in this scenario is essentially a variant of the minimum-cost embedding of a clique (the communication graph) in a tree (the substrate network).
 In addition, the scenario is designed to model certain aspects of Map-Reduce~\cite{mapreduce}, which is a predominant framework for performing large-scale parallel data processing.
 We consider the wide range of possible extensions that model certain aspects of Map-Reduce applications, most notably:
 
 \begin{itemize}
-\item \emph{Data chunk processing}. In Map-Reduce applications, virtual machines process large amo\-unts of data chunks that are stored in a distributed file system. Each chunk of data must be assigned to a virtual machine. Data chunk transfers require their own network reservations.
+\item \emph{Data chunk processing}. Virtual machines process large amo\-unts of data chunks that are stored in a distributed file system. Each chunk of data must be assigned to a virtual machine. Data chunk transfers require their own network reservations.
 
 \item \emph{Data chunk replication}. Distributed file systems often store redundant copies of data chunks, called \emph{chunk replicas}. Only one copy of each data chunk replica must be processed, and we are free to choose the replica to be used based on its placement.
 
@@ -170,14 +169,13 @@ widely used today~\cite{fattree}).
 \label{sec:contributions-dynamic-mapping}
 
 In Chapter~\ref{ch:dynamic-mapping}, we study virtual network embeddings in the scenario where virtual machines can be migrated during runtime to another physical machine.
-Possibility of migration provides efficient tools that allow to react to unpredictible communication patterns.
+Possibility of migration allows to react to unpredictible communication patterns.
 For example, if some distant nodes communicate often, it is vital to reduce their distance to save network bandwidth.
 The objective is to minimize the total network bandwidth used for communication and for migration.
 
 We assume that the communication patterns are not known in advance.
 We measure the quality of presented algorithmic solutions by competitive analysis~\cite{borodin-book}, which is well-suited for problems that are online by their nature.
-In the competitive analysis, the goal is to optimize \emph{the competitive ratio} of a given online algorithm by comparing its performance to an optimal offline algorithm that knows the whole input sequence in advance.
-To obtain the competitive ratio for a minimization problem, we take the maximum ratio (over all input sequences) of the online algorithm cost to the offline algorithm cost.
+In the competitive analysis, the goal is to optimize \emph{the competitive ratio} of a given online algorithm: the ratio of its cost to the cost of an optimal offline algorithm that knows the whole input sequence in advance.
 
 In the dynamic scenario, we assume that the physical substrate network is a~tree of height one.
 That is, every physical machine (leaf) is connected directly to the root (that has no hosting capabilities).
@@ -191,7 +189,7 @@ Intuitively, we would like to minimize inter-cluster
 interactions by mapping frequently communicating nodes to the same cluster.
 Since communication patterns change over time, the nodes should be \emph{repartitioned}, in
 an online manner, by \emph{migrating} them between clusters.
-The objective is to minimize the weighted sum of inter-cluster communication and repartition costs.
+The objective is to minimize the weighted sum of inter-cluster communication and repartitioning costs.
 The former is defined as the number of communication requests between nodes placed in distinct clusters, and the latter as the number of migrations between clusters.
 
 
@@ -208,7 +206,7 @@ how. Should $x$ be migrated to the cluster holding $y$, $y$ to the one holding
 $x$, or should both nodes be migrated to a new cluster?
 
 \item \emph{Which nodes to evict?}
-There, space of the desired destination cluster may not be sufficient. In
+The space of the desired destination cluster may not be sufficient. In
 this case, the~algorithm needs to decide which nodes to ``evict'' (migrate to
 other clusters), to free up space.
 
@@ -238,30 +236,31 @@ Recently, there has been much interest in programming models and distributed
 system architectures for processing and analysis of big data (see, e.g.,~\cite{mapreduce,nodb,shark}).
 Such applications
 generate large amounts of network traffic~\cite{orchestra,talk-about,amazonbw},
-and over the last years, several systems have been proposed which provide a provable network performance.
+and over the last years, several systems have been proposed that provide a provable network performance.
 To guarantee a certain performance level, these systems reserve a portion of a~bandwidth among cooperating nodes.
 There are two major approaches to bandwidth reservations: some systems depend on supplying the volume of bandwidth communication between each pair of nodes~\cite{faircloud,elasticswitch,seawall}, while other systems guarantee sufficient bandwidth for any communication pattern by acquiring sufficient bandwidth among all nodes~\cite{oktopus,secondnet,drl,gatekeeper,proteus}.
-In this thesis we research both approaches: in Chapter~\ref{ch:static-mapping} we pre-reserve a portion of bandwidth among allcooperating nodes, while in Chapter~\ref{ch:dynamic-mapping} we perform the reservation as a pair of nodes request the communication.
+In this thesis we research both approaches: in Chapter~\ref{ch:static-mapping} we pre-reserve a portion of bandwidth among all cooperating nodes, while in Chapter~\ref{ch:dynamic-mapping} we perform the reservation as pairs of nodes communicate.
 
 \medskip
 
-In Chapter~\ref{ch:static-mapping}, we study virtual network embeddings.
-The most popular virtual network abstraction for batch-processing applications~\cite{mapreduce} today is the \emph{virtual cluster} introduced by~\cite{oktopus}, later studied by many others~\cite{talk-about,infocom16,ccr15emb,proteus}.
-The virtual network embedding problem is related to classic VPN graph embedding problems~\cite{gupta2001provisioning,vpn1, vpn2, Goyal2008}.
-The VPN problem is NP-hard, and is constant-factor approximable even for assymmetric traffic demands~\cite{vpn-apx}.
-The VPN problem requires finding a graph embedding with fixed endpoints, while in virtual network embedding problems studied in this thesis, the embedding endpoints are subject to optimization.
+In Chapter~\ref{ch:static-mapping}, we study virtual network embeddings, a problem of embedding a weighted \emph{guest} graph in a capacitated \emph{host} graph.
+The virtual network embedding problem is related to classic VPN graph embedding problems~\cite{gupta2001provisioning,vpn1, vpn2, Goyal2008},
+a problem that is NP-hard, and is constant-factor approximable even for assymmetric traffic demands~\cite{vpn-apx}.
+The VPN problem requires finding a graph embedding with fixed endpoints, while in virtual network embedding problems, studied in this thesis, the embedding endpoints are also subject to optimization.
 In this respect, the virtual network embedding problem can also be seen as related to
 classic Minimum Linear Arrangement problem~\cite{EvNaRS99,ord-prob} which asks for the
-embedding of communication graphs on simple \emph{line topologies} (rather than tree-like topologies as
-studied in this thesis).
+embedding of communication graphs on simple line topologies.
 
-We consider a variant of virtual network embedding enriched by motivations that follow from batch-processing applications.
+We consider a variant of virtual network embedding with extensions motivatied by batch-processing applications.
+The most popular virtual network abstraction for batch-processing applications~\cite{mapreduce} is the \emph{virtual cluster}~\cite{oktopus,talk-about,infocom16,ccr15emb,proteus}, a virtual network that forms a clique.
 Existing virtual cluster embedding algorithms often ignore a crucial dimension of the problem, namely data locality:
-an input to a batch-processing application such as MapReduce is typically stored in a distributed
+an input to a batch-processing application is typically stored in a distributed
 and sometimes redundant file system. Since moving
-data is costly, an embedding algorithm should be aware of data locality,
-and allocate computational resources close to the data; in case of redundant storage, the algorithm should also optimize the replica selection.
-Note that our variant is not strictly a~generalization of a virtual network embedding, as we took simplifing assumptions about the traffic demands.
+data is costly, an embedding algorithm should be aware of the data placement,
+and allocate computational resources close to the data.
+Redundant storage gives additional optimization possibilities.
+In this thesis, we study data locality and replica aware virtual cluster embeddings in tree topologies.
+%Note that our variant is not strictly a~generalization of a virtual network embedding, as we took simplifing assumptions about the traffic demands.
 
 \medskip
 
@@ -282,8 +281,7 @@ is~to~compute a graph partitioning into $\ell$ components of~size at most~$k$ (w
 solution where all components are of size at most $n/k$. The variant where
 $n \geq 2 \cdot k \cdot \ell$ was considered in
 \cite{LeMaTr90,SimTen97,EvNaRS00,EvNaRS99,KrNaSc09}. So far, the best result is
-an $O(\!\sqrt{\log n \cdot \log \ell})$-approximation by Krauthgamer et
-al.~\cite{KrNaSc09}.
+an $O(\!\sqrt{\log n \cdot \log \ell})$-approximation algorithm~\cite{KrNaSc09}.
 
 Our model is related to online
 paging~\cite{SleTar85,FKLMSY91,McGSle91,AcChNo00}, sometimes also referred to
@@ -291,12 +289,12 @@ as online caching, where requests for data items (nodes) arrive over time and
 need to be served from a cache of finite capacity, and where the number of
 cache misses must be minimized. Classic problem variants usually boil down to
 finding a smart eviction strategy, such as Least Recently Used (LRU)~\cite{competitive-analysis}. In our
-setting, requests can be served remotely (i.e., without fetching the
+setting, requests can be served remotely (i.e.,~without fetching the
 corresponding nodes to a single cluster). In this light, our model is more
 reminiscent of caching models \emph{with
 bypassing}~\cite{EpImLN11,EpImLN15,Irani02}. As a side result, we show that our problem is
 capable of emulating online paging.
-A major difference between  these problems is that in the caching problem, each request relate to a sigle element of the universe, while in our model, \emph{both} end points of a communication request are subject to optimization.
+A major difference between  these problems is that in the caching problems, each request involves a sigle element of the universe, while in our model \emph{both} endpoints of a communication request are subject to optimization.
 
 
 
@@ -318,9 +316,8 @@ The TCAM memory is an associative memory storage that enables hardware supported
 
 \subsection{Growth of Forwarding Tables}
 
-Certain routers located at the Internet core forward packets among large number of networks and have the knowledge about virtually all Internet networks.
-Their forwarding tables are usually refered to as \emph{global forwarding table}.
-In Figure~\ref{fig:bgp-entries}, we see the growth of the number of entries in the global forwarding table \cite{url-bgp-entries}.
+Most routers located at the Internet core forward packets among large number of networks and have the knowledge about virtually all Internet networks.
+Their forwarding tables are usually refered to as \emph{global forwarding table} (Figure~\ref{fig:bgp-entries} depicts the growth of its size)~\cite{url-bgp-entries}.
 Therefore, those routers have to store an~enormous number of forwarding rules: the
 number of rules has doubled in the last six years~\cite{bgp-routeviews} and
 the superlinear growth is likely to be sustained~\cite{steve-myth}.
@@ -329,7 +326,7 @@ The concept of virtual networks described in Part~\ref{pt:virtual-networks} cont
 
 In the last years, the size of forwarding table started to exceed the amount of available TCAM memory in a typical router (the phenomenon called the TCAM exhaustion~\cite{tcam-exhaust}).
 Sophisticated electronics circuits such as TCAM are very expensive and power-hungry in comparison to RAM~\cite{tcam-expensive}.
-Moreover, typical operations performed on TCAM memory examine the whole contents stored in memory, which requires closely connected physical structure among memory cells --- as the result, it is expensive to expand available memory.
+Moreover, typical operations performed on TCAM memory examine the whole contents stored in memory, which requires closely connected physical structure among memory cells --- as the result, available memory is expensive to expand.
 
 Limited size of memory and expanding size of the content to store brings new challenges in memory management of the routers.
 In the second part of this thesis, we investigate the following problem, using the tools provided by contemporary routers:
@@ -340,7 +337,7 @@ In the second part of this thesis, we investigate the following problem, using t
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.79\columnwidth]{figs/bgp-entries.png}
-\caption{The number of entries in the global forwarding table. The global forwarding table is built upon the informations exchanged via Border Gateway Protocol. The graph presents the growth of the global forwarding table from 1988 to 2018.}\label{fig:bgp-entries}
+\caption{The number of entries in the global forwarding table. The entries are built on the basis of informations exchanged via Border Gateway Protocol. The graph presents the growth of the global forwarding table from 1988 to 2018.}\label{fig:bgp-entries}
 \end{figure}
 
 
@@ -382,7 +379,7 @@ $O(h(T)\cdot k)$-competitive, where $h(T)$ is the height of the forwarding rules
 Our result is optimal up to the factor~$O(h(T))$: we show that the lower
 bound for the paging problem~\cite{competitive-analysis} implies an
 $\Omega(k)$ lower bound for our problem.
-While in theory $h(T)$ can be as large as the length of IP address, for the actual forwarding tables it is a small constant (around 4-7).
+While in theory $h(T)$ can be as large as the length of IP address, for the actual forwarding tables, it is a small constant (around 4-7).
 In addition, we consider the online tree caching problem within the resource
 augmentation paradigm: we assume that cache sizes of the online algorithm
 ($\kALG$)  and the optimal offline algorithm ($\kOPT$) may differ.
@@ -395,7 +392,8 @@ Finally, we show that our algorithm can be implemented efficiently, and without 
 
 \subsection{Related Work}
 
-So far, the papers on caching of forwarding tables avoided dependencies, either assuming
+An important aspect of our problem are forwarding rule dependencies caused by their hierarchical structure.
+So far, the papers on caching of forwarding tables avoided this issue, either assuming
 that rules do not overlap (a~tree has a single level)~\cite{route-caching-flat} 
 or by preprocessing the forwarding table, so that the rules become
 non-overlapping~\cite{prefix-caching,fib-caching-non-overlapping}.
@@ -417,7 +415,7 @@ to the routing table in the presence of updates to this table. While
 many practical heuristics have been devised by the networking community for
 this problem~\cite{mms,fib-compression-fifa,fib-compression-globecom10,fib-compression-infocom13,fib-sigcomm,fib-compression-smalta,fib-compression-infocom10},
 worst-case analyses were presented only for some restricted
-scenarios~\cite{fib-icdcs,fib-sirocco}. Combining rules compression and rules
+scenarios~\cite{fib-icdcs,fib-sirocco}. Finally, combining rules compression and rules
 caching is so far an unexplored area.
 
 
@@ -425,12 +423,13 @@ caching is so far an unexplored area.
 \section{Bibliographic notes and acknowledgements}
 
 The results of this thesis were published by the author of this thesis in various conferences and journals.
-Parts of Chapter~\ref{ch:static-mapping} appeared previously in the proceedings of 23rd IEEE International Conference on Network Protocols (ICNP 2015)~\cite{my-icnp},
+Parts of Chapter~\ref{ch:static-mapping} appeared previously in the proceedings of 23rd~IEEE~International Conference~on~Network Protocols (ICNP~2015)~\cite{my-icnp}
 and in Theoretical Computer Science, vol.~697~\cite{my-tcs}.
 Some of the results from Chapter~\ref{ch:static-mapping} appeared in the PhD thesis of my co-author Carlo Fuerst.
-Parts of Chapter~\ref{ch:dynamic-mapping} appeared previously in the proceedings of 30th International Symposium on Distributed Computing (DISC 2016)~\cite{my-disc}.
+Parts of Chapter~\ref{ch:dynamic-mapping} appeared previously in the proceedings of 30th~International Symposium~on~Distributed Computing (DISC~2016)~\cite{my-disc}.
 Chapter~\ref{ch:dynamic-mapping} contains a throughly rewritten and improved revision of the results published in these proceedings.
-Finally, parts of Chapter~\ref{ch:packet-forwarding} were published in the proceedings of 29th ACM Symposium on Parallelism in Algorithmics and Architectures (ACM~SPAA~2017)~\cite{my-spaa}.
+Finally, parts of Chapter~\ref{ch:packet-forwarding} were published in the proceedings of 29th~ACM~Symposium on Parallelism in Algorithmics and Architectures (SPAA~2017)~\cite{my-spaa}.
 Some preliminary results from Chapter~\ref{ch:packet-forwarding} appeared in the master thesis of my co-author Aleksandra Spyra.
 
-For some figures in this thesis, icons by Smashicons from www.flaticons.com were used.
+This thesis was supported by Polish National Science Centre grant 2016/23/N/ST6/03412.
+
