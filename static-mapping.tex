@@ -91,7 +91,7 @@ By $\RS$ we denote the flexibility of choosing which replica of each data chunk 
 In the problem variant without $\RS$, a node needs to access the singular location where the assigned chunk resides.
 
 \parag{Flexible Placement ($\FP$).}
-In most applications, nodes of virtual network are indifferent to their physical placement.
+In most applications, nodes of virtual network are unconcerned about their physical placement.
 By $\FP$ we denote the flexibility of assignment of nodes to physical machines.
 In the problem variant without $\FP$, the assignment of nodes to physical machines is given as an input.
 
@@ -146,7 +146,6 @@ We first present an algorithm to solve the~$\RS+\MA+\CC+\BW$ variant.
 Recall that in this problem variant,
 we are given a~set of redundant chunks ($\RS$) and a~set of
 nodes
-(the \emph{nodes})
 at fixed locations (no~$\FP$). The number of chunks may be larger than the number
 of nodes ($\MA$), and each node needs to be connected
 to its selected chunks as well as to other nodes ($\CC$), while respecting
@@ -178,7 +177,7 @@ $\MaFactor$.
 We additionally assign the following costs to edges of~$\Tree^*$:
 every edge of the original substrate network costs one unit, and all other artificial edges
 cost nothing.
-A solution to the~$\RS+\MA+\BW$ problem can now be computed
+A solution to the~$\RS+\MA+\BW$ variant can now be computed
 from a solution to the \emph{min-cost~max-flow} problem between super-source
 $\Source$ and
 super-sink~$\Sink$ on the artificial graph~$\Tree^*$.
@@ -191,7 +190,7 @@ Exemplary problem instance is presented in Figure~\ref{fig:flow_construction}.
 network~$\Tree^*$: The sink~$\Sink$ is connected to the two leaves, which host the
 nodes. The artificial nodes are depicted below the leaves, are labeled with
 their respective chunks (e.g.,~$\achunk_1$), and are connected to the source
-$\Source$ as well as to the leaves which contain replicas of their chunk.
+$\Source$ as well as to the leaves that contain replicas of their chunk.
 The
 maximum flow with minimal costs is indicated by the dashed lines: each line
 represents one unit of flow. The dotted lines indicate links which have reduced
@@ -259,20 +258,20 @@ and uncapacitated networks, we can simply set~$U=\tau$.
 \label{fig:venn_match}
 \end{figure}
 This section presents faster algorithms to solve 
-the two problem variants
+the two variants
 $\RS+\MA+\CC$ and~$\MA+\CC+\BW$ which can also be solved with the flow approach
 introduced above.
 
 
 Let us first consider the~$\RS+\MA+\CC$ variant.
-Recall that in this problem,
+Recall that in this variant,
 we are given a~set of redundant chunks ($\RS$) and a~set of nodes
 at fixed locations (no $\FP$). The number of chunks may be larger than the number
 of nodes ($\MA$), and each node needs to be connected
 to its chunks as well as to other nodes ($\CC$).
 
 \parag{Algorithm.} Due to Observation~\ref{obs:nofp},~$\RS+\MA+\CC$ degenerates to~$\RS+\MA$.
-In order to solve the~$\RS+\MA$ problem variant,
+In order to solve the~$\RS+\MA$ variant,
 we construct a bipartite
 graph between the set
 $\VirtualNodes$ of nodes and
@@ -294,15 +293,15 @@ Exemplary problem instance is presented in Figure~\ref{fig:matching}.
 \includegraphics[width = 0.49\columnwidth]{figs/static-mapping/model_ma_r_cv_boxes}
 \hfill
 \includegraphics[width =0.49\columnwidth]{figs/static-mapping/matching}
-\caption{The~$\RS+\MA$ problem on the \emph{left} is converted into a
-  matching problem on the \emph{right}.
+\caption{The~$\RS+\MA$ variant on the \emph{left} is converted into a
+  matching problem instance on the \emph{right}.
 The figure illustrates
 an instance where two nodes are
 cloned into~$\MaFactor = 2$ nodes each,
 resulting in a total of four nodes in
-the matching problem representation.
+the matching representation.
 The two replicas of each chunk are
-aggregated into a single chunk vertex~$\achunk_j$  in the matching problem;
+aggregated into a single chunk vertex~$\achunk_j$  in the matching instance;
 this gives a total of four chunk vertices in the matching graph. The costs
 on the links between all clones of a specific vertex and a chunk are set to
 the minimum distance. We can observe this for instance at the edges connecting
@@ -332,10 +331,10 @@ $\mathcal{O}(\tau^{5/2}\cdot \log(\tau\cdot n_S))$; recall that~$\tau = \MaFacto
 We now show that we can solve~$\MA+\CC$ even faster, by exploiting
 locality. Moreover, we will show that we can
 even solve
-$\MA+\CC+\BW$ problem variants by simply
+$\MA+\CC+\BW$ variants by simply
 verifying feasibility.
 In the following, due to Observation~\ref{obs:nofp}, we can focus on
-the~$\MA$ resp.~$\MA+\BW$ problem.
+the~$\MA$ resp.~$\MA+\BW$ variant.
 
 We first introduce the following definition.
 \begin{defn}[Local Assignment (LA)]\label{def:loc}
@@ -409,7 +408,7 @@ It remains to prove optimality of such local assignments.
 By \emph{uplink} of a subtree with root $r$ we denote the edge from $parent(r)$ to $r$ (if it exists).
 We first characterize the bandwidth allocation on uplinks of subtrees.
 \begin{lemma}\label{lem:uplink-alloc}
-Given an~$\MA$ problem and a subtree~$\Tree'$
+Given an~$\MA$ variant and a subtree~$\Tree'$
 containing~$x$
 chunks and~$y$ nodes, the minimal bandwidth allocation of any
 assignment
@@ -443,7 +442,7 @@ for a single transfer~$\CostTrans$.
 
 
 \begin{theorem}
-Given an~$\MA+\CC$ problem instance, a feasible assignment~$\VmChunkAssignment$
+Given an~$\MA+\CC$ variant instance, a feasible assignment~$\VmChunkAssignment$
 is optimal iff it is local.
 \label{thm:local_optimal}
 \end{theorem}
@@ -475,9 +474,9 @@ graph.
 
 \subsection{Dynamic Programming}\label{ssec:dyn}
 
-We now show how to solve the~$\MA+\FP+\CC+\BW$ problem variant
+We now show how to solve the~$\MA+\FP+\CC+\BW$ variant
 in polynomial time.
-Note that this problem variant requires to find a
+Note that this variant requires to find a
 tradeoff between the desire to place nodes as close as possible to each other
 (in order to minimize communication costs), and the desire to place nodes
 as close as possible to
@@ -530,7 +529,7 @@ footprint. In other cases, one solution outperforms the other.}
 leverages the \emph{optimal substructure property} of~$\MA+\FP+\CC+\BW$:
 as we will see, optimal solutions for subproblems (namely subtrees)
 can efficiently be combined into optimal solutions for larger problems.
-Indeed, the~$\MA+\FP+\CC+\BW$ problem
+Indeed, the~$\MA+\FP+\CC+\BW$ variant
 exhibits such a structure, and we show how to exploit it to
 compute efficient embeddings, even in scenarios where multiple chunks
 need to be assigned to flexibly placeable nodes.
@@ -612,13 +611,13 @@ The runtime to binarize~$\Tree$ is asymptotically negligible.
 \begin{figure}
 \centering
 \includegraphics[width=0.49\textwidth]{figs/static-mapping/venn_trivial.pdf}
-\caption{Trivially solvable problem variants.}
+\caption{Trivially solvable variants.}
 \label{fig:venn_trivial}
 \end{figure}
 
 
 For the sake of completeness, we also observe that there are
-several variants that adimit a trivial solution. Concretely, problems with~$\FP$
+several variants that adimit a trivial solution. Concretely, variants with~$\FP$
 plus any combination of
 $\RS$ and~$\BW$ (but without~$\MA$ and~$\CC$) can easily be solved by
 mapping
@@ -629,24 +628,16 @@ shows a Venn diagram of the trivial property combinations.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{NP-Hardness Results}\label{sec:np}
 
-We have seen that even problems with multiple dimensions of
+We have seen that even variants with multiple dimensions of
 flexibility can be solved optimally in polynomial time.
 This section now points out fundamental
 limitations in terms of computational tractability.
 In particular, we
-will show that problems become NP-hard if flexibly placeable nodes ($\FP$) have to be assigned to one of multiple replicas ($RS$), either with multiple chunks per node ($\MA$ in Section~\ref{ssec:fprsma}) or with communication among nodes ($\CC$ in Section~\ref{ssec:fprscc}).
+will show that variants become NP-hard if flexibly placeable nodes ($\FP$) have to be assigned to one of multiple replicas ($RS$), either with multiple chunks per node ($\MA$ in Section~\ref{ssec:fprsma}) or with communication among nodes ($\CC$ in Section~\ref{ssec:fprscc}).
 Both results hold even in uncapacitated networks, and even in small-diameter
 substrate networks (namely two- or three-level trees~\cite{fattree}).
 The hardness of~$\FP+\RS+\MA$ and~$\FP+\RS+\CC$ imply
-the hardness of four additional, more general models, as
-summarized in Figure~\ref{fig:np_implications}:\\
-\begin{figure}[htbp]
-\centering
-\includegraphics[width = .6\columnwidth]{figs/static-mapping/np_implications}
-\caption{The NP-hardness of~$2$ variants implies the hardness of 
-$4$ other variants.}
-\label{fig:np_implications}
-\end{figure}
+the hardness of four additional, more general variants.
 
 \subsection{Introduction to 3D Perfect Matching}
 \label{sec:3dm_intro}
@@ -745,9 +736,9 @@ via two hops, inflicting unitary costs on each hop.
 
 \begin{figure}[t]
 \hfill
-\includegraphics[width = 0.18\columnwidth]{figs/static-mapping/np_3dm_formular}
+\includegraphics[width = 0.3\columnwidth]{figs/static-mapping/np_3dm_formular}
 \hfill
-\includegraphics[width = 0.35\columnwidth]{figs/static-mapping/np_3dm_construction}
+\includegraphics[width = 0.5\columnwidth]{figs/static-mapping/np_3dm_construction}
 \caption{\textit{Left:} A~$\TDM$ instance with three triples:
 $(x_1, y_1, z_1)$,~$(x_2, y_1, z_2)$, and~$(x_2, y_2, z_2)$. The solution is
 indicated by the grey triples; the dashed triple is not used for the
@@ -791,7 +782,7 @@ transportation).
 
 Next, we prove that the joint optimization of node placement and replica selection
 is NP-hard if an inter-connect has to be established between nodes.
-In our terminology, this is the~$\FP+\RS+\CC$ problem.
+In our terminology, this is the~$\FP+\RS+\CC$ variant.
 
 The proof is similar in spirit to the proof of~$\FP+\RS+\MA$, however,
 we modify the construction to account for the absence of~$\MA$:
@@ -895,20 +886,20 @@ In particular, we will show that already two replicas for each chunk are suffici
 introduce intractability.
 
 Namely, we provide the NP-hardness results for two restricted variants of Virtual Cluster Embedding (Sections~\ref{ap:tworep-ma} and \ref{ap:tworep-ni}).
-We augment the $\RS$ variant of $\VCEMB$ problem in the following way: by $\RS(k)$ we denote the problem where each chunk has the redundancy factor at most $k$.
+We augment the $\RS$ variant of $\VCEMB$ in the following way: by $\RS(k)$ we denote the variant where each chunk has the redundancy factor at most $k$.
 In Section~\ref{ap:tworep-ma} we provide the hardness result for $\RS(2)+\MA+\FP$, and in Section~\ref{ap:tworep-ni} we provide the hardness result for $\RS(2)+\FP+\CC+\BW$.
 
-Both problems are reduced from the problem $\TDPM$ (see Section~\ref{sec:3dm_intro} with no further restrictions.
+Both variants are reduced from the problem $\TDPM$ (see Section~\ref{sec:3dm_intro} with no further restrictions.
 The constructions are based upon the reduction of $\TDPM$ to $\FP+\RS+\MA$ (see Section~\ref{ssec:fprsma}) and the reduction of $\TDPM$ to $\FP+\RS+\CC$ (see Section~\ref{ssec:fprscc}).
 However, in contrast to Section~\ref{ssec:fprscc}, in two replica variant without multiple assignment, we added the bandwidth constraints.
-It is currently unknown to the authors of this very paper, whether the hardness result holds without bandwidth constraints (namely, whether the problem $\RS(2)+\FP+\CC$ is NP-hard).
+It is currently unknown to the authors of this very paper, whether the hardness result holds without bandwidth constraints (namely, whether the variant $\RS(2)+\FP+\CC$ is NP-hard).
 The necessity for bandwidth constraints arises as to deal with restricted factor of replication, we need to introduce gadgets in the tree that makes the tree asymmetric.
 Introducing bandwidth constraints allows to control the number of nodes spawning in certain parts of the tree.
 
 \subsection{Two Replicas without Bandwidth Constraints}\label{ap:tworep-ma}
 
-We now show that the 2-replica selection problem is even NP-hard
-without capacity constraints.  In particular, we consider the problem
+We now show that the 2-replica selection variant is even NP-hard
+without capacity constraints.  In particular, we consider the 
 variant~$\RS(2)+\MA(4)+\FP$ with at most two replicas of each chunk and assignment factor
 four. There are no capacity constraints on links.
 
@@ -1463,7 +1454,7 @@ Using the properties of the substrate network, we perform the reduction in the f
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.69\columnwidth]{figs/static-mapping/venn_full2.pdf}
-\caption{Fastest algorithms for different respective problem variants. Variants depicted by solid black are NP-hard, and variants depicted by checked filling are trivially solvable. For the remainder of variants we provide the fastest algorithm determined by the key.}
+\caption{Fastest algorithms for different respective variants. Variants depicted by solid black are NP-hard, and variants depicted by checked filling are trivially solvable. For the remainder of variants we provide the fastest algorithm determined by the key.}
 \label{fig:venn_full}
 \end{figure}
 
@@ -1472,8 +1463,8 @@ Using the properties of the substrate network, we perform the reduction in the f
 In this chapter we have shown that despite the
 multiple dimensions of flexibility in terms of chunk assignment and node placement, 
 and despite the large scale of modern datacenters, 
-many problems can be solved efficiently. However, we have also
-shown that several embedding problems are NP-hard already in two-
+many variants can be solved efficiently. However, we have also
+shown that several embedding variants are NP-hard already in two-
 and three-level trees---a practically relevant result given today's datacenter topologies~\cite{fattree}.
 
 
@@ -1533,7 +1524,7 @@ Figure~\ref{fig:venn_full}.
 One interesting takeaway from this figure regards
 the question which properties render the problem
 NP-hard. For instance, we see that,~$\BW$
-does not influence the hardness of any problem variant,
+does not influence the hardness of any variant,
 while~$\RS$ is crucial for NP-hardness.
 $\MA$ only affects hardness if combined with~$\RS$.
 $\CC$ is trivial without~$\FP$, and~$\FP$ requires
