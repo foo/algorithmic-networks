@@ -175,8 +175,9 @@ problem variant.
 In order to solve the~$\RS+\MA+\NI+\BW$ variant of {\CTE} problem,
 we first remove the~$\NI$ component using Observation~\ref{obs:nofp}.
 Then, we construct
-an artificial graph~$\Tree^*$, extending the substrate network~$\Tree$ as follows. For~$\Tree^*$,
-we normalize the bandwidth of~$\Tree$ to integer multiples of~$\CostTrans$,
+an artificial graph~$\Tree^*$, extending the substrate network~$\Tree$.
+Furthermore, we reduce bandwidth capacities so that the volume of capacity corresponds to number of chunks that we transfer through the link.
+Concretely, for~$\Tree^*$, we set the bandwidth of~$\Tree$ to integer multiples of~$\CostTrans$,
 i.e., for each link~$e\in E(\Tree)$, we set its new
 capacity in~$\Tree^*$ to~$\lfloor\capacity(e) / \CostTrans\rfloor$.
 After this normalization, we extend the topology~$\Tree$ by
@@ -221,8 +222,8 @@ capacity due to~$\NI$.}
 Our algorithm to solve~$\RS+\MA+\NI+\BW$ variant consists of three parts:
 First, we construct the normalized and extended graph~$\Tree^*$
 described above and compute
-a min-cost-max-flow solution, e.g.,
-using~\cite{mincostmaxflow-1,mincostmaxflow-2}.
+a min-cost-max-flow solution.
+Fastest min-cost-max-flow algorithms is the double scaling algorithm~\cite{mincostmaxflow-state}, which is based on the scaling technique~\cite{mincostmaxflow-1,mincostmaxflow-2}, .
 
 Second, we have to \emph{round} the resulting, possibly fractional flow, to
 integer values. Due to the \emph{integrality theorem}~\cite{flow-book},
