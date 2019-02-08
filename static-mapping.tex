@@ -1,4 +1,4 @@
-In large-scale batch-processing systems (e.g. those using MapReduce~\cite{mapreduce} computing paradigm), multiple machines cooperate to processes large quantities of data stored in the data center in a distributed manner.
+
 For a certain computational task, one spawns an adequate number of workers, whose task is to select their data portion, process them, and aggregate the result by cooperation with other workers.
 Workers establish a network connection called a virtual network, formed to peform a given computational task, and in such setting the worker is referred to as a node of a virtual network.
 While these nodes can be placed at~any feasible physical machine in the data center, the performance of the processing is heavily influenced by their placement.
@@ -223,24 +223,13 @@ Our algorithm to solve~$\RS+\MA+\NI+\BW$ variant consists of three parts:
 First, we construct the normalized and extended graph~$\Tree^*$
 described above and compute
 a min-cost-max-flow solution.
-Fastest min-cost-max-flow algorithms is the double scaling algorithm~\cite{mincostmaxflow-state}, which is based on the scaling technique~\cite{mincostmaxflow-1,mincostmaxflow-2}, .
+State-of-the-art min-cost-max-flow algorithm is the double scaling algorithm~\cite{mincostmaxflow-state}, which is based on the scaling technique~\cite{mincostmaxflow-1,mincostmaxflow-2}, .
 
 Second, we have to \emph{round} the resulting, possibly fractional flow, to
 integer values. Due to the \emph{integrality theorem}~\cite{flow-book},
 there always exists an optimal integer solution on graphs with integer capacities.
-However, while algorithms like the successive shortest path algorithm~\cite{successive_shortest_path_complexity}
-directly give us such an integral solution (in polynomial time), the fastest min-cost~max-flow algorithms (e.g., based on double-scaling
-methods~\cite{mincostmaxflow-1} or minimum mean-cost cycle
-algorithms~\cite{mincostmaxflow-2}, may yield fractional solutions
-which need to be rounded to integral solutions (of the same cost).
-In order to compute integral solutions, we proceed as follows: we iteratively
-pick an arbitrary (loop-free) path
-currently having a fractional allocation of value~$f$ ($f>0$), and distribute its flow~$f$
-among all other fractional paths of the same length\todo{opisz dokladniej}; due to the optimality of the fractional solution
-and due to the integrality theorem, such paths must always exist. After distributing this flow,
-the total allocation on this path is 0, and we have increased the number of
-integer paths by at least one. We proceed until we constructed the perfect
-matching.
+However, min-cost~max-flow algorithms may yield fractional solutions
+which need to be rounded to integral solutions (of the same cost)~\cite{electric-flows}.
 
 Third, given an integer min-cost-max-flow solution, we need to decompose
 the integer flow into the paths
@@ -259,10 +248,8 @@ We continue the pairing process until every chunk is assigned.
 The runtime of our algorithm consists of four parts: construction of~$\Tree^*$,
 computation of the min-cost-max-flow, flow rounding, and decomposition. The
 dominant term in the asymptotic runtime is the flow computation.
-Using the state-of-the-art min-cost-max-flow
-algorithms~\cite{mincostmaxflow-1,mincostmaxflow-2}
-we get a runtime of~$\mathcal{O}(n_S^2 \cdot \log\log \min \{U,\tau\})$
-where~$U$ is the maximal link capacity; note that in networks with high capacity
+Using the double scaling algorithm for min-cost-max-flow, we get a runtime of~$\mathcal{O}(n_S^2\cdot m \cdot\log m \cdot \log U \cdot \log n)$
+where~$U$ is the maximal link capacity. Note that each edge has a constant cost, and in networks with high capacity
 and uncapacitated networks, we can simply set~$U=\tau$.
 
 
@@ -278,9 +265,7 @@ and uncapacitated networks, we can simply set~$U=\tau$.
 This section presents faster algorithms to solve 
 the two variants of $\CTE$ problem, the $\RS+\MA+\NI$ and~$\MA+\NI+\BW$, that can also be solved with the flow approach
 introduced above.
-
-
-Let us first consider the~$\RS+\MA+\NI$ variant.
+First, we consider the~$\RS+\MA+\NI$ variant.
 Recall that in this variant,
 we are given a~set of redundant chunks ($\RS$) and a~set of nodes
 at fixed locations (no $\FP$). The number of chunks may be larger than the number
@@ -336,11 +321,7 @@ and for each edge we need to compute its cost, i.e., the shortest distance
 which in a tree can be computed in time~$\mathcal{O}(n_S)$; thus, the overall construction time
 is
 $\mathcal{O}(n_S \cdot \tau^2)$.
-The state-of-the-art algorithm to compute matchings are based on scaling techniques~\cite{scale-match}.
-The runtime translates to
-$\mathcal{O}(\tau^{5/2}\cdot \log(\tau\cdot n_S))$; recall that~$\tau = \MaFactor\cdot n_V$.
-\todo{Porownaj z flow, kiedy ktore jest lepsze}
-
+The state-of-the-art algorithm to compute matchings~\cite{matching-best} has a running time of $\mathcal{O}(\tau^{10/7}\cdot \log(\tau\cdot n_S))$; recall that~$\tau = \MaFactor\cdot n_V$.
 
 
 \subsubsection{Faster~$\MA+\NI$ and~$\MA+\NI+\BW$}
@@ -420,6 +401,7 @@ runtime~$\mathcal{O}(n_S)$. The sum of all remove operations, is equal to
 the number of chunks~$\mathcal{O}(\ChunkType)$.
 Hence the overall complexity of this construction amounts to
 $\mathcal{O}(n_S + \ChunkType)$.
+The matching-based algorithm outperforms flow-based algorithm in situations, where the substrate network is large in comparison to the size of virtual network, as the matching-based algorithm is linear in terms of $n_S$, and the flow-based algorithm is quadratic in terms of $n_S$.
 
 It remains to prove optimality of such local assignments.
 By \emph{uplink} of a subtree with root $r$ we denote the edge from $parent(r)$ to $r$ (if it exists).
