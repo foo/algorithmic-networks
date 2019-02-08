@@ -1,4 +1,4 @@
-In large-scale batch-processing systems (e.g. those using MapReduce computing paradigm~\cite{mapreduce}), multiple machines cooperate to processes large quantities of data stored in the data center in a distributed manner.
+In large-scale batch-processing systems (e.g. those using MapReduce~\cite{mapreduce} computing paradigm), multiple machines cooperate to processes large quantities of data stored in the data center in a distributed manner.
 For a certain computational task, one spawns an adequate number of workers, whose task is to select their data portion, process them, and aggregate the result by cooperation with other workers.
 Workers establish a network connection called a virtual network, formed to peform a given computational task, and in such setting the worker is referred to as a node of a virtual network.
 While these nodes can be placed at~any feasible physical machine in the data center, the performance of the processing is heavily influenced by their placement.
@@ -11,7 +11,10 @@ As described informally in the introduction (see Section~\ref{sec:virt_net_emb})
 and the connecting physical network),
 (2)~the virtual network (the virtual machines and the logical network connecting the machines to each other
 as well as to the data), and (3)~the data divided into data chunks that needs to be processed.
-Figure~\ref{fig:overview} gives an overview of our model.
+For the remainder of this chapter, we restrict our attention to the substrate networks that form a tree, and a particular virtual network topology, the virtual cluster.
+We~refer to aforementioned problem as the \textsc{cluster-in-tree embedding} problem, abbreviated \CTE.
+Below we provide the details of components of \CTE. Figure~\ref{fig:overview} gives an overview of our model.
+
 
 \parag{The Substrate Network.} The substrate network (also known as the \emph{host graph}) represents the physical resources:
 a~set~$S$ of~$n_S=|S|$ servers interconnected by a network consisting of a~set~$R$ of routers (or switches)
@@ -43,6 +46,8 @@ The choice of replica and processing node is subject to optimization, and
 $\mu$ denotes the assignment of chunks to nodes.
 We assume that the number of chunks $\tau$ is divisible by the number of nodes $n_V$, and the assignment $\mu$ is \emph{balanced}:
 each node processes exactly $\tau / n_V$ chunks.
+Collectively, the nodes of virtual network with the inter-connect network and the access network form the \emph{virtual cluster}.
+We extended the notion of the virtual cluster studied by others \cite{oktopus,talk-about,infocom16,ccr15emb,proteus} by incorporating the access network.
 
 \begin{figure}[t]
 \centering
@@ -55,6 +60,8 @@ each node processes exactly $\tau / n_V$ chunks.
 
 
 \subsection{Optimization Objective}
+
+\todo{Bez subsekcji optimization objective? Tylko problem definition i podsekcja problem decomposition?}
 
 Our goal is to design algoriths that minimize the resource \emph{footprint}, the most common objective function considered in the literature \cite{fischer-survey}.
 Formally, let~$\dist(v,\achunk)$ denote the distance (in the underlying physical network~$\Tree$) between a~node~$v$ and
@@ -70,25 +77,25 @@ The solution must obey the capacity of the substrate network: (1) the total numb
 
 \subsection{Problem Decomposition}
 
-In order to chart the landscape of the computational tractability and intractability of different
-problem variants, we decompose our problem into its fundamental aspects, namely multiple chunk assignment ($\MA$),
+We introduced the \CTE problem in its full generality.
+To fully chart the algorithmic complexity of \CTE, we decompose the problem into its fundamental components that can be activated or deactivated independently of each other, and we consider all possible variant.
+Concretely, we consider $5$ aspects of \CTE, namely multiple chunk assignment ($\MA$),
 replica selection ($\RS$), flexible node placement ($\FP$), node interconnect ($\CC$),
 and bandwidth constraints ($\BW$), as described in the following. 
-In this chapter, we consider all possible variants, where each of these five aspects
-can either be enabled or disabled. 
 
 \parag{Multiple Assignment ($\MA$).}
 In most applications, the number of chunks~$\tau$ is larger than the number of nodes, and the objective is to assign multiple chunks to each node.
-We investigate assignments that balances chunks among nodes, i.e. where the number of chunks is divisible by the number of nodes, and each node processes an identical integer number of chunks~$\MaFactor = \tau / n_V$, and we refer to $\MaFactor$ as the multi-assignment factor.
-We refer to such scenario as $\MA$.
-In the problem variant without $\MA$, each node has exactly one chunk assigned.
+In each variant (regardless of $\MA$), we investigate assignments that balances chunks among nodes, i.e. where the number of chunks is divisible by the number of nodes, and each node processes an identical integer number of chunks.
+The number of chunks processed by each node is equal to~$\MaFactor = \tau / n_V$, and we call $\MaFactor$ the multi-assignment factor.
+If the number of chunks exceeds the number of nodes, i.e. $\MaFactor > 1$, then we refer to such scenario as $\MA$.
+In the problem variant without $\MA$, each node has exactly one chunk assigned, and $\MaFactor = 1$.
 
 \parag{Replica Selection ($\RS$).}
 Distributed filesystems often utilize data redundancy for corruption detection and correction.
 A redundant data chunk has multiple \emph{replicas}, stored on different physical machines.
 For each data chunk, it is sufficient to process only one of its replicas.
-By $\RS$ we denote the flexibility of choosing which replica of each data chunk to process
-In the problem variant without $\RS$, a node needs to access the singular location where the assigned chunk resides.
+By $\RS$ we denote the flexibility of choosing which replica of each data chunk to process.
+In the problem variant without $\RS$, a node needs to access the singular location where the assigned chunk resides, and $\forall_i r_i = 1$.
 
 \parag{Flexible Placement ($\FP$).}
 In most applications, nodes of virtual network are unconcerned about their physical placement.
@@ -100,15 +107,15 @@ In multiple computational tasks, it is sufficient to process data chunks indepen
 However, more often the result of processing the individual chunks is combined afterwards.
 By $\CC$ we refer to the latter scenario, where the computation requires the nodes to cooperate.
 We investigate the scenario, where we reserve a bandwidth of volume $\CostCom$ between each pair of nodes, i.e. the node interconnect is modelled as a complete graph, to account for the all-to-all communication patterns of batch processing applications such as MapReduce.
-In the problem variant without $\CC$, we optimize only the cost of transporting chunks to nodes.
+In the problem variant without $\CC$, we optimize only the cost of transporting chunks to nodes, and the inter-node communication is set to zero, i.e. $\CostCom = 0$.
 
 \parag{Bandwidth Capacities ($\BW$).}
-We distinguish between an uncapacitated and a capacitated scenario where the links
+We distinguish between an uncapacitated and a capacitated scenario where each link $e$
 of the substrate network come with bandwidth
-constraints, and will refer to the bandwidth-constrained version by~$\BW$.
+constraint $\capacity(e)$, and will refer to the bandwidth-constrained version by~$\BW$.
 Note that capacity constraints introduce infeasible problem instances, where it is impossible to
 allocate sufficient resources to embed the virtual network.
-In the problem variant without $\BW$, each link has infinite capacity.
+In the problem variant without $\BW$, each link has infinite capacity, i.e. $\forall_{e\in E} \capacity(e) = \infty$.
 
 \section{Polynomial-Time Algorithms}\label{sec:poly}
 
@@ -119,6 +126,8 @@ we can solve many problem variants efficiently.
  which can roughly be categorized into
  \emph{flow} (Section~\ref{ssec:flow}), \emph{matching} (Section~\ref{ssec:match}) and \emph{dynamic programming}
  (Section~\ref{ssec:dyn}) approaches.
+Figure~\ref{fig:venn_full} summarizes the fastest method to solve the computational problem, with exception for variants that are NP-hard.
+ 
 First, let us make a simplifying observation:
 \begin{obs}\label{obs:nofp}
 In problems without flexible placement ($\FP$),
@@ -131,15 +140,23 @@ Accordingly, we can reduce problem variant~$\RS+\MA+\CC +\BW$ (as well as all it
 to~$\RS+\MA+\BW$ (resp.~its subproblems).
 \end{obs}
 
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.69\columnwidth]{figs/static-mapping/venn_full2}
+\caption{Fastest algorithms for different respective variants. Variants depicted by solid black are NP-hard, and variants depicted by checked filling are trivially solvable. For the remainder of variants we provide the fastest algorithm determined by the key.}
+\label{fig:venn_full}
+\end{figure}
+
+
 \subsection{Flow-Based Algorithm}\label{ssec:flow}
 
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.49\columnwidth]{figs/static-mapping/venn_flow.pdf}
-\caption{Variants solved by flow approach.}
-\label{fig:venn_flow}
-\end{figure}
+%\begin{figure}[t]
+%\centering
+%\includegraphics[width=0.49\columnwidth]{figs/static-mapping/venn_flow.pdf}
+%\caption{Variants solved by flow approach.}
+%\label{fig:venn_flow}
+%\end{figure}
 
 
 We first present an algorithm to solve the~$\RS+\MA+\CC+\BW$ variant.
@@ -251,12 +268,12 @@ and uncapacitated networks, we can simply set~$U=\tau$.
 \subsection{Matching Algorithms}\label{ssec:match}
 
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.49\columnwidth]{figs/static-mapping/venn_matching.pdf}
-\caption{Variants solved by matching approaches.}
-\label{fig:venn_match}
-\end{figure}
+%\begin{figure}[t]
+%\centering
+%\includegraphics[width=0.49\columnwidth]{figs/static-mapping/venn_matching.pdf}
+%\caption{Variants solved by matching approaches.}
+%\label{fig:venn_match}
+%\end{figure}
 This section presents faster algorithms to solve 
 the two variants
 $\RS+\MA+\CC$ and~$\MA+\CC+\BW$ which can also be solved with the flow approach
@@ -495,13 +512,13 @@ node placements: each node has a distance of two hops to one other node,
 and four hops to two other nodes. Hence the resulting allocations for the
 node interconnect sum up to~$20 \cdot \CostCom$.
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.49\columnwidth]{figs/static-mapping/venn_dp.pdf}
-\caption{Variants solved by dynamic programming approach.}
-\vspace{-1em}
-\label{fig:venn_dp}
-\end{figure}
+%\begin{figure}[t]
+%\centering
+%\includegraphics[width=0.49\columnwidth]{figs/static-mapping/venn_dp.pdf}
+%\caption{Variants solved by dynamic programming approach.}
+%\vspace{-1em}
+%\label{fig:venn_dp}
+%\end{figure}
 
 Figure~\ref{fig:dynamic_motivation} \emph{(right)} shows a different node
 mapping~$\NodeMapping_2$, which seeks to minimize the communication costs
@@ -608,12 +625,12 @@ The runtime to binarize~$\Tree$ is asymptotically negligible.
 
 \subsection{Simple Variants}
 
-\begin{figure}
-\centering
-\includegraphics[width=0.49\textwidth]{figs/static-mapping/venn_trivial.pdf}
-\caption{Trivially solvable variants.}
-\label{fig:venn_trivial}
-\end{figure}
+%\begin{figure}
+%\centering
+%\includegraphics[width=0.49\textwidth]{figs/static-mapping/venn_trivial.pdf}
+%\caption{Trivially solvable variants.}
+%\label{fig:venn_trivial}
+%\end{figure}
 
 
 For the sake of completeness, we also observe that there are
@@ -622,8 +639,8 @@ plus any combination of
 $\RS$ and~$\BW$ (but without~$\MA$ and~$\CC$) can easily be solved by
 mapping
 nodes to chunk locations.
-Figure~\ref{fig:venn_trivial}
-shows a Venn diagram of the trivial property combinations.
+%Figure~\ref{fig:venn_trivial}
+%shows a Venn diagram of the trivial property combinations.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{NP-Hardness Results}\label{sec:np}
@@ -1450,14 +1467,6 @@ Using the properties of the substrate network, we perform the reduction in the f
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions}\label{sec:conclusion-static}
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.69\columnwidth]{figs/static-mapping/venn_full2.pdf}
-\caption{Fastest algorithms for different respective variants. Variants depicted by solid black are NP-hard, and variants depicted by checked filling are trivially solvable. For the remainder of variants we provide the fastest algorithm determined by the key.}
-\label{fig:venn_full}
-\end{figure}
-
 
 
 In this chapter we have shown that despite the
