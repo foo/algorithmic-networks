@@ -90,10 +90,10 @@ The computing power of a single virtual machine is usually insufficient for the 
 Therefore, data centers provide its resources as a sizeable set of virtual machines connected by a network.
 Collectively, the virtual machines with their interconnecting network are called a \emph{virtual network}, where the cooperating virtual machines are refered to as \emph{nodes} of a virtual network.
 To~guarantee certain quality of service (\emph{QoS}) for multitude of co-existing virtual networks, up-front bandwidth reservations are required.
-However, the generality of performed calculations results in unpredictibility of communication patterns and poses a challenge in optimization of bandwidth reservations.
+However, the generality of performed calculations results in unpredictability of communication patterns and poses a challenge in optimization of bandwidth reservations.
 In this thesis, we provide algorithms for efficient management of~network reservations without any assumptions about communication patterns.
 
-To measure the quality of resource management strategy, in Part~\ref{pt:virtual-networks} we state formal optimization problems; for now, we only briefly sketch it.
+To measure the quality of resource management strategy, in Chapter~\ref{ch:static-mapping} and Chapter~\ref{ch:dynamic-mapping} we state formal optimization problems; for now, we only briefly sketch it.
 Physical components of a data center are modelled as a~graph called a \emph{substrate network}, in which vertices correspond to physical machines, and edges correspond to an interconnecting network.
 A communication cost between a pair of physical machines is proportional to edge-distance in substrate network (the~number of~\emph{hops} in the substrate network).
 A communication pattern among virtual machines is~also modelled as a graph, called a \emph{communication graph}.
@@ -158,7 +158,7 @@ placement, and answer questions such as:
 We draw a complete picture of the problem space: we show that
 some problem variants (also those exhibiting multiple degrees of freedom in terms of
 replica selection and embedding),
-can be solved in polynomial time. For all other variants, we prove limitations of their
+can be solved in polynomial time. For all other variants, we show limitations of their
 computational tractability, by proving their NP-completeness. Interestingly,
 our hardness results also hold in \emph{uncapacitated} substrate
 networks of small-diameter networks (as they are
@@ -238,7 +238,7 @@ Such applications
 generate large amounts of network traffic~\cite{orchestra,talk-about,amazonbw},
 and over the last years, several systems have been proposed that provide a provable network performance.
 To guarantee a certain performance level, these systems reserve a portion of a~bandwidth among cooperating nodes.
-There are two major approaches to bandwidth reservations: some systems depend on supplying the volume of bandwidth communication between each pair of nodes~\cite{faircloud,elasticswitch,seawall}, while other systems guarantee sufficient bandwidth for any communication pattern by acquiring sufficient bandwidth among all nodes~\cite{oktopus,secondnet,drl,gatekeeper,proteus}.
+There are two major approaches to bandwidth reservations: some systems depend on supplying the volume of bandwidth communication between each pair of nodes~\cite{faircloud,elasticswitch,seawall}, while other systems allocate abundant bandwidth of equal volume among all nodes~\cite{oktopus,secondnet,drl,gatekeeper,proteus}.
 In this thesis we research both approaches: in Chapter~\ref{ch:static-mapping} we pre-reserve a portion of bandwidth among all cooperating nodes, while in Chapter~\ref{ch:dynamic-mapping} we perform the reservation as pairs of nodes communicate.
 
 \medskip
@@ -304,12 +304,12 @@ A major difference between  these problems is that in the caching problems, each
 In the second part of this thesis, we consider the fundamental problem of \emph{packet forwarding}.
 We focus on a single router, that physically connects different networks and is responsible for passing packets between them.
 Upon receiving a data packet, the router forwards it to~a~specific output port leading to a neighbouring network.
-To choose an appropriate port, the router stores of a \emph{forwarding table}, which consists of rules describing how to map the packet destination addresses to appropriate ports.
+To choose an appropriate port, the router stores a \emph{forwarding table}, which consists of rules describing how to map the packet destination addresses to appropriate ports.
 Typically, a router stores a single rule for each network it knows about.
 
 The router maintains the forwarding table in its memory.
 Only a small restricted set of~operations is performed on such memory: lookups and updates.
-Nowadays, routers perform milions of lookup operations and thousands updates (see, e.g., a report~\cite{bgp-updates}), and use specialized hardware for the efficiency.
+Nowadays, routers perform milions of lookup operations and thousands updates per second (see, e.g., a report~\cite{bgp-updates}), and use specialized hardware for the efficiency.
 Hence, instead of using the general-purpose memory such as RAM, the specialized memory units such as TCAM are utilized~\cite{tcam-memory}.
 The TCAM memory is an~associative memory storage that enables hardware supported pattern-matching lookup that closely matches the way the forwarding rules are used.
 
