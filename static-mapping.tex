@@ -11,7 +11,7 @@ As described informally in the introduction (see Section~\ref{sec:virt_net_emb})
 and the connecting physical network),
 (2)~the virtual network (the virtual machines and the logical network connecting the machines to each other
 as well as to the data), and (3)~the data divided into data chunks that needs to be processed.
-For the remainder of this chapter, we restrict our attention to the substrate networks that form a tree, and a particular virtual network topology, the virtual cluster.
+For the remainder of this chapter, we restrict our attention to the substrate networks that form a tree, and a particular virtual network topology, called the virtual cluster, which is basically a fully connected graph (a clique).
 We~refer to aforementioned problem as the \textsc{cluster-in-tree embedding} problem, abbreviated \CTE.
 Below we provide the details of components of \CTE. Figure~\ref{fig:overview} gives an overview of our model.
 
@@ -19,7 +19,7 @@ Below we provide the details of components of \CTE. Figure~\ref{fig:overview} gi
 \parag{The Substrate Network.} The substrate network (also known as the \emph{host graph}) represents the physical resources:
 a~set~$S$ of~$n_S=|S|$ servers interconnected by a network consisting of a~set~$R$ of routers (or switches)
 and a~set~$E$ of (symmetric) links. We often refer to the elements in~$S\cup R$
-as the \emph{vertices}. We assume that the inter-connecting network forms an arbitrary rooted tree,
+as the \emph{vertices}. We assume that the inter-connecting network forms an arbitrary rooted tree $T$,
 where the servers are located at the tree leaves and routers at inner nodes.
 Depending on the available capacity~$\capacity(s)$ of server~$s$, multiple virtual machines may be hosted on~$s$.
 Each link~$e\in E$ in the substrate network has a certain bandwidth capacity~$\capacity(e)$.
@@ -39,15 +39,15 @@ Furthermore, to enable nodes to process the data, we provide the virtual network
 The \emph{(node) inter-connect network} forms a complete network (a clique) among nodes,
 and the \emph{(chunk) access network} consists of links from each active replica to the node that is assigned to processes it.
 In order to ensure a predictable application performance, both those networks require certain minimal bandwidth guarantees.
-Concretely, we assume that a chunk
-is connected to its node at a bandwidth~$\CostTrans$, and a node is connected to any other node
+Concretely, we assume that each chunk
+is connected to its processing node at a bandwidth~$\CostTrans$, and each node is connected to any other node
 at  bandwidth~$\CostCom$.
 The choice of replica and processing node is subject to optimization, and
 $\mu$ denotes the assignment of chunks to nodes.
-We assume that the number of chunks $\tau$ is divisible by the number of nodes $n_V$, and the assignment $\mu$ is \emph{balanced}:
+Furthermore, we assume that the number of chunks $\tau$ is divisible by the number of nodes $n_V$, and the assignment $\mu$ is \emph{balanced}:
 each node processes exactly $\tau / n_V$ chunks.
+We extended the notion of the virtual cluster studied by others \cite{oktopus,talk-about,infocom16,ccr15emb,proteus} by incorporating the chunk access network.
 Collectively, the nodes of virtual network with the inter-connect network and the access network form the \emph{virtual cluster}.
-We extended the notion of the virtual cluster studied by others \cite{oktopus,talk-about,infocom16,ccr15emb,proteus} by incorporating the access network.
 
 \begin{figure}[t]
 \centering
@@ -59,27 +59,24 @@ We extended the notion of the virtual cluster studied by others \cite{oktopus,ta
 \end{figure}
 
 
-\subsection{Optimization Objective}
-
-\todo{Bez subsekcji optimization objective? Tylko problem definition i podsekcja problem decomposition?}
-
+\parag{Optimization Objective.} 
 Our goal is to design algoriths that minimize the resource \emph{footprint}, the most common objective function considered in the literature \cite{fischer-survey}.
 Formally, let~$\dist(v,\achunk)$ denote the~distance (in the underlying physical network~$\Tree$) between a~node~$v$ and
 its assigned (active) replica~$\achunk$, and let~$\dist(v_1,v_2)$ denote the distance between the two nodes~$v_1$ and~$v_2$.
 We define the \emph{footprint}~$\Cost(v)$ of a node~$v$ as follows:
 $$
-\Cost(v) = \underbrace{\sum_{\achunk\in \mu(v)} \CostTrans \cdot \dist(v,\achunk)}_{\text{chunk access cost}} +  \underbrace{\frac{1}{2} \cdot \sum_{v' \in \VirtualNodes\setminus\{v\}} \CostCom \cdot \dist(v,v')}_{\text{node inter-connect cost}},
+\Cost(v) = \underbrace{\sum_{\achunk \mid \mu(c) = v} \CostTrans \cdot \dist(v,\achunk)}_{\text{chunk access cost}} +  \underbrace{\frac{1}{2} \cdot \sum_{v' \in \VirtualNodes\setminus\{v\}} \CostCom \cdot \dist(v,v')}_{\text{node inter-connect cost}},
 $$
 where~$\mu(v)$ is the set of chunks assigned to~$v$.
 Our goal is to minimize the overall resource footprint $\Cost=\sum_{v\in V} \Cost(v)$.
-The solution must obey the capacity of the substrate network: (1) the total number of nodes hosted at each server $s$ must not excced $\capacity(s)$, and (2) the total bandwidth allocated at each link $e$ must not exceed its capacity $\capacity(e)$.
+The solution must obey the capacity of the substrate network: (1)~the total number of nodes hosted at each server $s$ must not excced $\capacity(s)$, and (2)~the total bandwidth allocated at each link $e$ must not exceed its capacity $\capacity(e)$.
 %Finally, the solution must assign every chunk to some node, i.e. $\bigcup_v \mu(v) = \{ c_1, \ldots, c_{\tau} \}$.
 
 \subsection{Problem Decomposition}
 
-We introduced the \CTE problem in its full generality.
-To fully chart the algorithmic complexity of \CTE, we decompose the problem into its fundamental components that can be activated or deactivated independently of each other, and we consider all possible variants.
-Concretely, we consider $5$ aspects of \CTE, namely multiple chunk assignment ($\MA$),
+We introduced the $\CTE$ problem in its full generality.
+To fully chart the algorithmic complexity of $\CTE$, we decompose the problem into its fundamental components that can be activated or deactivated independently of each other, and we consider all possible variants.
+Concretely, we consider $5$ aspects of $\CTE$, namely multiple chunk assignment ($\MA$),
 replica selection ($\RS$), flexible node placement ($\FP$), node interconnect ($\NI$),
 and bandwidth constraints ($\BW$), as~described in the following. 
 
@@ -88,17 +85,17 @@ In most applications, the number of chunks~$\tau$ is larger than the number of n
 In each variant (regardless of $\MA$), we investigate assignments that balances chunks among nodes, i.e. where the number of chunks is divisible by the number of nodes, and each node processes an~identical integer number of chunks.
 We require that the number of chunks processed by each node is equal to~$\MaFactor = \tau / n_V$, and we call $\MaFactor$ the multi-assignment factor.
 If the number of chunks exceeds the number of nodes, i.e. $\MaFactor > 1$, then we refer to such scenario as $\MA$.
-In~the~$\CTE$ variant without $\MA$, each node has exactly one chunk assigned, and $\MaFactor = 1$.
+In~the~$\CTE$ variant without $\MA$, each node has exactly one chunk assigned, i.e. $\MaFactor = 1$.
 
 \parag{Replica Selection ($\RS$).}
 Distributed filesystems often utilize data redundancy for corruption detection and correction.
 A redundant data chunk has multiple \emph{replicas}, stored on different physical machines.
 For each data chunk, it is sufficient to process only one of its replicas.
 By~$\RS$ we denote the flexibility of choosing which replica of each data chunk to process.
-In~the~problem variant without $\RS$, a node needs to access the singular location where the assigned chunk resides, and $\forall_i r_i = 1$.
+In~the~problem variant without $\RS$, each chunk has a single replica ($r_i = 1$ for all $i$).
 
 \parag{Flexible Placement ($\FP$).}
-In most applications, nodes of virtual network are unconcerned about their physical placement.
+%In most applications, nodes of virtual network are unconcerned about their physical placement.
 By $\FP$ we denote the flexibility of assignment of nodes to~physical machines.
 In the problem variant without $\FP$, the assignment of nodes to physical machines is given as an input.
 
@@ -150,6 +147,25 @@ to~$RS+MA+BW$ (resp.~its subproblems).
 
 \subsection{Flow-Based Algorithm}\label{ssec:flow}
 
+\begin{figure}
+\centering
+\includegraphics[width=0.5\columnwidth]{figs/static-mapping/flow_ma_cv}
+\caption{An example of the extended substrate
+network~$\Tree^*$: The sink~$\Sink$ is connected to the two leaves, which host the
+nodes. The artificial nodes are depicted below the leaves, are labeled with
+their respective chunks (e.g.,~$\achunk_1$), and are connected to the source
+$\Source$ as well as to the leaves that contain replicas of their chunk.
+The~maximum flow with minimum cost is indicated by the dashed lines: each line
+represents one unit of flow. The~dotted lines indicate links which have reduced
+capacity due to~$\NI$.}
+%\caption{Example of flow construction: Problem instance with two nodes, four chunk
+%types, and two replicas per type. The min-cost-max-flow
+%is indicated by the dashed lines: each line represents one unit of flow.
+%}
+\label{fig:flow_construction}
+\end{figure}
+
+
 
 %\begin{figure}[t]
 %\centering
@@ -159,7 +175,7 @@ to~$RS+MA+BW$ (resp.~its subproblems).
 %\end{figure}
 
 
-We first present an algorithm to solve the~$\RS+\MA+\NI+\BW$ variant of $\CTE$ problem.
+We first present an algorithm to solve the~$\RS+\MA+\NI+\BW$ variant of the $\CTE$ problem.
 Recall that in this problem variant,
 we are given a~set of redundant chunks ($\RS$) and a~set of
 nodes
@@ -176,9 +192,8 @@ In order to solve the~$\RS+\MA+\NI+\BW$ variant of {\CTE} problem,
 we first remove the~$\NI$ component using Observation~\ref{obs:nofp}.
 Then, we construct
 an artificial graph~$\Tree^*$, extending the substrate network~$\Tree$.
-Furthermore, we reduce bandwidth capacities so that the volume of capacity corresponds to number of chunks that we transfer through the link.
-Concretely, for~$\Tree^*$, we set the bandwidth of~$\Tree$ to integer multiples of~$\CostTrans$,
-i.e., for each link~$e\in E(\Tree)$, we set its new
+Furthermore, we transform bandwidth capacities so that they correspond to the maximal number of chunks that we can transfer through the link.
+Concretely, for~$\Tree^*$, for each link~$e\in E(\Tree)$, we set its new
 capacity in~$\Tree^*$ to~$\lfloor\capacity(e) / \CostTrans\rfloor$.
 After this normalization, we extend the topology~$\Tree$ by
 introducing an artificial vertex for each of $\tau$ chunks. Each of these artificial
@@ -199,24 +214,6 @@ from a solution to the \emph{min-cost~max-flow} problem between super-source
 $\Source$ and
 super-sink~$\Sink$ on the artificial graph~$\Tree^*$.
 An illustration of this construction is presented in Figure~\ref{fig:flow_construction}.
-
-\begin{figure}
-\centering
-\includegraphics[width=0.5\columnwidth]{figs/static-mapping/flow_ma_cv}
-\caption{An example of the extended substrate
-network~$\Tree^*$: The sink~$\Sink$ is connected to the two leaves, which host the
-nodes. The artificial nodes are depicted below the leaves, are labeled with
-their respective chunks (e.g.,~$\achunk_1$), and are connected to the source
-$\Source$ as well as to the leaves that contain replicas of their chunk.
-The~maximum flow with minimal costs is indicated by the dashed lines: each line
-represents one unit of flow. The~dotted lines indicate links which have reduced
-capacity due to~$\NI$.}
-%\caption{Example of flow construction: Problem instance with two nodes, four chunk
-%types, and two replicas per type. The min-cost-max-flow
-%is indicated by the dashed lines: each line represents one unit of flow.
-%}
-\label{fig:flow_construction}
-\end{figure}
 
 \parag{Algorithm.}
 Our algorithm to solve~$\RS+\MA+\NI+\BW$ variant consists of three parts:
@@ -248,8 +245,8 @@ We continue the pairing process until every chunk is assigned.
 The runtime of our algorithm consists of four parts: construction of~$\Tree^*$,
 computation of the min-cost-max-flow, flow rounding, and decomposition. The
 dominant term in the~asymptotic runtime is the flow computation.
-Using the double scaling algorithm for min-cost-max-flow, we get a runtime of~$\mathcal{O}(n_S^2\cdot m \cdot\log m \cdot \log U \cdot \log n)$
-where~$U$ is the maximal link capacity. Note that each edge has a constant cost, and in networks with high capacity
+Using the double scaling algorithm for min-cost-max-flow~\cite{mincostmaxflow-state}, we get a runtime of~$\mathcal{O}(|E|^2\cdot m \cdot\log\log U \cdot \log |E|)$
+where~$|E| = n_S+\sum_{i=1}^\tau r_i$, and~$U$ is the maximal link capacity. Note that each edge has a constant cost, and in networks with high capacity
 and uncapacitated networks, we can simply set~$U=\tau$.
 
 
@@ -263,7 +260,7 @@ and uncapacitated networks, we can simply set~$U=\tau$.
 %\label{fig:venn_match}
 %\end{figure}
 This section presents faster algorithms to solve 
-the two variants of $\CTE$ problem, the~$\RS+\MA+\NI$ and~$\MA+\NI+\BW$, that can also be solved with the flow approach
+the two variants of $\CTE$ problem, $\RS+\MA+\NI$ and~$\MA+\NI+\BW$, that can also be solved with the flow approach
 introduced above.
 First, we consider the~$\RS+\MA+\NI$ variant.
 Recall that in this variant,
@@ -278,17 +275,19 @@ we construct a bipartite
 graph between the set
 $\VirtualNodes$ of nodes and
 the set of chunks.
-Concretely, we clone each node~$\MaFactor$ times,
+First, we clone each node~$\MaFactor$ times,
 as each node needs to process
 $\MaFactor$ chunks, and we aggregate all replicas of a given chunk in a
 single %$\ChunkType$
-``super-vertex''.
-For each node $v$ and chunk $c$, we connect $v$ and super-vertex $c$ with the link of cost $\min_i \dist(v,c^{(i)})$, i.e. the cost of reaching the closest replica.
-On the resulting bipartite graph, we compute a~\emph{minimum weight
+super-vertex.
+Second, we link (cloned) nodes to (aggregated) replicas.
+In instances without $\BW$, mapping of any replica to any node is feasible, and hence, for a given mapping of chunks to nodes $\mu$, the minimum bandwidth is utilized if for each $c$, $\mu(c)$ serves the closest replica of $c$.
+Therefore, for each node $v$ and chunk $c$, we connect $v$ and super-vertex $c$ with the link of cost $\min_i \dist(v,c^{(i)})$, i.e. the cost of reaching the closest replica.
+Finally, on the resulting bipartite graph, we compute a~\emph{minimum weight
 perfect
-matching}~\cite{gabow_scaling_algorithm}:
+matching}:
 the resulting matching describes the optimal assignment of chunks to nodes.
-Exemplary problem instance is presented in Figure~\ref{fig:matching}.
+An example instance is presented in Figure~\ref{fig:matching}.
 
 
 \begin{figure}
@@ -317,101 +316,63 @@ The runtime consists of two parts: the construction of the matching graph and
 the~actual matching computation. The constructed graph consists of
 $\MaFactor \cdot n_V \cdot \ChunkType = \tau^2$
 many edges,
-and for each edge we need to compute its cost, i.e., the shortest distance
-which in a tree can be computed in time~$\mathcal{O}(n_S)$; thus, the overall construction time
-is
-$\mathcal{O}(n_S \cdot \tau^2)$.
-The state-of-the-art algorithm to compute matchings~\cite{matching-best} has a running time of $\mathcal{O}(\tau^{10/7}\cdot \log(\tau\cdot n_S))$; recall that~$\tau = \MaFactor\cdot n_V$.
+and for each edge we compute its weight. The shortest distances
+in a tree can be computed in time~$\mathcal{O}(t + q)$~\cite{offline-lca}, where $t$ is the size of a tree and $q$ is the number of queried pairs, which translates to the overall construction time~$\mathcal{O}(n_s + n_v\cdot \sum_{i=1}^\tau r_i)$.
+The state-of-the-art algorithm to compute matchings~\cite{matching-best} has a running time of $\tilde{\mathcal{O}}(m^{10/7}\cdot \log(W))$, where $m$ is the number of edges, $W$ is the maximum weight of an edge, and $\tilde(\mathcal{O})$ hides polylogarithmic (in terms of $m$) factors.
+The total running time is $\tilde{\mathcal{O}}(\tau^{20/7}\cdot \log(n_s)) + \mathcal{O}(n_v\cdot \sum_{i=1}^\tau r_i)$.
+The matching-based algorithm outperforms the flow-based algorithm.
 
 
 \subsubsection{Faster~$\MA+\NI$ and~$\MA+\NI+\BW$}
+\todo{subsection: ``Local matching algorithm''?}
 
-We now show that we can solve~$\MA+\NI$ even faster, by exploiting
+In this section, we present the way to solve~$\MA+\NI$ even faster by exploiting
 locality. Moreover, we show that we can
 even solve
 $\MA+\NI+\BW$ variants by simply
 verifying feasibility.
 In~the~following, due to Observation~\ref{obs:nofp}, we can focus on
-the~$\MA$ resp.~$\MA+\BW$ variant.
+the~$\MA$ and~$\MA+\BW$ variants.
+We start by lower-bounding the required bandwidth allocation in form of Lemma~\ref{lem:uplink-alloc}.
 
-We first introduce the following definition.
-\begin{defn}[Local Assignment (LA)]\label{def:loc}
-We define an assignment~$\VmChunkAssignment$ to
-be \emph{local in a specific subtree~$\Tree'$}, iff~$\VmChunkAssignment$
-assigns the maximum number of chunks in the
-subtree to nodes in the same subtree.
-We define~$\VmChunkAssignment$ to be \emph{local} when
-it is local with respect to all possible subtrees of the~substrate network.
-\end{defn}
+%We first introduce the following definition.
+%\begin{defn}[Local Assignment (LA)]\label{def:loc}
+%We define an assignment~$\VmChunkAssignment$ to
+%be \emph{local in a specific subtree~$\Tree'$}, iff~$\VmChunkAssignment$
+%assigns the maximum number of chunks in the
+%subtree to nodes in the same subtree.
+%We define~$\VmChunkAssignment$ to be \emph{local} when
+%it is local with respect to all possible subtrees of the~substrate network.
+%\end{defn}
+%
+%\begin{figure}
+%\center
+%\includegraphics[width = 0.45\columnwidth]{figs/static-mapping/unbalanced_tree}
+%\caption{Illustration of local assignment: The dashed lines indicate bandwidth allocations, which occur
+%independently of the chosen assignment. The dotted lines indicate bandwidth
+%allocation which occur only if~$c_2$ is assigned to~$v_1$.}
+%\label{fig:unbalanced_tree}
+%\end{figure}
+%
+%\parag{Example.}
+%Figure \ref{fig:unbalanced_tree} illustrates the concept of local assignment:
+%The closest chunk to~$v_2$ is~$c_1$, and the closest node to~$c_1$ is~$v_2$.
+%However, a subtree~$T'$ exists such that~$v_1 \in T'$ and~$c_1
+%\in T'$, but~$v_2 \notin T'$. Therefore, a local assignment cannot assign~$c_1$ to~$v_2$.
 
-\begin{figure}
-\center
-\includegraphics[width = 0.45\columnwidth]{figs/static-mapping/unbalanced_tree}
-\caption{Illustration of local assignment: The dashed lines indicate bandwidth allocations, which occur
-independently of the chosen assignment. The dotted lines indicate bandwidth
-allocation which occur only if~$c_2$ is assigned to~$v_1$.}
-\label{fig:unbalanced_tree}
-\end{figure}
 
-\parag{Example.}
-Figure \ref{fig:unbalanced_tree} illustrates the concept of local assignment:
-The closest chunk to~$v_2$ is~$c_1$, and the closest node to~$c_1$ is~$v_2$.
-However, a subtree~$T'$ exists such that~$v_1 \in T'$ and~$c_1
-\in T'$, but~$v_2 \notin T'$. Therefore, a local assignment cannot assign~$c_1$ to~$v_2$.
+%Later we will see that
+%optimal solutions to
+%$\MA$ have a local assignment. We exploit this in our algorithms described
+%in the following.
 
 
-Later we will see that
-optimal solutions to
-$\MA$ have a local assignment. We exploit this in our algorithms described
-in the following.
-
-\parag{Algorithm.} Our proposed algorithm for~$\MA$
-proceeds in a bottom-up fashion, traversing the~substrate network~$\Tree$
-from the leaves toward the root.
-For each subtree~$\Tree'$, we maintain
-two sets~$S_1,S_2$ in order to match unmatched
-chunks~$S_1$ in the subtree~$\Tree'$ to unmatched
-nodes~$S_2$ in~$\Tree'$. Both sets are initially empty.
-
-We first process all the leaves, in an arbitrary order; subsequently, we process arbitrary inner vertices
-of~$\Tree$, whenever all their children have been processed.
-We process any leaf~$\ell$
-by adding any
-nodes or chunks which are located on~$\ell$ to the corresponding sets~$S_1$ and~$S_2$.
-A non-leaf vertex~$u$ is processed in the following way: we take the union of
-the sets of~$u$'s children, i.e., the sets contain the unmatched chunks and nodes
-in this subtree.
-For both leaves and inner nodes, whenever
-both sets are non-empty, we greedily match an arbitrary chunk in~$S_1$ with an arbitrary node in~$S_2$,
-and remove them from the sets.
-
-\parag{Analysis.} On a given vertex~$u$, emptying one of the sets, results in a \emph{local assignment} (cf~Definition~\ref{def:loc})
-in the
-subtree rooted at~$u$. The bottom-up strategy ensures that this works
-for every subtree in the substrate, rendering the resulting assignment
-local.
-The complexity of this
-construction is low: For each
-vertex in the substrate graph,
-we build the union of the
-children's sets,
-and since each vertex can only be the child of one vertex,
-the amortized runtime per vertex is constant; and hence the overall
-runtime~$\mathcal{O}(n_S)$. The sum of all remove operations, is equal to
-the number of chunks~$\mathcal{O}(\ChunkType)$.
-Hence the overall complexity of this construction amounts to
-$\mathcal{O}(n_S + \ChunkType)$.
-The matching-based algorithm outperforms flow-based algorithm in situations, where the substrate network is large in comparison to the size of virtual network, as the matching-based algorithm is linear in terms of $n_S$, and the flow-based algorithm is quadratic in terms of $n_S$.
-
-It remains to prove optimality of such local assignments.
-By \emph{uplink} of a subtree with root $r$ we denote the edge from $parent(r)$ to $r$ (if it exists).
-We first characterize the bandwidth allocation on uplinks of subtrees.
 \begin{lemma}\label{lem:uplink-alloc}
 Given an~$\MA$ variant and a subtree~$\Tree'$
 containing~$x$
-chunks and~$y$ nodes, the~minimal bandwidth allocation of any
+chunks and~$y$ nodes, the bandwidth allocation of any
 assignment
-$\VmChunkAssignment$ on the uplink of~$\Tree'$ is~$|x-y\cdot\MaFactor|\cdot
+$\VmChunkAssignment$ on the uplink of~$\Tree'$ is at~least $|x-y\cdot\MaFactor|\cdot
 \CostTrans$.
 \label{lemma:uplink}
 \end{lemma}
@@ -421,9 +382,7 @@ nodes in the given subtree,
 the bandwidth allocation inflicted by the chunk access network on the uplink can
 be
 zero, since we can assign all chunks to nodes in the same subtree.
-Otherwise, we distinguish between two cases: Recall, that in instances
-without~$\RS$, all chunks have to be processed. In case
-there are more chunks in the subtree, at least all of the excess chunks have to
+Otherwise, we distinguish between two cases. If there are more chunks in the subtree, at least all of the excess chunks have to
 be transferred to a different subtree, which 
 inflicts costs~$\CostTrans$ per excess chunk on the uplink connecting~$\Tree'$
 with the
@@ -440,24 +399,68 @@ for a single transfer~$\CostTrans$.
 \end{proof}
 
 
-\begin{theorem}
-Given an~$\MA+\NI$ variant instance, a feasible assignment~$\VmChunkAssignment$
-is optimal iff it is local.
-\label{thm:local_optimal}
-\end{theorem}
+\parag{Algorithm.} Our proposed algorithm for~$\MA$
+proceeds in a bottom-up fashion, traversing the~substrate network~$\Tree$
+from the leaves toward the root.
+For each subtree~$\Tree'$, we maintain
+two sets~$S_c,S_v$ in order to match unmatched
+chunks~$S_c$ in the subtree~$\Tree'$ to unmatched
+nodes~$S_v$ in~$\Tree'$. Both sets are initially empty.
 
-\begin{proof}
-Local assignments generate exactly the minimal allocations on all links, as
- the assignments which generate the minimal bandwidth allocations
-described in
-the proof of
-Lemma~\ref{lemma:uplink} are local in the given subtree. Hence
-each local assignment has to be optimal. A non-local assignment, has at least
-one subtree, in which it is not local. This subtree has a higher
-allocation on the uplink. Since the local assignment has minimal allocations
-on all other links, the non local assignment has a larger footprint.
-\end{proof}
 
+We first process all the leaves, in an arbitrary order; subsequently, we process arbitrary inner vertices
+of~$\Tree$ whenever all their children have been processed.
+We process any leaf~$\ell$
+by adding any
+nodes or chunks which are located on~$\ell$ to the corresponding sets~$S_c$ and~$S_v$.
+A non-leaf vertex~$u$ is processed in the following way: we take the union of
+the sets of~$u$'s children, i.e., the sets contain the unmatched chunks and nodes
+in this subtree.
+For both leaves and inner nodes, whenever
+both sets are non-empty, we greedily match an arbitrary chunk in~$S_c$ with an arbitrary node in~$S_v$,
+and remove them from the sets.\todo{!}
+
+\parag{Analysis.} On a given vertex~$u$, emptying one of the sets, results in a \emph{local assignment}
+in the
+subtree rooted at~$u$. The bottom-up strategy ensures that this works
+for every subtree in the substrate, rendering the resulting assignment
+local.
+The complexity of this
+construction is low: For each
+vertex in the substrate graph,
+we build the union of the
+children's sets,
+and since each vertex can only be the child of one vertex,
+the amortized runtime per vertex is constant; and hence the overall
+runtime~$\mathcal{O}(n_S)$. The sum of all remove operations, is equal to
+the number of chunks~$\mathcal{O}(\ChunkType)$.
+Hence the overall complexity of this construction amounts to
+$\mathcal{O}(n_S + \ChunkType)$.
+The local matching algorithm outperforms the previous presented matching-based algorithm.
+
+%It remains to prove optimality of such local assignments.
+%By \emph{uplink} of a subtree with root $r$ we denote the edge from $parent(r)$ to $r$ (if it exists).
+%We first characterize the bandwidth allocation on uplinks of subtrees.
+
+%\begin{theorem}
+%Given an~$\MA+\NI$ variant instance, a feasible assignment~$\VmChunkAssignment$
+%is optimal iff it is local.
+%\label{thm:local_optimal}
+%\end{theorem}
+%
+%\begin{proof}
+%Local assignments generate exactly the minimal allocations on all links, as
+% the assignments which generate the minimal bandwidth allocations
+%described in
+%the proof of
+%Lemma~\ref{lemma:uplink} are local in the given subtree. Hence
+%each local assignment has to be optimal. A non-local assignment, has at least
+%one subtree, in which it is not local. This subtree has a higher
+%allocation on the uplink. Since the local assignment has minimal allocations
+%on all other links, the non local assignment has a larger footprint.
+%\end{proof}
+
+\todo{Algorytm osiaga tyle ile w lemacie. Dlatego jest optymalny}
 
 
 Combined with a simple postprocessing step, this approach can also solve~$\MA+\BW$. The central idea of this extension, is
