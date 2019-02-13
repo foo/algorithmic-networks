@@ -654,6 +654,8 @@ elements of~$X \cup Y \cup Z$ exactly once.
 
 \subsection{Hardness of Multi-Assignments}\label{ssec:fprsma}
 
+\subsubsection{Warm-up: Multi-Assignment with at Most 3 Replicas}
+
 Our proof that the variant $\FP+\RS+\MA$ of the $\CTE$ problem is NP-hard is based on the following main ideas.
 We encode a~$\TDM$ instance as an instance as follows:
 
@@ -741,124 +743,14 @@ cost must be larger than~$\Thr$ (high costs for chunk
 transportation).
 \end{proof}
 
+\subsubsection{Mult-Assignment with at most 2 replicas}
 
-\subsection{Hardness of Inter-connects}\label{ssec:fprscc}
-
-
-Next, we prove that the joint optimization of node placement and replica selection
-is NP-hard if an inter-connect has to be established between nodes.
-In our terminology, this is the~$\FP+\RS+\NI$ variant.
-
-The proof is similar in spirit to the proof of the~$\FP+\RS+\MA$ variant, however,
-we modify the construction to account for the absence of~$\MA$:
-we choose
-a high value for~$\CostTrans$ (the cost of chunk transportation), such that nodes are directly collocated with
-their assigned chunks. We leverage the fact that any solution which does not
-assign 0 or 3 chunks to each gadget, has higher communication costs.
-
-\parag{Construction.}
-Let~$I$ be an instance of~$\TDM$ with $p$ triples and set cardinality $k$ ($k = |X| = |Y| = |Z|$). We create an instance~$I'$
-for the~$\FP+\RS+\NI$ variant as follows:
-\begin{itemize}
-\item We construct the same tree as in Section~\ref{ssec:fprsma} with
-chunk replicas placed in the same way.
-\item The communication cost in the inter-connect is set to~$\CostCom = 1$.
-\item The number of nodes (virtual machines) is~$\Vms = 3 \cdot k$, where~$k$ is the set cardinality.
-\item Only solutions which place a node in each leaf of~$k$ gadgets, can
-be converted into solutions for the 3-DM problem. We use the cost threshold
-$\Thr =  6 \cdot k + 18 \cdot
-(k - 1) \cdot k$, to verify whether a solution achieves this, transforming
-the~$\FP+\RS+\NI$ variant into a decision problem. A~detailed explanation of this value can
-be found in the proof of Theorem~\ref{theorem:fp_rs_cc}.
-\item We set the access cost~$\CostTrans$ to a chunk replica to $\Thr + 1$. This forces
-nodes to be collocated with the replica. Any solution not
-assigning chunks to collocated nodes, have cost that exceeds $\Thr$.
-\end{itemize}
-
-We focus on instances with unit server capacities.
-
-\parag{Proof of correctness of the reduction.}
-Intuitively, in order to minimize embedding costs,
-nodes should be placed on near-by replicas. We use the following
-helper lemma.
-\begin{lemma}\label{lemma:helper}
-In every valid solution of~$I'$ of cost~$\leq \Thr$, each gadget
-falls in one of two categories:
-$k$ gadgets have exactly
-$3$ nodes, and~$p-k$ gadgets remain empty.
-\end{lemma}
-\begin{proof}
-The~$3\cdot k$ nodes have to be placed
-directly on different chunks, resulting in 0 costs for the access network.
-Consider any pair of nodes
-communicating over the
-inter-connect; due to our construction, the communication cost
-for each such pair is either
-$2$ hops (if they belong to the same gadget) or $4$ hops (if they belong
-to different gadgets).
-The lemma then follows from the observation that~$\Thr$
-is chosen such that it is never possible to distribute nodes
-among more than~$k$ gadgets.
-\end{proof}
-
-\begin{theorem}
-\label{theorem:fp_rs_cc}
-The $\FP+\RS+\NI$ variant of $\CTE$ problem is NP-hard.
-\end{theorem}
-\begin{proof}
-Let~$I$ be an instance of~$\TDM$ and let~$I'$ be an instance of
-the~$\FP+\RS+\NI$ variant constructed as described above.
-We prove that~$I'$ has solution of cost~$\leq \Thr$ if ($\Rightarrow$) and only if
-($\Leftarrow$)
-$I$ has a~solution.
-
-($\Rightarrow$) In order to compute a solution
-for~$I'$ given a solution for~$I$, we proceed as follows.
-Given an exact covering set of triples~$S = \{t_1, t_2,
-\ldots, t_k\}$, we place three nodes in each gadget that
-corresponds to every triple of~$S$. Chunks are matched to the nodes which are located
-on the same server.
-
-The solution has the following cost:
-(1) the communication cost inside a gadget is~$2 \cdot {3 \choose 2}$,
-  as every pair contributes two hops;
-  (2) the communication cost from each gadget to all other gadgets is~$4
-  \cdot 3 \cdot 3 \cdot (k - 1) / 2$, where the factor~$4$ is
-  for the
-  communication over~$4$ hops, the factor~$3$
-  corresponds to the number of nodes per gadget, and
- ~$3 \cdot (k-1)$ is the number of nodes in remote gadgets;
-  as we count each pair twice, we need to divide by two in the end.
-Summing up over all~$k$ gadgets, we get exactly~$\Thr$.
-
-($\Leftarrow$) Given a solution for~$I'$,
-we can exploit Lemma~\ref{lemma:helper} to construct a solution for~$I$.
-We know that in any solution of cost at most~$\Thr$,
-$k$ gadgets contain exactly 3 nodes. These gadgets correspond to a valid
-3D Perfect Matching: exactly one replica of every chunk is processed and
-hence every element is covered exactly once.
-\end{proof}
-
-
-\section{A Detailed Study of Replica Selection Hardness}\label{ap:tworep}
 We have seen that replica selection flexibilities can render embeddings computationally hard.
 Now, we provide a more detailed look at this hardness result
 and explore the minimal requirements for rendering replica selection hard.
 In particular, we show that already two replicas for each chunk are sufficient for computational intractability.
 
-Namely, we provide the NP-hardness results for two restricted variants of Virtual Cluster Embedding (Sections~\ref{ap:tworep-ma} and \ref{ap:tworep-ni}).
-We augment the $\RS$ variant of $\CTE$ in the following way: by $\RS(k)$ we denote the variant where each chunk has the redundancy factor at most $k$.
-In Section~\ref{ap:tworep-ma} we provide the hardness result for the $\RS(2)+\MA+\FP$ variant, and in Section~\ref{ap:tworep-ni} we provide the hardness result for the $\RS(2)+\FP+\NI+\BW$ variant.
-
-Both variants are reduced from the problem $\TDPM$ (see Section~\ref{sec:3dm_intro}).
-The constructions are based upon the reduction of $\TDPM$ to the $\FP+\RS+\MA$ variant of the $\CTE$ problem (see Section~\ref{ssec:fprsma}) and the reduction of $\TDPM$ to the $\FP+\RS+\NI$ variant (see Section~\ref{ssec:fprscc}).
-However, in contrast to Section~\ref{ssec:fprscc}, in two replica variant without multiple assignment, we added the bandwidth constraints.
-The necessity for bandwidth constraints arises as to deal with restricted factor of replication, we need to introduce gadgets in the tree that makes the tree asymmetric.
-Introducing bandwidth constraints allows to control the number of nodes placing in certain parts of the tree.
-
-\subsection{Two Replicas without Bandwidth Constraints}\label{ap:tworep-ma}
-
-%We now show that the 2-replica selection variant is even NP-hard
+% We now show that the 2-replica selection variant is even NP-hard
 %without capacity constraints.  In particular, we consider the 
 %variant~$\RS(2)+\MA(4)+\FP$ with at most two replicas of each chunk and assignment factor
 %four. There are no capacity constraints on links.
@@ -1104,12 +996,122 @@ Hence, exactly $k$ \TripleGadgets{} are active.
 \end{proof}
 
 
-\subsection{Two replicas without Multiple Assignment}\label{ap:tworep-ni}
+
+\subsection{Hardness of Inter-connects}\label{ssec:fprscc}
+
+
+\subsubsection{Warm-up: Inter-connects with at most 3 replicas}
+
+Next, we prove that the joint optimization of node placement and replica selection
+is NP-hard if an inter-connect has to be established between nodes.
+In our terminology, this is the~$\FP+\RS+\NI$ variant.
+
+The proof is similar in spirit to the proof of the~$\FP+\RS+\MA$ variant, however,
+we modify the construction to account for the absence of~$\MA$:
+we choose
+a high value for~$\CostTrans$ (the cost of chunk transportation), such that nodes are directly collocated with
+their assigned chunks. We leverage the fact that any solution which does not
+assign 0 or 3 chunks to each gadget, has higher communication costs.
+
+\parag{Construction.}
+Let~$I$ be an instance of~$\TDM$ with $p$ triples and set cardinality $k$ ($k = |X| = |Y| = |Z|$). We create an instance~$I'$
+for the~$\FP+\RS+\NI$ variant as follows:
+\begin{itemize}
+\item We construct the same tree as in Section~\ref{ssec:fprsma} with
+chunk replicas placed in the same way.
+\item The communication cost in the inter-connect is set to~$\CostCom = 1$.
+\item The number of nodes (virtual machines) is~$\Vms = 3 \cdot k$, where~$k$ is the set cardinality.
+\item Only solutions which place a node in each leaf of~$k$ gadgets, can
+be converted into solutions for the 3-DM problem. We use the cost threshold
+$\Thr =  6 \cdot k + 18 \cdot
+(k - 1) \cdot k$, to verify whether a solution achieves this, transforming
+the~$\FP+\RS+\NI$ variant into a decision problem. A~detailed explanation of this value can
+be found in the proof of Theorem~\ref{theorem:fp_rs_cc}.
+\item We set the access cost~$\CostTrans$ to a chunk replica to $\Thr + 1$. This forces
+nodes to be collocated with the replica. Any solution not
+assigning chunks to collocated nodes, have cost that exceeds $\Thr$.
+\end{itemize}
+
+We focus on instances with unit server capacities.
+
+\parag{Proof of correctness of the reduction.}
+Intuitively, in order to minimize embedding costs,
+nodes should be placed on near-by replicas. We use the following
+helper lemma.
+\begin{lemma}\label{lemma:helper}
+In every valid solution of~$I'$ of cost~$\leq \Thr$, each gadget
+falls in one of two categories:
+$k$ gadgets have exactly
+$3$ nodes, and~$p-k$ gadgets remain empty.
+\end{lemma}
+\begin{proof}
+The~$3\cdot k$ nodes have to be placed
+directly on different chunks, resulting in 0 costs for the access network.
+Consider any pair of nodes
+communicating over the
+inter-connect; due to our construction, the communication cost
+for each such pair is either
+$2$ hops (if they belong to the same gadget) or $4$ hops (if they belong
+to different gadgets).
+The lemma then follows from the observation that~$\Thr$
+is chosen such that it is never possible to distribute nodes
+among more than~$k$ gadgets.
+\end{proof}
+
+\begin{theorem}
+\label{theorem:fp_rs_cc}
+The $\FP+\RS+\NI$ variant of $\CTE$ problem is NP-hard.
+\end{theorem}
+\begin{proof}
+Let~$I$ be an instance of~$\TDM$ and let~$I'$ be an instance of
+the~$\FP+\RS+\NI$ variant constructed as described above.
+We prove that~$I'$ has solution of cost~$\leq \Thr$ if ($\Rightarrow$) and only if
+($\Leftarrow$)
+$I$ has a~solution.
+
+($\Rightarrow$) In order to compute a solution
+for~$I'$ given a solution for~$I$, we proceed as follows.
+Given an exact covering set of triples~$S = \{t_1, t_2,
+\ldots, t_k\}$, we place three nodes in each gadget that
+corresponds to every triple of~$S$. Chunks are matched to the nodes which are located
+on the same server.
+
+The solution has the following cost:
+(1) the communication cost inside a gadget is~$2 \cdot {3 \choose 2}$,
+  as every pair contributes two hops;
+  (2) the communication cost from each gadget to all other gadgets is~$4
+  \cdot 3 \cdot 3 \cdot (k - 1) / 2$, where the factor~$4$ is
+  for the
+  communication over~$4$ hops, the factor~$3$
+  corresponds to the number of nodes per gadget, and
+ ~$3 \cdot (k-1)$ is the number of nodes in remote gadgets;
+  as we count each pair twice, we need to divide by two in the end.
+Summing up over all~$k$ gadgets, we get exactly~$\Thr$.
+
+($\Leftarrow$) Given a solution for~$I'$,
+we can exploit Lemma~\ref{lemma:helper} to construct a solution for~$I$.
+We know that in any solution of cost at most~$\Thr$,
+$k$ gadgets contain exactly 3 nodes. These gadgets correspond to a valid
+3D Perfect Matching: exactly one replica of every chunk is processed and
+hence every element is covered exactly once.
+\end{proof}
+
+
+\subsubsection{Inter-connects with at most 2 replicas and with bandwidth constraints}\label{ap:tworep}
+
+%Namely, we provide the NP-hardness results for two restricted variants of Virtual Cluster Embedding (Sections~\ref{ap:tworep-ma} and \ref{ap:tworep-ni}).
+%We augment the $\RS$ variant of $\CTE$ in the following way: by $\RS(k)$ we denote the variant where each chunk has the redundancy factor at most $k$.
+%In Section~\ref{ap:tworep-ma} we provide the hardness result for the $\RS(2)+\MA+\FP$ variant, and in Section~\ref{ap:tworep-ni} we provide the hardness result for the $\RS(2)+\FP+\NI+\BW$ variant.
+
+The construction is based upon the reduction of $\TDPM$ to the $\FP+\RS+\NI$ variant (see Section~\ref{ssec:fprscc}).
+However, in contrast to Section~\ref{ssec:fprscc}, in two replica variant without multiple assignment, we added the bandwidth constraints.
+The necessity for bandwidth constraints arises as to deal with restricted factor of replication, we need to introduce gadgets in the tree that makes the tree asymmetric.
+Introducing bandwidth constraints allows to control the number of nodes placing in certain parts of the tree.
+
 
 We now show that the~$\RS(2)+\FP+\NI+\BW$ variant is even NP-hard without multiple
 assignment.
 The proof is similar in spirit to proof of hardness of the~$\RS(2)+\FP+\MA$ variant.
-
 The reduction (Theorem~\ref{th:ma-reduction}) unfolds in two stages.
 First, given a solution $\STDPM$ to $\ITDPM$, we construct a solution $\SVCEMB$ to $\IVCEMB$.
 This part is the easier of the two, and mainly consists of placing nodes in Triple Gadgets for triples chosen in $\STDPM$.
