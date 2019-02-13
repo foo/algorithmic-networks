@@ -217,7 +217,7 @@ super-sink~$\Sink$ on the artificial graph~$\Tree^*$.
 An illustration of this construction is presented in Figure~\ref{fig:flow_construction}.
 
 \parag{Algorithm.}
-Our algorithm to solve~$\RS+\MA+\NI+\BW$ variant consists of three parts:
+Our algorithm to solve the~$\RS+\MA+\NI+\BW$ variant consists of three parts:
 First, we construct the normalized and extended graph~$\Tree^*$
 described above and compute
 a~min-cost-max-flow solution.
@@ -261,7 +261,7 @@ and uncapacitated networks, we can simply set~$U=\tau$.
 %\label{fig:venn_match}
 %\end{figure}
 This section presents faster algorithms to solve 
-the two variants of $\CTE$ problem, $\RS+\MA+\NI$ and~$\MA+\NI+\BW$, that can also be solved with the flow approach
+two variants of $\CTE$ problem, $\RS+\MA+\NI$ and~$\MA+\NI+\BW$, that can also be solved with the flow approach
 introduced above.
 First, we consider the~$\RS+\MA+\NI$ variant.
 Recall that in this variant,
@@ -270,7 +270,7 @@ at fixed locations (no $\FP$). The number of~chunks may be larger than the numbe
 of nodes ($\MA$), and each node needs to be connected
 to its chunks as well as to other nodes ($\NI$).
 
-\parag{Algorithm.} Due to Observation~\ref{obs:nofp},~$\RS+\MA+\NI$ variant degenerates to~$\RS+\MA$.
+\parag{Algorithm.} Due to Observation~\ref{obs:nofp}, the $\RS+\MA+\NI$ variant degenerates to~$\RS+\MA$.
 In order to solve the~$\RS+\MA$ variant,
 we construct a bipartite
 graph between the set
@@ -326,7 +326,7 @@ The matching-based algorithm outperforms the flow-based algorithm.
 
 \subsubsection{Local matching algorithm}
 
-In this section, we present the way to solve~$\MA+\NI$ variant even faster by exploiting
+In this section, we present the way to solve the~$\MA+\NI$ variant even faster by exploiting
 locality. Moreover, we show that we can
 even solve
 $\MA+\NI+\BW$ variants by simply
@@ -368,7 +368,7 @@ We start by lower-bounding the required bandwidth allocation in form of Lemma~\r
 
 
 \begin{lemma}\label{lem:uplink-alloc}
-Given an~$\MA$ variant and a subtree~$\Tree'$
+Given the~$\MA$ variant and a subtree~$\Tree'$
 containing~$x$
 chunks and~$y$ nodes, the bandwidth allocation of any
 assignment
@@ -519,7 +519,7 @@ footprint. In other cases, one solution outperforms the other.}
 
 
 \parag{Basic ideas.} Our proposed approach is based on dynamic programming, and
-leverages the \emph{optimal substructure property} of~$\MA+\FP+\NI+\BW$ variant:
+leverages the \emph{optimal substructure property} of the $\MA+\FP+\NI+\BW$ variant:
 as we will see, optimal solutions for subproblems (namely subtrees)
 can efficiently be combined into optimal solutions for larger problems.
 
@@ -721,7 +721,7 @@ Variant $\FP+\RS+\MA$ of the $\CTE$ problem is NP-hard.
 \end{theorem}
 \begin{proof}
 Let~$I$ be an instance of~$\TDM$ and let~$I'$ be an instance of
-$\FP+\RS+\MA$ variant constructed as described above. We prove that~$I'$ has a solution of cost at most $\Thr = 4 \cdot k$ if ($\Rightarrow$) and only if
+the~$\FP+\RS+\MA$ variant constructed as described above. We prove that~$I'$ has a solution of cost at most $\Thr = 4 \cdot k$ if ($\Rightarrow$) and only if
 ($\Leftarrow$)
 $I$ has a~matching of size~$k$.
 
@@ -732,7 +732,7 @@ solution has
 cost exactly~$\Thr$. As every element of the universe is covered, every
 chunk is processed.
 
-($\Leftarrow$) Let us take a solution to~$\FP+\RS+\MA$ variant of cost at most $\Thr$. We
+($\Leftarrow$) Let us take a solution to the~$\FP+\RS+\MA$ variant of cost at most $\Thr$. We
 choose triples that correspond to gadgets where there are nodes. Since
 all chunks are processed, every element of~$X$,~$Y$ and~$Z$ is matched. Each
 node must process chunks that
@@ -758,7 +758,7 @@ assign 0 or 3 chunks to each gadget, has higher communication costs.
 
 \parag{Construction.}
 Let~$I$ be an instance of~$\TDM$ with $p$ triples and set cardinality $k$ ($k = |X| = |Y| = |Z|$). We create an instance~$I'$
-for~$\FP+\RS+\NI$ variant as follows:
+for the~$\FP+\RS+\NI$ variant as follows:
 \begin{itemize}
 \item We construct the same tree as in Section~\ref{ssec:fprsma} with
 chunk replicas placed in the same way.
@@ -768,7 +768,7 @@ chunk replicas placed in the same way.
 be converted into solutions for the 3-DM problem. We use the cost threshold
 $\Thr =  6 \cdot k + 18 \cdot
 (k - 1) \cdot k$, to verify whether a solution achieves this, transforming
-$\FP+\RS+\NI$ variant into a decision problem. A~detailed explanation of this value can
+the~$\FP+\RS+\NI$ variant into a decision problem. A~detailed explanation of this value can
 be found in the proof of Theorem~\ref{theorem:fp_rs_cc}.
 \item We set the access cost~$\CostTrans$ to a chunk replica to $\Thr + 1$. This forces
 nodes to be collocated with the replica. Any solution not
@@ -803,11 +803,11 @@ among more than~$k$ gadgets.
 
 \begin{theorem}
 \label{theorem:fp_rs_cc}
-The variant $\FP+\RS+\NI$ of $\CTE$ problem is NP-hard.
+The $\FP+\RS+\NI$ variant of $\CTE$ problem is NP-hard.
 \end{theorem}
 \begin{proof}
 Let~$I$ be an instance of~$\TDM$ and let~$I'$ be an instance of
-$\FP+\RS+\NI$ variant constructed as described above.
+the~$\FP+\RS+\NI$ variant constructed as described above.
 We prove that~$I'$ has solution of cost~$\leq \Thr$ if ($\Rightarrow$) and only if
 ($\Leftarrow$)
 $I$ has a~solution.
@@ -844,15 +844,14 @@ hence every element is covered exactly once.
 We have seen that replica selection flexibilities can render embeddings computationally hard.
 Now, we provide a more detailed look at this hardness result
 and explore the minimal requirements for rendering replica selection hard.
-In particular, we show that already two replicas for each chunk are sufficient to
-introduce intractability.
+In particular, we show that already two replicas for each chunk are sufficient for computational intractability.
 
 Namely, we provide the NP-hardness results for two restricted variants of Virtual Cluster Embedding (Sections~\ref{ap:tworep-ma} and \ref{ap:tworep-ni}).
 We augment the $\RS$ variant of $\CTE$ in the following way: by $\RS(k)$ we denote the variant where each chunk has the redundancy factor at most $k$.
-In Section~\ref{ap:tworep-ma} we provide the hardness result for $\RS(2)+\MA+\FP$ variant, and in Section~\ref{ap:tworep-ni} we provide the hardness result for $\RS(2)+\FP+\NI+\BW$ variant.
+In Section~\ref{ap:tworep-ma} we provide the hardness result for the $\RS(2)+\MA+\FP$ variant, and in Section~\ref{ap:tworep-ni} we provide the hardness result for the $\RS(2)+\FP+\NI+\BW$ variant.
 
 Both variants are reduced from the problem $\TDPM$ (see Section~\ref{sec:3dm_intro}).
-The constructions are based upon the reduction of $\TDPM$ to $\FP+\RS+\MA$ variant of $\CTE$ (see Section~\ref{ssec:fprsma}) and the reduction of $\TDPM$ to $\FP+\RS+\NI$ variant (see Section~\ref{ssec:fprscc}).
+The constructions are based upon the reduction of $\TDPM$ to the $\FP+\RS+\MA$ variant of the $\CTE$ problem (see Section~\ref{ssec:fprsma}) and the reduction of $\TDPM$ to the $\FP+\RS+\NI$ variant (see Section~\ref{ssec:fprscc}).
 However, in contrast to Section~\ref{ssec:fprscc}, in two replica variant without multiple assignment, we added the bandwidth constraints.
 The necessity for bandwidth constraints arises as to deal with restricted factor of replication, we need to introduce gadgets in the tree that makes the tree asymmetric.
 Introducing bandwidth constraints allows to control the number of nodes spawning in certain parts of the tree.
@@ -1073,7 +1072,7 @@ Hence, exactly $k$ \TripleGadgets{} are active.
 \end{proof}
 
 \begin{theorem}
-  The variant $\RS(2)+\MA+\FP$ of the $\CTE$ problem is NP-hard.
+  The $\RS(2)+\MA+\FP$ variant of the $\CTE$ problem is NP-hard.
   \label{th:ma-reduction}
 \end{theorem}
 
@@ -1116,9 +1115,9 @@ Hence, exactly $k$ \TripleGadgets{} are active.
 
 \subsection{Two replicas without Multiple Assignment}\label{ap:tworep-ni}
 
-We now show that~$\RS(2)+\FP+\NI+\BW$ variant is even NP-hard without multiple
+We now show that the~$\RS(2)+\FP+\NI+\BW$ variant is even NP-hard without multiple
 assignment.
-The proof is similar in spirit to proof of hardness of $\RS(2)+\FP+\MA$ variant.
+The proof is similar in spirit to proof of hardness of the~$\RS(2)+\FP+\MA$ variant.
 
 The reduction (Theorem~\ref{th:ma-reduction}) unfolds in two stages.
 First, given a solution $\STDPM$ to $\ITDPM$, we construct a solution $\SVCEMB$ to $\IVCEMB$.
@@ -1188,7 +1187,7 @@ We construct the tree that has the following structure (see Figure~\ref{fig:over
   {\UnqSubtree}. In the {\MatchSubtree} we put $p$
   {\TripleGadgets}. The {\CoverSubtree} consist of~$k$ element gadgets.
   \item The {\UnqSubtree} consist of~$|U|$ leaves, and two middle nodes:
-  a lower and an upper middle node. Note that this is different from $\RS(2)+\FP+\MA(4)$ variant NP-completeness proof, where {\UnqSubtree} was placed in the {\MatchSubtree}.
+  a lower and an upper middle node. Note that this is different from the~$\RS(2)+\FP+\MA(4)$ variant NP-completeness proof, where {\UnqSubtree} was placed in the {\MatchSubtree}.
   \item \TripleGadget: For each triple, we create a subtree
   consisisting of four vertices: three leaves and one triple root.  We
   attach the root of the triple to the root of the matching subtree.
@@ -1331,7 +1330,7 @@ in each Element Gadget, and the placement of nodes in the
 
 
 
-Similar in spirit to the NP-completeness proof of~$\RS(2)+\MA(4)+\FP$ variant,
+Similar in spirit to the NP-completeness proof of the~$\RS(2)+\MA(4)+\FP$ variant,
 we call the {\TripleGadget} active if it contains exactly three nodes. 
 Similarly, we call the {\TripleGadget} inactive if it
 does not contain spawned nodes, and \emph{partially active} if it
@@ -1372,7 +1371,7 @@ spawned nodes.
 Using the properties of the substrate network, we perform the reduction in the following way.
 
 \begin{theorem}
- The variant $\RS(2)+\FP+\NI+\BW$ of the $\CTE$ problem is NP-hard.
+ The $\RS(2)+\FP+\NI+\BW$ variant of the $\CTE$ problem is NP-hard.
 \end{theorem}
 
 \begin{proof}
