@@ -36,23 +36,24 @@ replica as the \emph{active} (or selected) replica.
 Each node can be placed (or, synonymously, embedded) on an arbitrary server and this placement is subject
 to optimization.
 Furthermore, to enable nodes to process the data, we provide the virtual network with network connections.
-The \emph{(node) inter-connect network} forms a complete network (a clique) among nodes,
+The \emph{(node) inter-connect network} forms a~complete network (a clique) among nodes,
 and the \emph{(chunk) access network} consists of links from each active replica to the node that is assigned to processes it.
 In order to ensure a predictable application performance, both those networks require certain minimal bandwidth guarantees.
 Concretely, we assume that each chunk
-is connected to its processing node at a bandwidth~$\CostTrans$, and each node is connected to any other node
+is connected to its processing node at a~bandwidth~$\CostTrans$, and each node is connected to any other node
 at  bandwidth~$\CostCom$.
 The choice of replica and processing node is subject to optimization, and
 $\mu$ denotes the assignment of chunks to nodes.
-Furthermore, we assume that the number of chunks $\tau$ is divisible by the number of nodes $n_V$, and the assignment $\mu$ is \emph{balanced}:
+Furthermore, we assume that the number of chunks $\tau$ is divisible by the number of nodes~$n_V$, and the assignment~$\mu$ is \emph{balanced}:
 each node processes exactly $\tau / n_V$ chunks.
-We extended the notion of the virtual cluster studied by others \cite{oktopus,talk-about,infocom16,ccr15emb,proteus} by incorporating the chunk access network.
 Collectively, the nodes of virtual network with the inter-connect network and the access network form the \emph{virtual cluster}.
+Note that our definition extends the notion of the virtual cluster studied by others \cite{oktopus,talk-about,infocom16,ccr15emb,proteus} by incorporating the chunk access network.
+
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.79\columnwidth]{figs/static-mapping/data_locality_no_legend.pdf}
-\caption{Overview: a 9-server datacenter storing~$\tau=4$ different chunks~$\{c_1,\ldots,c_4\}$ (depicted as \emph{circles}). The replicas need to be selected and assigned to the two
+\caption{Overview: a 9-server datacenter storing~$\tau=4$ different chunks~$\{c_1,\ldots,c_4\}$ (depicted as \emph{circles}), each having two replicas. The replicas need to be selected and assigned to the two
  virtual machines~$v_1$ and~$v_2$; the virtual machines are depicted as \emph{squares}, and
  the network connecting them to chunks (using bandwidth~$\CostTrans$) is \emph{dashed}. In addition, the virtual machines are inter-connected among
  each other using bandwidth~$\CostCom$ (\emph{dotted}). The objective of the embedding algorithm is to minimize the overall bandwidth allocation.}\label{fig:overview}
@@ -269,7 +270,7 @@ at fixed locations (no $\FP$). The number of~chunks may be larger than the numbe
 of nodes ($\MA$), and each node needs to be connected
 to its chunks as well as to other nodes ($\NI$).
 
-\parag{Algorithm.} Due to Observation~\ref{obs:nofp},~$\RS+\MA+\NI$ degenerates to~$\RS+\MA$.
+\parag{Algorithm.} Due to Observation~\ref{obs:nofp},~$\RS+\MA+\NI$ variant degenerates to~$\RS+\MA$.
 In order to solve the~$\RS+\MA$ variant,
 we construct a bipartite
 graph between the set
@@ -323,10 +324,9 @@ The total running time is $\tilde{\mathcal{O}}(\tau^{20/7}\cdot \log(n_s)) + \ma
 The matching-based algorithm outperforms the flow-based algorithm.
 
 
-\subsubsection{Faster~$\MA+\NI$ and~$\MA+\NI+\BW$}
-\todo{subsection: ``Local matching algorithm''?}
+\subsubsection{Local matching algorithm}
 
-In this section, we present the way to solve~$\MA+\NI$ even faster by exploiting
+In this section, we present the way to solve~$\MA+\NI$ variant even faster by exploiting
 locality. Moreover, we show that we can
 even solve
 $\MA+\NI+\BW$ variants by simply
@@ -397,7 +397,7 @@ for a single transfer~$\CostTrans$.
 \end{proof}
 
 
-\parag{Algorithm.} Our proposed algorithm for~$\MA$
+\parag{Algorithm.} Our proposed algorithm for $\CTE$ variants with $\MA$
 proceeds in a bottom-up fashion, traversing the~substrate network~$\Tree$
 from the leaves toward the root.
 For each subtree~$\Tree'$, we maintain
@@ -454,7 +454,7 @@ The local matching algorithm outperforms the previous algorithm that relied upon
 %\end{proof}
 
 The algorithm allocates the minimum bandwidth at an uplink of every subtree, as stated in Lemma~\ref{lemma:uplink}, hence the algorithm is optimal.
-Combined with a simple postprocessing step, this approach can also solve~$\MA+\BW$. The central idea of this extension, is
+Combined with a simple postprocessing step, this approach can also solve~$\MA+\BW$ variant. The central idea of this extension, is
 that \emph{local} assignments allocate the minimal bandwidth
 on each individual edge. In consequence, each bandwidth constraint
 which is lower than the allocation of a local assignment on one link, renders
@@ -519,7 +519,7 @@ footprint. In other cases, one solution outperforms the other.}
 
 
 \parag{Basic ideas.} Our proposed approach is based on dynamic programming, and
-leverages the \emph{optimal substructure property} of~$\MA+\FP+\NI+\BW$:
+leverages the \emph{optimal substructure property} of~$\MA+\FP+\NI+\BW$ variant:
 as we will see, optimal solutions for subproblems (namely subtrees)
 can efficiently be combined into optimal solutions for larger problems.
 
@@ -631,20 +631,20 @@ In particular, we
 show that variants become NP-hard if flexibly placeable nodes ($\FP$) have to be assigned to one of multiple replicas ($\RS$), either with multiple chunks per node ($\MA$ in Section~\ref{ssec:fprsma}) or with communication among nodes ($\NI$ in Section~\ref{ssec:fprscc}).
 Both results hold even in uncapacitated networks, and even in small-diameter
 substrate networks (namely two- or three-level trees).
-The hardness of~$\FP+\RS+\MA$ and~$\FP+\RS+\NI$ imply
+The hardness of variants $\FP+\RS+\MA$ and~$\FP+\RS+\NI$ imply
 the hardness of four additional, more general variants.
 
 \subsection{Introduction to 3D Perfect Matching}
 \label{sec:3dm_intro}
 
-Both the hardness of~$\FP+\RS+\MA$ and~$\FP+\RS+\NI$ are shown by a reduction
+Both the hardness of~$\FP+\RS+\MA$ and~$\FP+\RS+\NI$ variants of the $\CTE$ problem are shown by a reduction
 from the NP-complete problem of \emph{3D Perfect Matching}~\cite{3dmatch},
 which can be seen as a generalization of bipartite matchings to 3-uniform
 hypergraphs. We refer to this problem by~$\TDM$, and for completeness,
 review it quickly:
 $\TDM$ is defined as follows. We are given three finite and disjoint
 sets~$X$,~$Y$, and~$Z$ of cardinality~$k$, as well as a subset of triples~$P\subseteq
-X \times Y \times Z$.  Set~$M \subseteq P$ is a 3-dimensional matching
+X \times Y \times Z$, and $p = |P|$.  Set~$M \subseteq P$ is a 3-dimensional matching
 if and only if, for any two distinct triples~$t_1=(x_1, y_1, z_1) \in M$
 and~$t_2=(x_2, y_2, z_2) \in M$, it holds that~$x_1\neq x_2$,~$y_1\neq
 y_2$, and~$z_1\neq z_2$. Our goal is to decide if we can construct
@@ -657,7 +657,7 @@ elements of~$X \cup Y \cup Z$ exactly once.
 Our proof that the variant $\FP+\RS+\MA$ of the $\CTE$ problem is NP-hard is based on the following main ideas.
 We encode a~$\TDM$ instance as an instance as follows:
 
-Let~$I$ be an instance of~$\TDM$ with $t$ triples and set cardinality $k$ (where $k = |X| = |Y| = |Z|$).
+Let~$I$ be an instance of~$\TDM$ with $p$ triples and set cardinality $k$ (where $k = |X| = |Y| = |Z|$).
 We construct an instance~$I'$ in the following way:
 \begin{itemize}
 \item \emph{Tree Construction:} We create a tree consisting of a root,
@@ -707,8 +707,8 @@ via two hops, incurring unit costs on each hop.
 \caption{\textit{Left:} A~$\TDM$ instance with three triples:
 $(x_1, y_1, z_1)$,~$(x_2, y_1, z_2)$, and~$(x_2, y_2, z_2)$. The solution is
 indicated by the grey triples; the dashed triple is not used for the
-solution. \textit{Right:} The corresponding problem and solution of~$\FP + \MA
-+ \RS$.}
+solution. \textit{Right:} The corresponding problem and solution for~$\FP + \MA
++ \RS$ of $\CTE$ problem.}
 \hfill
 \label{fig:fprsma}
 \end{figure}
@@ -721,7 +721,7 @@ Variant $\FP+\RS+\MA$ of the $\CTE$ problem is NP-hard.
 \end{theorem}
 \begin{proof}
 Let~$I$ be an instance of~$\TDM$ and let~$I'$ be an instance of
-$\FP+\RS+\MA$ constructed as described above. We prove that~$I'$ has a solution of cost at most $\Thr = 4 \cdot k$ if ($\Rightarrow$) and only if
+$\FP+\RS+\MA$ variant constructed as described above. We prove that~$I'$ has a solution of cost at most $\Thr = 4 \cdot k$ if ($\Rightarrow$) and only if
 ($\Leftarrow$)
 $I$ has a~matching of size~$k$.
 
@@ -732,7 +732,7 @@ solution has
 cost exactly~$\Thr$. As every element of the universe is covered, every
 chunk is processed.
 
-($\Leftarrow$) Let us take a solution to~$\FP+\RS+\MA$ of cost at most $\Thr$. We
+($\Leftarrow$) Let us take a solution to~$\FP+\RS+\MA$ variant of cost at most $\Thr$. We
 choose triples that correspond to gadgets where there are nodes. Since
 all chunks are processed, every element of~$X$,~$Y$ and~$Z$ is matched. Each
 node must process chunks that
@@ -757,8 +757,8 @@ their assigned chunks. We leverage the fact that any solution which does not
 assign 0 or 3 chunks to each gadget, has higher communication costs.
 
 \parag{Construction.}
-Let~$I$ be an instance of~$\TDM$ with $t$ triples and set cardinality $k$ ($k = |X| = |Y| = |Z|$). We create an instance~$I'$
-for~$\FP+\RS+\NI$ as follows:
+Let~$I$ be an instance of~$\TDM$ with $p$ triples and set cardinality $k$ ($k = |X| = |Y| = |Z|$). We create an instance~$I'$
+for~$\FP+\RS+\NI$ variant as follows:
 \begin{itemize}
 \item We construct the same tree as in Section~\ref{ssec:fprsma} with
 chunk replicas placed in the same way.
@@ -768,7 +768,7 @@ chunk replicas placed in the same way.
 be converted into solutions for the 3-DM problem. We use the cost threshold
 $\Thr =  6 \cdot k + 18 \cdot
 (k - 1) \cdot k$, to verify whether a solution achieves this, transforming
-$\FP+\RS+\NI$ into a decision problem. A~detailed explanation of this value can
+$\FP+\RS+\NI$ variant into a decision problem. A~detailed explanation of this value can
 be found in the proof of Theorem~\ref{theorem:fp_rs_cc}.
 \item We set the access cost~$\CostTrans$ to a chunk replica to $\Thr + 1$. This forces
 nodes to be collocated with the replica. Any solution not
@@ -785,7 +785,7 @@ helper lemma.
 In every valid solution of~$I'$ of cost~$\leq \Thr$, each gadget
 falls in one of two categories:
 $k$ gadgets have exactly
-$3$ nodes, and~$t-k$ gadgets remain empty.
+$3$ nodes, and~$p-k$ gadgets remain empty.
 \end{lemma}
 \begin{proof}
 The~$3\cdot k$ nodes have to be placed
@@ -803,11 +803,11 @@ among more than~$k$ gadgets.
 
 \begin{theorem}
 \label{theorem:fp_rs_cc}
-$\FP+\RS+\NI$ is NP-hard.
+The variant $\FP+\RS+\NI$ of $\CTE$ problem is NP-hard.
 \end{theorem}
 \begin{proof}
 Let~$I$ be an instance of~$\TDM$ and let~$I'$ be an instance of
-$\FP+\RS+\NI$ constructed as described above.
+$\FP+\RS+\NI$ variant constructed as described above.
 We prove that~$I'$ has solution of cost~$\leq \Thr$ if ($\Rightarrow$) and only if
 ($\Leftarrow$)
 $I$ has a~solution.
@@ -849,10 +849,10 @@ introduce intractability.
 
 Namely, we provide the NP-hardness results for two restricted variants of Virtual Cluster Embedding (Sections~\ref{ap:tworep-ma} and \ref{ap:tworep-ni}).
 We augment the $\RS$ variant of $\CTE$ in the following way: by $\RS(k)$ we denote the variant where each chunk has the redundancy factor at most $k$.
-In Section~\ref{ap:tworep-ma} we provide the hardness result for $\RS(2)+\MA+\FP$, and in Section~\ref{ap:tworep-ni} we provide the hardness result for $\RS(2)+\FP+\NI+\BW$.
+In Section~\ref{ap:tworep-ma} we provide the hardness result for $\RS(2)+\MA+\FP$ variant, and in Section~\ref{ap:tworep-ni} we provide the hardness result for $\RS(2)+\FP+\NI+\BW$ variant.
 
 Both variants are reduced from the problem $\TDPM$ (see Section~\ref{sec:3dm_intro}).
-The constructions are based upon the reduction of $\TDPM$ to $\FP+\RS+\MA$ (see Section~\ref{ssec:fprsma}) and the reduction of $\TDPM$ to $\FP+\RS+\NI$ (see Section~\ref{ssec:fprscc}).
+The constructions are based upon the reduction of $\TDPM$ to $\FP+\RS+\MA$ variant of $\CTE$ (see Section~\ref{ssec:fprsma}) and the reduction of $\TDPM$ to $\FP+\RS+\NI$ variant (see Section~\ref{ssec:fprscc}).
 However, in contrast to Section~\ref{ssec:fprscc}, in two replica variant without multiple assignment, we added the bandwidth constraints.
 The necessity for bandwidth constraints arises as to deal with restricted factor of replication, we need to introduce gadgets in the tree that makes the tree asymmetric.
 Introducing bandwidth constraints allows to control the number of nodes spawning in certain parts of the tree.
@@ -873,7 +873,7 @@ We still use the threshold value as the placement mechanism, but in this section
 For an introduction to the concept of unique chunks, let us consider the following example.
 Suppose that within one $\VCEMB$ construction, we would like to encode not one $\TDPM$ instance, but two $\TDPM$ instances: $M_1$ and $M_2$, with disjoint universe and different number of triples to be chosen: $n_1$ and $n_2$.
 We perform the following modifications to the encoding provided in Section~\ref{ssec:fprsma}.
-The multi-assignment factor grows by $1$, that is the instance we construct is the $\RS+\MA(4)+\FP$ instance.
+The multi-assignment factor grows by $1$, that is the instance we construct is the $\RS+\MA(4)+\FP$ variant instance.
 We construct two subtrees $T_1$ and $T_2$, that correspond to $M_1$, resp. $M_2$; we construct two two-edge-level combs $C_1$ and $C_2$, with number of leaves $n_1$, resp. $n_2$.
 We attach $M_1$ and $C_1$ (resp. $M_2$ and $C_2$) to the common root and we name the resulting subtree $P_1$, resp. $P_2$.
 Next, we attach $P_1$ and $P_2$ to the common root.
@@ -905,7 +905,7 @@ As a way to deal with replication, we use the families of chunks using the uniqu
 We extend the construction of a gadget for chunk with redundancy, by incorporating the fact that the multi-assignment factor is $4$.
 For the construction to remain correct given such a multi-assignment factor, we introduce further chunks with one chunk replica to place in the chunk gadget and use the excessive $3$ data processing capacities.
 
-\parag{Construction.} For an arbitrary instance~$\ITDPM$ of~$\TDM$ we construct a~$\RS(2)+\MA(4)+\FP$ instance~$\IVCEMB$ the way described in the remainder of this section.
+\parag{Construction.} For an arbitrary instance~$\ITDPM$ of~$\TDM$ we construct a~$\RS(2)+\MA(4)+\FP$ variant instance~$\IVCEMB$ the way described in the remainder of this section.
 Let $k = |X|=|Y|=|Z|$.
 
 By $P$ we denote the set of all triples of $\ITDPM$.
@@ -928,10 +928,10 @@ For unique chunks we simply co-notate the chunk with chunk replica.
 
 Formally, the construction of chunks and replicas unfolds as follows:
 \begin{enumerate}
-  \item For each triple $\tau \in P$, we construct $3$ chunks, with two replicas each.
-  We construct different chunks for each triple $\tau$, which contain element $e$ (in total $\deg(e)$ chunks).
-  We refer to those replicas by $ch_1(e, \tau)$ and $ch_2(e, \tau)$.
-  In total we construct $2\cdot \sum_e\deg(e) = 6\cdot t$ chunk replicas.
+  \item For each triple $t \in P$, we construct $3$ chunks, with two replicas each.
+  We construct different chunks for each triple $t$, which contain element $e$ (in total $\deg(e)$ chunks).
+  We refer to those replicas by $ch^{(1)}(e, t)$ and $ch^{(2)}(e, t)$.
+  In total we construct $2\cdot \sum_e\deg(e) = 6\cdot p$ chunk replicas.
   \item We construct~$k$ additional chunks named
   ~$u_1, \ldots, u_k$ with one replica each.
   \item For each element~$e\in X\cup Y\cup Z$,
@@ -954,7 +954,7 @@ We construct the tree that has the following structure (see Figure~\ref{fig:red-
 \begin{enumerate}
   \item The physical network consists of two subtrees connected to the
   root: the {\MatchSubtree} and the {\CoverSubtree}. The
-  {\MatchSubtree} consists of $t$ {\TripleGadgets}, one per each triple $\tau\in P$ and $k$
+  {\MatchSubtree} consists of $p$ {\TripleGadgets}, one per each triple $t\in P$ and $k$
   {\UnqGadgets}. The {\CoverSubtree} consist of~$3\cdot k$ {\ElGadgets}, one for each element $e\in X\cup Y\cup Z$.
   \item {\TripleGadget} consists of four vertices: three leaves and the root of the gadget.
   \item {\UnqGadget} consists of two vertices: the leaf and the root of the gadget.
@@ -967,14 +967,14 @@ We construct the tree that has the following structure (see Figure~\ref{fig:red-
 \paragraph{Chunk Placement.}
 The chunks are placed as follows:
 \begin{enumerate}
-  \item \emph{Chunks in the Matching Subtree:} In {\TripleGadget} of triple $\tau$ we put
+  \item \emph{Chunks in the Matching Subtree:} In {\TripleGadget} of triple $t$ we put
   three replicas:
- ~$ch_1(e_X(\tau), \tau), ch_1(e_Y(\tau), \tau), ch_1(e_Z(\tau), \tau)$, one per each leaf.
+ ~$ch^{(1)}(t \cap X, t), ch^{(1)}(t \cap Y, t), ch^{(1)}(t \cap Z, t)$, one per each leaf.
   \item \emph{Chunks in the Unique Gadgets:} We place replicas
  ~$u_1,\ldots, u_k$ at the leaves of \UnqGadgets.
  \item \emph{Chunks in Element Gadgets:} Consider the \ElGadget{} for the element $e \in X\cup Y\cup Z$.
  We place two types of replicas in the leaves of the gadget.
- We put replicas $ch_2(\tau, e)$ for each $\tau \in P_e$.
+ We put replicas $ch^{(2)}(t, e)$ for each $t \in P_e$.
  Additionally, we place all the replicas from set $\UniqueE$.
  In total, we place $4\cdot (\deg(e) - 1) + 1$ replicas, one per each leaf of the gadget.
 \end{enumerate}
@@ -983,16 +983,16 @@ The chunks are placed as follows:
 \begin{enumerate}
   \item \emph{Multiple assignment:} We set the multi-assignment factor to $m=4$.
   \item \emph{Number of nodes:} We set the number of nodes to spawn to
- ~$\numNodes = k + \sum_{e}(\deg(e)-1) = 3\cdot t - 2\cdot k$ nodes.
+ ~$\numNodes = k + \sum_{e}(\deg(e)-1) = 3\cdot p - 2\cdot k$ nodes.
  \item \emph{Threshold:} We set the following threshold:
- ~$\Thr = 18\cdot t - 10\cdot k$.
+ ~$\Thr = 18\cdot p - 10\cdot k$.
  This value corresponds to the cost of solution, where $k$ nodes are matched to $4$ chunks that are in distance: $0, 2, 2$ and $4$ to the node, and remaining $\Vms-k$ nodes are matched to $4$ chunks that are in distance: $0, 2, 2$ and $2$ to the node.
 \end{enumerate}
 
 \parag{The reduction.}
 
-Given any $\TDPM$ instance $\ITDPM$, we produce corresponding instance of $\VCEMB$ variant, namely the $\RS(2)+\MA+\FP$ instance, in the way described above.
-We refer to such $\RS(2)+\MA+\FP$ instance as the $\IVCEMB$.
+Given any $\TDPM$ instance $\ITDPM$, we produce corresponding instance of $\VCEMB$ variant, namely the $\RS(2)+\MA+\FP$ variant instance, in the way described above.
+We refer to such $\RS(2)+\MA+\FP$ variant instance as the $\IVCEMB$.
 
 The reduction (Theorem~\ref{th:ma-reduction}) unfolds in two stages.
 First, given a solution $\STDPM$ to $\ITDPM$, we construct a solution $\SVCEMB$ to $\IVCEMB$.
@@ -1033,7 +1033,7 @@ Now, we argue that such node configuration results in $3\cdot i$ long matches.
 Consider the \ElGadget{} $g_e$ for element $e$.
 The gadget $g_e$ has exactly $4\cdot(\deg(e)-1)+1$ leaves, each hosting exactly one chunk replica.
 As $4\cdot(\deg(e)-1)+1 \mod 4 = 1$, spawnining $\deg(e)-1+j$ nodes in $g_e$ for non-negative $j$ results in at least $3\cdot j$ long matches by the fact that there are insufficient chunk replicas in the short distance.
-Using the fact that $\sum_e(\deg(e)-1) = 3\cdot t - 3\cdot k = \Vms - k$, by pidgeon-hole principle we conclude that indeed spawning $\Vms-k+i$ nodes in the \CoverSubtree{} results in at least $3\cdot i$ long matches.
+Using the fact that $\sum_e(\deg(e)-1) = 3\cdot p - 3\cdot k = \Vms - k$, by pidgeon-hole principle we conclude that indeed spawning $\Vms-k+i$ nodes in the \CoverSubtree{} results in at least $3\cdot i$ long matches.
 
 Consider the configuration with $\Vms-k+i$ nodes spawned in the \CoverSubtree{}, and $k-i$ nodes spawned in the \MatchSubtree{}.
 Such configuration results in at least $2\cdot i + k$ long matches, where $3\cdot i$ long matches come from the excessive nodes spawned in the \CoverSubtree{}, and $k-i$ long matches come from $k-i$ nodes in the \MatchSubtree{}.
@@ -1073,7 +1073,7 @@ Hence, exactly $k$ \TripleGadgets{} are active.
 \end{proof}
 
 \begin{theorem}
-  ~$\RS(2)+\MA+\FP$ is NP-hard.
+  The variant $\RS(2)+\MA+\FP$ of the $\CTE$ problem is NP-hard.
   \label{th:ma-reduction}
 \end{theorem}
 
@@ -1105,9 +1105,9 @@ Hence, exactly $k$ \TripleGadgets{} are active.
   We construct the solution $\STDPM$ from the set of triples that correspond to active \TripleGadgets{}.
 
   It remains to show that $\STDPM$ indeed matches every element of $X\cup Y\cup Z$.
-  By Lemma~\ref{lem:short-ma}, each match of $ch(e, \tau)$ for each $e\in X\cup Y\cup Z$ and each $\tau \in P$ is matched by a short match.
+  By Lemma~\ref{lem:short-ma}, each match of $ch(e, t)$ for each $e\in X\cup Y\cup Z$ and each $t \in P$ is matched by a short match.
   Hence, each active node processes the 3 chunks that are placed in its \TripleGadget.
-  In each {\ElGadget} for element~$e$, one chunk $ch(e, \tau)$ for some $\tau \in P$ is not matched.
+  In each {\ElGadget} for element~$e$, one chunk $ch(e, t)$ for some $t \in P$ is not matched.
   Let's call this chunk instance~$\Unmatched(e)$, and let's call~$\Unmatched = \cup_e \Unmatched(e)$.
   Note that~$|\Unmatched| = 3\cdot k$.
   The set~$\Unmatched$ is covered by \ActiveNodes{}, and hence the set of triples in $\STDPM$ form a 3D Perfect Matching of $X\cup Y\cup Z$.
@@ -1116,9 +1116,9 @@ Hence, exactly $k$ \TripleGadgets{} are active.
 
 \subsection{Two replicas without Multiple Assignment}\label{ap:tworep-ni}
 
-We now show that~$\RS(2)+\FP+\NI+\BW$ is even NP-hard without multiple
+We now show that~$\RS(2)+\FP+\NI+\BW$ variant is even NP-hard without multiple
 assignment.
-The proof is similar in spirit to proof of hardness of $\RS(2)+\FP+\MA$.
+The proof is similar in spirit to proof of hardness of $\RS(2)+\FP+\MA$ variant.
 
 The reduction (Theorem~\ref{th:ma-reduction}) unfolds in two stages.
 First, given a solution $\STDPM$ to $\ITDPM$, we construct a solution $\SVCEMB$ to $\IVCEMB$.
@@ -1141,11 +1141,11 @@ Additional nodes do not interfere with the rest of the construction, as we provi
 
 
 \parag{Contruction.}
-For an arbitrary instance~$\ITDPM$ of~$\TDM$ we construct a~$\RS(2)+\FP+\NI+\BW$ instance~$\IVCEMB$ the way described in the remainder of this section.
+For an arbitrary instance~$\ITDPM$ of~$\TDM$ we construct a~$\RS(2)+\FP+\NI+\BW$ variant instance~$\IVCEMB$ the way described in the remainder of this section.
 Let $k = |X|=|Y|=|Z|$.
-By $T$ we denote the set of all triples of $\ITDPM$, and let $t = |T|$.
-For each $e\in X\cup Y\cup Z$, by $T_e$ we denote the set of all triples that contain element $e$.
-Let $\deg(e) = |T_e|$, and note that $\sum_e \deg(e) = 3\cdot t$.
+By $P$ we denote the set of all triples of $\ITDPM$, and let $p = |P|$.
+For each $e\in X\cup Y\cup Z$, by $P_e$ we denote the set of all triples that contain element $e$.
+Let $\deg(e) = |P_e|$, and note that $\sum_e \deg(e) = 3\cdot p$.
 
 We proceed with the construction as follows.
 
@@ -1161,12 +1161,12 @@ For unique chunks we simply co-notate the chunk with chunk replica.
 
 Formally, the construction of chunks and replicas unfolds as follows:
 \begin{enumerate}
-  \item For each triple $\tau \in T$, we construct $3$ chunks, with two replicas each.
-  We construct different chunks for each triple $\tau$, which contain element $e$ (in total $\deg(e)$ chunks).
-  We refer to those replicas by $ch_1(e, \tau)$ and $ch_2(e, \tau)$.
-  In total we construct $2\cdot \sum_e\deg(e) = 6\cdot t$ chunk replicas.
+  \item For each triple from $P$, we construct $3$ chunks, with two replicas each.
+  We construct different chunks for each triple $t$ that contains element $e$ (in total $\deg(e)$ chunks).
+  We refer to those replicas by $ch^{(1)}(e, t)$ and $ch^{(2)}(e, t)$.
+  In total we construct $2\cdot \sum_e\deg(e) = 6\cdot p$ chunk replicas.
   \item Additionally, we construct
-$\max\{3\cdot t + 3\cdot k + 1, \sum_e(2\cdot \deg(e)-1)\}$
+$\max\{3\cdot p + 3\cdot k + 1, \sum_e(2\cdot \deg(e)-1)\}$
 chunks called \emph{unique chunks}. We
 refer to the set of unique chunks by~$U$.
 \end{enumerate}
@@ -1185,10 +1185,10 @@ We construct the tree that has the following structure (see Figure~\ref{fig:over
 \begin{enumerate}
   \item The physical network consists of three subtrees connected to
   the root: the {\MatchSubtree}, the {\CoverSubtree}, and a
-  {\UnqSubtree}. In the {\MatchSubtree} we put $t$
+  {\UnqSubtree}. In the {\MatchSubtree} we put $p$
   {\TripleGadgets}. The {\CoverSubtree} consist of~$k$ element gadgets.
   \item The {\UnqSubtree} consist of~$|U|$ leaves, and two middle nodes:
-  a lower and an upper middle node. Note that this is different from $\RS(2)+\FP+\MA(4)$ NP-completeness proof, where {\UnqSubtree} was placed in the {\MatchSubtree}.
+  a lower and an upper middle node. Note that this is different from $\RS(2)+\FP+\MA(4)$ variant NP-completeness proof, where {\UnqSubtree} was placed in the {\MatchSubtree}.
   \item \TripleGadget: For each triple, we create a subtree
   consisisting of four vertices: three leaves and one triple root.  We
   attach the root of the triple to the root of the matching subtree.
@@ -1200,14 +1200,14 @@ We construct the tree that has the following structure (see Figure~\ref{fig:over
 \emph{Chunk placement.}
 The chunks are placed as follows:
 \begin{enumerate}
-  \item \emph{Chunks in the Matching Subtree:} In {\TripleGadget} of triple $\tau$ we put
+  \item \emph{Chunks in the Matching Subtree:} In {\TripleGadget} of triple $t$ we put
   three replicas:
- ~$ch_1(e_X(\tau), \tau), ch_1(e_Y(\tau), \tau), ch_1(e_Z(\tau), \tau)$, one per each leaf.
+ ~$ch^{(1)}(t \cap X, t), ch^{(1)}(t \cap Y, t), ch^{(1)}(t \cap Z, t)$, one per each leaf.
   \item \emph{Chunks in the Unique Subtree:} We place replicas
  ~$U$ at the leaves of \UnqGadgets.
  \item \emph{Chunks in Element Gadgets:} Consider the \ElGadget{} for the element $e \in X\cup Y\cup Z$.
  We place two types of replicas in the leaves of the gadget.
- We put replicas $ch_2(\tau, e)$ for each $\tau \in T_e$.
+ We put replicas $ch^{(2)}(t, e)$ for each $t \in P_e$.
  In total, we place $\deg(e)$ replicas, one per each leaf of the gadget.
 \end{enumerate}
 
@@ -1243,12 +1243,12 @@ $\numNodes := 3\cdot k + \sum_e (\deg(e)-1) + |U|$.
 
 \parag{Properties of the substrate network.}
 \begin{lemma}
-  Assume we have a~$\RS(2)+\FP+\NI+\BW$ instance~$I$ with a subtree
+  Assume we have a~$\RS(2)+\FP+\NI+\BW$ variant instance~$I$ with a subtree
  ~$T'$ with~$l$ leaves and the bandwidth capacity on uplink of~$T'$ is
  ~$\Band(k)$. Assume that no chunk transportation is allowed
   ($\CostTrans = \infty$, so every node must be collocated with the
   chunk it processes in every feasible solution), and~$\CostCom = 1$.
-  Then in any feasible solution the number $s$ of nodes spawned in~$T$ satisfies~$s \leq k \vee \Vms-s\leq k$, and~$s \leq l$.
+  Then in any feasible solution the number $s$ of nodes spawned in~$T'$ satisfies~$s \leq k \vee \Vms-s\leq k$, and~$s \leq l$.
   \label{lem:bandwidth1}
 \end{lemma}
 
@@ -1256,7 +1256,7 @@ $\numNodes := 3\cdot k + \sum_e (\deg(e)-1) + |U|$.
 It holds that ~$s\leq l$ as we cannot spawn more nodes than leaves.
   The bandwidth allocation on the uplink of~$T'$ is
  ~$uplink(s,T) := s\cdot (\Vms - s)$, as no chunk transportation
-  is allowed ($\CostTrans = \infty$), and every node in~$T$ has to
+  is allowed ($\CostTrans = \infty$), and every node in~$T'$ has to
   communicate over~$T'$'s uplink with nodes spawned outside of
  ~$T'$. Therefore, in every feasible solution we have:
  ~$uplink(s, T') \leq \Band(k)$.  Let's define the remaining bandwidth
@@ -1331,7 +1331,7 @@ in each Element Gadget, and the placement of nodes in the
 
 
 
-Similar in spirit to the NP-completeness proof of~$\RS(2)+\MA(4)+\FP$,
+Similar in spirit to the NP-completeness proof of~$\RS(2)+\MA(4)+\FP$ variant,
 we call the {\TripleGadget} active if it contains exactly three nodes. 
 Similarly, we call the {\TripleGadget} inactive if it
 does not contain spawned nodes, and \emph{partially active} if it
@@ -1372,7 +1372,7 @@ spawned nodes.
 Using the properties of the substrate network, we perform the reduction in the following way.
 
 \begin{theorem}
- ~$\RS(2)+\FP+\NI+\BW$ is NP-hard.
+ The variant $\RS(2)+\FP+\NI+\BW$ of the $\CTE$ problem is NP-hard.
 \end{theorem}
 
 \begin{proof}
@@ -1388,7 +1388,7 @@ Using the properties of the substrate network, we perform the reduction in the f
   ($\Leftarrow$) Let's take any feasible solution~$\STDPM$ to~$\ITDPM$ and
   produce a solution~$\SVCEMB$ to~$\IVCEMB$ in the way described in the construction section. We show that the cost of~$\SVCEMB$ is
   indeed~$\leq \Thr$.
-  For each triple~$t\in T$ in~$\STDPM$, we put~$3$ nodes at
+  For each triple~from $P$ in~$\STDPM$, we put~$3$ nodes at
   leaves of triple gadgets corresponding to those triples.  In each
   element gadget (that corresponds to element~$e$), we put~$\deg(e)-1$
   nodes. In each element gadget there is only one leaf without the
