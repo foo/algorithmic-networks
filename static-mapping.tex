@@ -931,7 +931,7 @@ We construct the tree that has the following structure (see Figure~\ref{fig:red-
   \item {\UnqGadget} consists of two vertices: the leaf and the root of the gadget.
   We construct the root node of the gadget not only to keep the tree balanced, but also to keep leaves of
   {\UnqGadgets} far from leaves of other \UnqGadgets. Note that \UnqGadgets{} form a comb.
-  \item {\ElGadget} for element $e$ consists of the
+  \item The {\ElGadget} for element $e$ consists of the
   root and~$4\cdot(\deg(e)-1)+1$ leaves.
 \end{enumerate}
 
@@ -1179,10 +1179,10 @@ We construct the tree that has the following structure (see Figure~\ref{fig:over
   {\TripleGadgets}. The {\CoverSubtree} consist of~$k$ element gadgets.
   \item The {\UnqSubtree} consist of~$|U|$ leaves, and two middle nodes:
   a lower and an upper middle node. Note that this is different from the~$\RS(2)+\FP+\MA(4)$ variant NP-completeness proof, where {\UnqSubtree} was placed in the {\MatchSubtree}.
-  \item \TripleGadget: For each triple, we create a subtree
+  \item The \TripleGadget: For each triple, we create a subtree
   consisisting of four vertices: three leaves and one triple root.  We
   attach the root of the triple to the root of the matching subtree.
-  \item \ElGadget: For each element~$e \in X\cup Y\cup Z$, we
+  \item The \ElGadget: For each element~$e \in X\cup Y\cup Z$, we
   construct a subtree consisting of the root of the element (attached
   to the root of the cover subtree), and~$\deg(e)$ leaves.
 \end{enumerate}
@@ -1195,7 +1195,7 @@ The chunks are placed as follows:
  ~$ch^{(1)}(t \cap X, t), ch^{(1)}(t \cap Y, t), ch^{(1)}(t \cap Z, t)$, one per each leaf.
   \item \emph{Chunks in the Unique Subtree:} We place replicas
  ~$U$ at the leaves of \UnqGadgets.
- \item \emph{Chunks in Element Gadgets:} Consider the \ElGadget{} for the element $e \in X\cup Y\cup Z$.
+ \item \emph{Chunks in the Element Gadgets:} Consider the \ElGadget{} for the element $e \in X\cup Y\cup Z$.
  We place two types of replicas in the leaves of the gadget.
  We put replicas $ch^{(2)}(t, e)$ for each $t \in P_e$.
  In total, we place $\deg(e)$ replicas, one per each leaf of the gadget.
@@ -1207,7 +1207,7 @@ constraints of an uplink of an {\ElGadget} for each element~$e$ to
 $\Band(\deg(e)-1)$, the bandwidth of an uplink of a~$\MatchSubtree$ to 
 $\Band(n)$, and an uplink of a~$\CoverSubtree$ to 
 $\Band(\sum_e (\deg(e)-1)$.
-Note that out of $\deg(e)$ leaves of \ElGadget{} for element $e$, we allow to place $\deg(e)-1$ nodes.
+Note that out of $\deg(e)$ leaves of the \ElGadget{} for element $e$, we allow to place $\deg(e)-1$ nodes.
 
 \emph{The threshold value and other properties of the instance.} We set the
 cost threshold for any solution to the following value:
