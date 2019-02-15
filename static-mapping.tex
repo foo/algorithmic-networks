@@ -650,8 +650,8 @@ which can be seen as a generalization of bipartite matchings to 3-uniform
 hypergraphs. We refer to this problem by~$\TDM$, and for completeness,
 review it quickly:
 $\TDM$ is defined as follows. We are given three finite and disjoint
-sets~$X$,~$Y$, and~$Z$ of cardinality~$k$, as well as a subset of triples~$P\subseteq
-X \times Y \times Z$, and $p = |P|$.  Set~$M \subseteq P$ is a 3-dimensional matching
+sets~$X$,~$Y$, and~$Z$ of cardinality~$k$, as well as a~subset of triples~$P\subseteq
+X \times Y \times Z$.  Set~$M \subseteq P$ is a 3-dimensional matching
 if and only if, for any two distinct triples~$t_1=(x_1, y_1, z_1) \in M$
 and~$t_2=(x_2, y_2, z_2) \in M$, it holds that~$x_1\neq x_2$,~$y_1\neq
 y_2$, and~$z_1\neq z_2$. Our goal is to decide if we can construct
@@ -667,43 +667,42 @@ Our proof that the variant $\FP+\RS+\MA$ of the $\CTE$ problem is NP-hard is bas
 We encode a~$\TDM$ instance as an instance as follows:
 
 Let~$I$ be an instance of~$\TDM$ with $p$ triples and set cardinality $k$ (where $k = |X| = |Y| = |Z|$).
-We construct an instance~$I'$ in the following way:
+We construct an instance~$\ICTE$ of the $\CTE$ problem in the following way:
 \begin{itemize}
-\item \emph{Tree Construction:} We create a tree consisting of a root,
-and for each triple, we create a gadget which we directly attach as
-child of the root. The gadget is of height 2,
-and consists of an inner node (a router) and three leaves.
-\item \emph{Chunks and chunk replicas:} For each element in~$X$,~$Y$ and~$Z$,
+\item \emph{Tree construction:} We create a tree consisting of a root,
+and for each triple from $P$, we create a \emph{triple gadget} which we directly attach as
+a child of the root. The gadget is of height 2,
+and consists of an inner node and three leaves.
+\item \emph{Chunks:} For each element in~$X$,~$Y$ and~$Z$,
  we create a chunk
-($3 \cdot k$ in total). Every gadget contains three chunk replicas (one per leaf),
+($3 \cdot k$ chunks in total). Every gadget contains three chunk replicas (one per leaf),
 corresponding to the elements of the triple.
-\item \emph{Other properties:} We set the number of to-be-embedded nodes to~$k$,
-$\CostTrans$ to~$1$, and the number of chunk slots in each node to the multi-assignment factor
+\item \emph{Other properties:} We set the number of to-be-embedded nodes $n_V = k$,
+$\CostTrans = 1$, and the the multi-assignment factor
 $\MaFactor=3$.
 \item \emph{Threshold.} In order to turn the optimization problem into a decision problem, we use
-a cost threshold~$\Thr$. The cost threshold is met by all
-assignments which assign all three chunks of each triple to a
+a cost threshold~$\Thr = 4\cdot k$. The cost threshold is met by all
+assignments which assign all three chunks of each triple gadget to a
 node which is collocated with one of the chunks. Assignments which connect a
 chunk to a node in a different triple have a larger footprint, and are
 considered to be infeasible.
-We use the~threshold~$\Thr= 4\cdot k$.
 
 \end{itemize}
 
-\parag{Example.} Figure~\ref{fig:fprsma} shows an example of our construction: In an~instance~$I$
+\parag{Example.} Figure~\ref{fig:fprsma} shows an example of our construction: In an~instance~$\ITDPM$
 of 3-DM sets $X, Y, Z$ consist of the following elements: $X = \{ x_1, x_2 \}, Y = \{ y_1, y_2 \}$ and $Z = \{ z_1, z_2 \}$.
 Set of triples $P$ contains three triples
 $(x_1, y_1,
 z_1)$,~$(x_2, y_1, z_2)$, and~$(x_2, y_2, z_2)$. This instance has only one solution:~$M =
 \{(x_1,y_1,z_1),(x_2,y_2,z_2))\}$.
 
-To construct the corresponding instance~$I'$ of the $\CTE$ problem, we
+To construct the corresponding instance~$\ICTE$ of the $\CTE$ problem, we
 create a gadget for each triple in~$P$. For each variable which occurs in a
 triple, the corresponding gadget contains a~chunk of the
 type of the variable. The triple
 $(x_2, y_1, z_2)$ of the instance is represented by the middle gadget in
-Figure~\ref{fig:fprsma}. The objective of~$I'$ is to allocate~$k=2$ nodes
-with the smallest possible footprint. If the total footprint is at most $4\cdot k$, we can construct a solution to~$I$ from the solution to~$I'$.
+Figure~\ref{fig:fprsma}. The objective of~$\ICTE$ is to allocate~$k=2$ nodes
+with the smallest possible footprint. If the total footprint is at most $4\cdot k$, we can construct a solution to~$\ITDPM$ from the solution to~$\ICTE$.
 The footprint consists of the costs which occur when a node is embedded in a~gadget, and the three chunks of that gadget which are assigned to that node: one of
 the chunks is collocated with the node, the other two have to be transferred
 via two hops, incurring unit costs on each hop.
@@ -730,10 +729,10 @@ Given these concepts, we can now show the computational hardness.
   \label{th:ma-unlimited}
 \end{theorem}
 \begin{proof}
-Let~$I$ be an instance of~$\TDM$ and let~$I'$ be an instance of
-the~$\FP+\RS+\MA$ variant constructed as described above. We prove that~$I'$ has a solution of cost at most $\Thr = 4 \cdot k$ if ($\Rightarrow$) and only if
+Let~$\ITDPM$ be an instance of~$\TDM$ and let~$\ICTE$ be an instance of
+the~$\FP+\RS+\MA$ variant constructed as described above. We prove that~$\ICTE$ has a solution of cost at most $\Thr = 4 \cdot k$ if ($\Rightarrow$) and only if
 ($\Leftarrow$)
-$I$ has a~matching of size~$k$.
+$\ITDPM$ has a~matching of size~$k$.
 
 ($\Rightarrow$) Let us take a feasible solution to~$\TDM$. We place a node in every
 gadget that corresponds to the chosen triples. In each of the corresponding
@@ -1022,7 +1021,7 @@ their assigned chunks. We leverage the fact that any solution which does not
 assign 0 or 3 chunks to each gadget, has higher communication costs.
 
 \parag{Construction.}
-Let~$I$ be an instance of~$\TDM$ with $p$ triples and set cardinality $k$ ($k = |X| = |Y| = |Z|$). We create an instance~$I'$
+Let~$\ITDPM$ be an instance of~$\TDM$ with $p$ triples and set cardinality $k$ ($k = |X| = |Y| = |Z|$). We create an instance~$\ICTE$
 for the~$\FP+\RS+\NI$ variant as follows:
 \begin{itemize}
 \item We construct the same tree as in Section~\ref{ssec:fprsma} with
@@ -1047,7 +1046,7 @@ Intuitively, in order to minimize embedding costs,
 nodes should be placed on near-by replicas. We use the following
 helper lemma.
 \begin{lemma}\label{lemma:helper}
-In every valid solution of~$I'$ of cost~$\leq \Thr$, each gadget
+In every valid solution of~$\ICTE$ of cost~$\leq \Thr$, each gadget
 falls in one of two categories:
 $k$ gadgets have exactly
 $3$ nodes, and~$p-k$ gadgets remain empty.
@@ -1071,14 +1070,14 @@ among more than~$k$ gadgets.
 The $\FP+\RS+\NI$ variant of $\CTE$ problem is NP-hard.
 \end{theorem}
 \begin{proof}
-Let~$I$ be an instance of~$\TDM$ and let~$I'$ be an instance of
+Let~$\ITDPM$ be an instance of~$\TDM$ and let~$\ICTE$ be an instance of
 the~$\FP+\RS+\NI$ variant constructed as described above.
-We prove that~$I'$ has solution of cost~$\leq \Thr$ if ($\Rightarrow$) and only if
+We prove that~$\ICTE$ has solution of cost~$\leq \Thr$ if ($\Rightarrow$) and only if
 ($\Leftarrow$)
-$I$ has a~solution.
+$\ITDPM$ has a~solution.
 
 ($\Rightarrow$) In order to compute a solution
-for~$I'$ given a solution for~$I$, we proceed as follows.
+for~$\ICTE$ given a solution for~$\ITDPM$, we proceed as follows.
 Given an exact covering set of triples~$S = \{t_1, t_2,
 \ldots, t_k\}$, we place three nodes in each gadget that
 corresponds to every triple of~$S$. Chunks are matched to the nodes which are located
@@ -1096,8 +1095,8 @@ The solution has the following cost:
   as we count each pair twice, we need to divide by two in the end.
 Summing up over all~$k$ gadgets, we get exactly~$\Thr$.
 
-($\Leftarrow$) Given a solution for~$I'$,
-we can exploit Lemma~\ref{lemma:helper} to construct a solution for~$I$.
+($\Leftarrow$) Given a solution for~$\ICTE$,
+we can exploit Lemma~\ref{lemma:helper} to construct a solution for~$\ITDPM$.
 We know that in any solution of cost at most~$\Thr$,
 $k$ gadgets contain exactly 3 nodes. These gadgets correspond to a valid
 3D Perfect Matching: exactly one replica of every chunk is processed and
@@ -1380,9 +1379,9 @@ Using the properties of the substrate network, we perform the reduction in the f
   We show that~$\IVCEMB$ has a solution of cost~$\leq \Thr$ if and only if~$\ITDPM \in \TDPM$ (there exists a perfect 3D matching in $\ITDPM$).
 
 
-  Let's take an instance~$I$ of~$\TDPM$ and construct an instance~$I'$
+  Let's take an instance~$\ITDPM$ of~$\TDPM$ and construct an instance~$\ICTE$
   of~$\RS(2)+\FP+\NI+\BW$ in the way described above.  We show that
- ~$I'$ has solution of cost~$\leq \Thr$ if and only if~$I \in \TDPM$
+ ~$\ICTE$ has solution of cost~$\leq \Thr$ if and only if~$I \in \TDPM$
   (there exists a perfect 3D matching).
 
   ($\Leftarrow$) Let's take any feasible solution~$\STDPM$ to~$\ITDPM$ and
