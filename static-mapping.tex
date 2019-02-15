@@ -687,34 +687,37 @@ considered to be infeasible.
 
 \end{itemize}
 
-\parag{Example.} Figure~\ref{fig:fprsma} shows an example of our construction: In an~instance~$\ITDPM$
-of 3-DM sets $X, Y, Z$ consist of the following elements: $X = \{ x_1, x_2 \}, Y = \{ y_1, y_2 \}$ and $Z = \{ z_1, z_2 \}$.
-Set of triples $P$ contains three triples
-$(x_1, y_1,
-z_1)$,~$(x_2, y_1, z_2)$, and~$(x_2, y_2, z_2)$. This instance has only one solution:~$M =
-\{(x_1,y_1,z_1),(x_2,y_2,z_2))\}$.
+%\parag{Example.} Figure~\ref{fig:fprsma} shows an example of our construction: In an~instance~$\ITDPM$
+%of 3-DM sets $X, Y, Z$ consist of the following elements: $X = \{ x_1, x_2 \}, Y = \{ y_1, y_2 \}$ and $Z = \{ z_1, z_2 \}$.
+%Set of triples $P$ contains three triples
+%$(x_1, y_1,
+%z_1)$,~$(x_2, y_1, z_2)$, and~$(x_2, y_2, z_2)$. This instance has only one solution:~$M =
+%\{(x_1,y_1,z_1),(x_2,y_2,z_2))\}$.
+%
+%To construct the corresponding instance~$\ICTE$ of the $\CTE$ problem, we
+%create a gadget for each triple in~$P$. For each variable which occurs in a
+%triple, the corresponding gadget contains a~chunk of the
+%type of the variable. The triple
+%$(x_2, y_1, z_2)$ of the instance is represented by the middle gadget in
+%Figure~\ref{fig:fprsma}. The objective of~$\ICTE$ is to allocate~$k=2$ nodes
+%with the smallest possible footprint. If the total footprint is at most $4\cdot k$, we can construct a solution to~$\ITDPM$ from the solution to~$\ICTE$.
+%The footprint consists of the costs which occur when a node is embedded in a~gadget, and the three chunks of that gadget which are assigned to that node: one of
+%the chunks is collocated with the node, the other two have to be transferred
+%via two hops, incurring unit costs on each hop.
 
-To construct the corresponding instance~$\ICTE$ of the $\CTE$ problem, we
-create a gadget for each triple in~$P$. For each variable which occurs in a
-triple, the corresponding gadget contains a~chunk of the
-type of the variable. The triple
-$(x_2, y_1, z_2)$ of the instance is represented by the middle gadget in
-Figure~\ref{fig:fprsma}. The objective of~$\ICTE$ is to allocate~$k=2$ nodes
-with the smallest possible footprint. If the total footprint is at most $4\cdot k$, we can construct a solution to~$\ITDPM$ from the solution to~$\ICTE$.
-The footprint consists of the costs which occur when a node is embedded in a~gadget, and the three chunks of that gadget which are assigned to that node: one of
-the chunks is collocated with the node, the other two have to be transferred
-via two hops, incurring unit costs on each hop.
+Figure~\ref{fig:fprsma} shows an example of our construction.
 
 \begin{figure}[t]
+  \centering
+\includegraphics[width = 0.25\columnwidth]{figs/static-mapping/np_3dm_formular}
+\hspace{1cm}
+\centering
+\includegraphics[width = 0.4\columnwidth]{figs/static-mapping/np_3dm_construction}
 \hfill
-\includegraphics[width = 0.3\columnwidth]{figs/static-mapping/np_3dm_formular}
-\hfill
-\includegraphics[width = 0.5\columnwidth]{figs/static-mapping/np_3dm_construction}
-\caption{\textit{Left:} A~$\TDM$ instance with three triples:
+\caption{\textit{Left:} A~$\TDM$ instance of cardinality $k=2$ with three triples:
 $(x_1, y_1, z_1)$,~$(x_2, y_1, z_2)$, and~$(x_2, y_2, z_2)$. The solution is
-indicated by the grey triples; the dashed triple is not used for the
-solution. \textit{Right:} The corresponding problem and solution for~$\FP + \MA
-+ \RS$ of $\CTE$ problem.}
+indicated by the grey triples. \textit{Right:} The corresponding instance and an optimal solution for the~$\FP + \MA
++ \RS$ of the $\CTE$ problem. Each triple corresponds to a single triple gadget.}
 \hfill
 \label{fig:fprsma}
 \end{figure}
@@ -730,27 +733,28 @@ Given these concepts, we can now show the computational hardness.
 Let~$\ITDPM$ be an instance of~$\TDM$ and let~$\ICTE$ be an instance of
 the~$\FP+\RS+\MA$ variant constructed as described above. We prove that~$\ICTE$ has a solution of cost at most $\Thr = 4 \cdot k$ if ($\Rightarrow$) and only if
 ($\Leftarrow$)
-$\ITDPM$ has a~matching of size~$k$.
+$\ITDPM$ has a~perfect matching (of size~$k$).
 
-($\Rightarrow$) Let us take a feasible solution to~$\TDM$. We place a node in every
-gadget that corresponds to the chosen triples. In each of the corresponding
+($\Rightarrow$) Fix a feasible solution to~$\TDM$. We place a single node in every
+gadget that corresponds to the chosen triples (of arbitrary leaf of this gadget). In each of the corresponding
 gadgets, we match every chunk to the node in this gadget. This
 solution has
-cost exactly~$\Thr$. As every element of the universe is covered, every
+cost exactly~$\Thr = 4\cdot k$: each of $k$ nodes processes $1$ chunk collocated with it, and $2$ chunks at the distance $2$. As every element of the universe is covered, every
 chunk is processed.
 
-($\Leftarrow$) Let us take a solution to the~$\FP+\RS+\MA$ variant of cost at most $\Thr$. We
+($\Leftarrow$) Fix a solution to the~$\FP+\RS+\MA$ variant of cost at most $\Thr$. We
 choose triples that correspond to gadgets where there are nodes. Since
 all chunks are processed, every element of~$X$,~$Y$ and~$Z$ is matched. Each
 node must process chunks that
 correspond to the triple, otherwise the
 cost must be larger than~$\Thr$ (high costs for chunk
 transportation).
+\todo{Uzasadnij}
 \end{proof}
 
 \subsubsection{Mult-Assignment with at most 2 replicas}
 
-We have seen that replica selection flexibilities can render embeddings computationally hard.
+We have seen that replica selection flexibility can render embeddings computationally hard.
 Now, we provide a more detailed look at this hardness result
 and explore the minimal requirements for rendering replica selection hard.
 In particular, we show that already two replicas for each chunk are sufficient for computational intractability.
@@ -796,16 +800,15 @@ In particular, we show that already two replicas for each chunk are sufficient f
 %Hence, exactly $1$ node is placed on a chunk of family $F_c$ outside the gadget $G_c$, and exactly $r_c-1$ nodes cover the remaining $r_c-1$ chunks inside gadget $G_c$.
 %All chunks are processed, the replication factor is reduced to $2$, and the size of construction grows polynomially.
 
-\parag{Introduction to the reduction.} As we already stated, we modify the construction from Section~\ref{ssec:fprsma}.
-As a way to deal with replication, we use the families of chunks using the unique chunks on the comb.
-We extend the construction of a gadget for chunk with redundancy, by incorporating the fact that the multi-assignment factor is $4$.
-For the construction to remain correct given such a multi-assignment factor, we introduce further chunks with one chunk replica to place in the chunk gadget and use the excessive $3$ data processing capacities.
+%\parag{Introduction to the reduction.} As we already stated, we modify the construction from Section~\ref{ssec:fprsma}.
+%As a way to deal with replication, we use the families of chunks using the unique chunks on the comb.
+%We extend the construction of a gadget for chunk with redundancy, by incorporating the fact that the multi-assignment factor is $4$.
+%For the construction to remain correct given such a multi-assignment factor, we introduce further chunks with one chunk replica to place in the chunk gadget and use the excessive $3$ data processing capacities.
 
-\parag{Construction.} For an arbitrary instance~$\ITDPM$ of~$\TDM$ we construct a~$\RS(2)+\MA(4)+\FP$ variant instance~$\IVCEMB$ the way described in the remainder of this section.
-Let $k = |X|=|Y|=|Z|$.
-By $P$ we denote the set of all triples of $\ITDPM$.
+\parag{Construction.} For an arbitrary instance~$\ITDPM$ of the~$\TDM$ problem we construct a~$\RS(2)+\MA+\FP$ variant instance~$\IVCEMB$ the following way.
+Let $k = |X|=|Y|=|Z|$ and $p = |P|$.
 For each $e\in X\cup Y\cup Z$, by $P_e$ we denote the set of all triples that contain element $e$.
-Let $\deg(e) = |P_e|$, and note that $\sum_e \deg(e) = 3\cdot |T|$.
+Let $\deg(e) = |P_e|$, and note that $\sum_e \deg(e) = 3\cdot |P|$.
 We proceed with the construction as follows.
 
 \paragraph{Tree.}
@@ -818,16 +821,17 @@ We construct the tree that has the following structure (see Figure~\ref{fig:red-
   \label{fig:red-ma2}
 \end{figure}
 
+\todo{Emph jak wprowadzasz subtree/gadget i bez emph jak uzywasz}
 
 \begin{enumerate}
   \item The physical network consists of two subtrees connected to the
   root: the {\MatchSubtree} and the {\CoverSubtree}. The
-  {\MatchSubtree} consists of $p$ {\TripleGadgets}, one per each triple $t\in P$ and $k$
+  {\MatchSubtree} consists of $p$ {\TripleGadgets}, one per each triple from $P$ and $k$
   {\UnqGadgets}. The {\CoverSubtree} consist of~$3\cdot k$ {\ElGadgets}, one for each element $e\in X\cup Y\cup Z$.
-  \item {\TripleGadget} consists of four vertices: three leaves and the root of the gadget.
+  \item {\TripleGadget} consists of four vertices: three leaves and the root of the gadget, as defined in the previous reduction in this section.
   \item {\UnqGadget} consists of two vertices: the leaf and the root of the gadget.
-  We construct the root node of the gadget not only to keep the tree balanced, but also to keep leaves of
-  {\UnqGadgets} far from leaves of other \UnqGadgets.% Note that \UnqGadgets{} form a comb.
+  This keeps the tree balanced, and it also keeps leaves of
+  {\UnqGadgets} far from each other.
   \item The {\ElGadget} for element $e$ consists of the
   root and~$4\cdot(\deg(e)-1)+1$ leaves.
 \end{enumerate}
@@ -835,12 +839,11 @@ We construct the tree that has the following structure (see Figure~\ref{fig:red-
 \paragraph{Chunks.}
 We construct three sets of chunks.
 The first set corresponds to elements of the universe (that is, $X\cup Y\cup Z$).
-The construction of such chunks is similar to construction of chunks in Section~\ref{ssec:fprsma}, but to take into consideration the restricted replication factor, we construct the familiy of chunks (as described in the introduction to this section).
-Namely, for each element of universe $e$, we construct as many chunks as there are occurences of $e$ in triples of $\ITDPM$.
-Each such chunk has exactly two replicas.
+The construction of such chunks is similar to construction of chunks in Section~\ref{ssec:fprsma}, but to take into consideration the restricted replication factor, we change the construction.
+Namely, for each element of universe $e \in X \cup Y \cup Z$, we construct $\deg(e)$ chunks, each having exactly two replicas.
 The other two sets of chunks has one replica, therefore those are called \emph{unique} chunks.
 We construct two types of unique chunks, distinguished by a different role in the construction.
-For unique chunks we simply co-notate the chunk with chunk replica.
+For unique chunks we simply identify the chunk with chunk replica.
 
 Concretely, we construct the following chunks:
 \begin{enumerate}
