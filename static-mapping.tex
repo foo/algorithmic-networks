@@ -654,11 +654,9 @@ elements of~$X \cup Y \cup Z$ exactly once.
 
 \subsection{Hardness of Multi-Assignments}\label{ssec:fprsma}
 
-\subsubsection{Warm-up: Multi-Assignment with at Most 3 Replicas}
+\subsubsection{Warm-up: Multi-Assignment with Unrestricted Number of Replicas}
 
-Our proof that the variant $\FP+\RS+\MA$ of the $\CTE$ problem is NP-hard is based on the following main ideas.
-We encode a~$\TDM$ instance as an instance as follows:
-
+Our proof that the variant $\FP+\RS+\MA$ of the $\CTE$ problem is NP-hard is based on the following construction.
 Let~$I$ be an instance of~$\TDM$ with $p$ triples and set cardinality $k$ (where $k = |X| = |Y| = |Z|$).
 We construct an instance~$I'$ in the following way:
 \begin{itemize}
@@ -1000,7 +998,7 @@ Hence, exactly $k$ \TripleGadgets{} are active.
 \subsection{Hardness of Inter-connects}\label{ssec:fprscc}
 
 
-\subsubsection{Warm-up: Inter-connects with at most 3 replicas}
+\subsubsection{Warm-up: Inter-connects with Unrestricted Number of Replicas}
 
 Next, we prove that the joint optimization of node placement and replica selection
 is NP-hard if an inter-connect has to be established between nodes.
