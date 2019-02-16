@@ -849,28 +849,19 @@ For unique chunks we simply identify the chunk with chunk replica.
 \begin{enumerate}
   \item For each triple $t \in P$, we construct $3$ chunks:~$c(t \cap X, t), c(t \cap Y, t), c(t \cap Z, t)$.
   Each chunk $c(e, t)$ has two replicas: $c^{(1)}(e,t)$ and $c^{(2)}(e,t)$.
-  In total we construct $6\cdot p = 2\cdot \sum_e\deg(e)$ chunk replicas that we put in the matching subtree.
-  In the {\TripleGadget} for triple $t$ we put
+  First replicas ($c^{(1)}(e,t)$) are placed in the matching subtree:
+  we place
   three replicas:
- ~$c^{(1)}(t \cap X, t), c^{(1)}(t \cap Y, t), c^{(1)}(t \cap Z, t)$, one per each leaf.
+  ~$c^{(1)}(t \cap X, t), c^{(1)}(t \cap Y, t), c^{(1)}(t \cap Z, t)$ in the {\TripleGadget} for triple $t\in P$, one per each leaf.
+  Second replicas ($c^{(2)}(e,t)$) are placed in the cover subtree:
+  we place replicas $c^{(2)}(t, e)$ in the leaves of \ElGadget{} for the element $e \in X\cup Y\cup Z$ for each $t \in P_e$.
+  In total we construct $6\cdot p = 2\cdot \sum_e\deg(e)$ replicas of those chunks.
   \item We construct~$k$ additional chunks named
   ~$u_1, \ldots, u_k$ with one replica each, and we place those at the leaves of \UnqGadgets (one chunk per leaf).
-  \item For each element~$e\in X\cup Y\cup Z$,
-  we construct additional~$3\cdot(\deg(e) - 1)$ chunks, with one replica each.
-  We call this set~$\UniqueE$.
-\end{enumerate}
-Those chunks are placed in the following parts of the tree:
-\begin{enumerate}
-  \item \emph{Chunks in the Matching Subtree:} In {\TripleGadget} of triple $t$ we put
-  three replicas:
- ~$c^{(1)}(t \cap X, t), c^{(1)}(t \cap Y, t), c^{(1)}(t \cap Z, t)$, one per each leaf.
-  \item \emph{Chunks in the Unique Gadgets:} We place replicas
- ~$u_1,\ldots, u_k$ at the leaves of \UnqGadgets.
- \item \emph{Chunks in Element Gadgets:} Consider the \ElGadget{} for the element $e \in X\cup Y\cup Z$.
- We place two types of replicas in the leaves of the gadget.
- We put replicas $c^{(2)}(t, e)$ for each $t \in P_e$.
- Additionally, we place all the replicas from set $\UniqueE$.
- In total, we place $4\cdot (\deg(e) - 1) + 1$ replicas, one per each leaf of the gadget.
+  \item For each element~$e\in X\cup Y\cup Z$
+  we construct additional set $\UniqueE$ of $3\cdot(\deg(e) - 1)$ chunks, with one replica each, and we place those replicas in $3\cdot (\deg(e)-1)$ out of $4\cdot (\deg(e)-1)+1)$ leaves of $e$'s element gadget.
+  In remaining leaves of $e$'s element gadget we place $\deg(e)$
+ replicas $c^{(2)}(t, e)$ for each $t \in P_e$. In total, we place $4\cdot (\deg(e) - 1) + 1$ replicas in $e$'s element gadget.
 \end{enumerate}
 
 \paragraph{Other properties of the instance.}
@@ -880,7 +871,7 @@ Those chunks are placed in the following parts of the tree:
  ~$\numNodes = k + \sum_{e}(\deg(e)-1) = 3\cdot p - 2\cdot k$.
  \item \emph{Threshold:} We set the following threshold:
  ~$\Thr = 18\cdot p - 10\cdot k$.
- This value corresponds to the cost of solution, where $k$ nodes are matched to $4$ chunks that are in distance: $0, 2, 2$ and $4$ to the node, and remaining $\Vms-k$ nodes are matched to $4$ chunks that are in distance: $0, 2, 2$ and $2$ to the node.
+ This value corresponds to the cost of solution, where $k$ nodes are matched to $4$ chunks that are in distances: $0, 2, 2$ and $4$ to the node, and remaining $\Vms-k$ nodes are matched to $4$ chunks that are in distances: $0, 2, 2$ and $2$ to the node.
 \end{enumerate}
 
 \parag{The reduction.}
@@ -893,7 +884,7 @@ This part is the easier of the two, and mainly consists of placing nodes in Trip
 In the second stage, given $\SVCEMB$, we construct the $\STDPM$.
 In this stage, the main difficulty lies in showing that $\SVCEMB$ has certain structure.
 
-We call the {\TripleGadget} \textit{active}, if it contains a node at any leaf, and we call the node \textit{active} if it is placed in {\TripleGadget}.
+We call the {\TripleGadget} \textit{active}, if it contains a node at some leaf, and we call the node \textit{active} if it is placed in {\TripleGadget}.
 Our goal is to show that in every feasible solution, exactly $k$ \TripleGadgets{} are active (Lemma~\ref{lem:n-active-ma}), and hence we can construct $\STDPM$ from the triples that correspond to active \TripleGadgets{} in $\SVCEMB$.
 
 In $\IVCEMB$, chunks can be matched to nodes at distance $0, 2, 4$ or $6$.
@@ -901,18 +892,20 @@ In $\IVCEMB$, chunks can be matched to nodes at distance $0, 2, 4$ or $6$.
   In addition we call the matches at distance $0$ or $2$ the \emph{short matches}, and the matches at distance $4$ or $6$ the \emph{long matches}.
   We call the distance between the pair of leaves the \emph{short distance}, if the distance between them is at most $2$, otherwise we call said distance the \emph{long distance}.
 
+\begin{lemma}
+  A feasible solution $\SVCEMB$ to $\IVCEMB$ has exactly $k$ nodes placed in the \MatchSubtree.
+  \label{lem:n-matchsubtree-ma}
+\end{lemma}
+
+\begin{proof}
+  \todo{ten dowod jest niegotowy}
+  
 Proving the existance of more than $k$ long matches is sufficient to show that the instance is infeasible, as its cost exceeds the threshold.
 To see this, note that the threshold value $\Thr$ corresponds to the cost of solution, where $k$ nodes has $1$ free match, $2$ neighbouring matches and $1$ long match at distance of $4$ hops, and remaining $\Vms-k$ nodes has $1$ free match and $3$ neighbouring matches assigned.
 Note that the limit of $\Vms$ free matches is exhausted, hence excessive long matches cannot be compensated in any way.
 Hence, at most $k$ long matches are present in any feasible solution.
 
 
-\begin{lemma}
-  In $\SVCEMB$ there are have exactly $k$ nodes placed in the \MatchSubtree.
-  \label{lem:n-matchsubtree-ma}
-\end{lemma}
-
-\begin{proof}
  We claim that each node placed in the \MatchSubtree{} results in at least one long match.
 This fact is a consequence of the structure of the tree and the fact that multi-assignment factor is set to $4$.
 For each node placed in the \MatchSubtree{}, by the construction of the tree, the node has at most $3$ leaves in short distance, hence at least one of the matches is long.
@@ -934,7 +927,7 @@ Hence we deduce that $i = 0$, as otherwise the number of long matches would exce
 \end{proof}
 
 \begin{lemma}
-  In $\SVCEMB$ no node were placed in \UnqGadget{}.
+  A feasible solution $\SVCEMB$ to $\IVCEMB$ has no nodes placed in \UnqGadget{}.
   \label{lem:no-unq-ma}
 \end{lemma}
 \begin{proof}
