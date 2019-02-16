@@ -825,15 +825,13 @@ We construct the tree that has the following structure (see Figure~\ref{fig:red-
   \label{fig:red-ma2}
 \end{figure}
 
-\todo{Emph jak wprowadzasz subtree/gadget i bez emph jak uzywasz}
-
 \begin{enumerate}
   \item The physical network consists of two subtrees connected to the
-  root: the {\MatchSubtree} and the {\CoverSubtree}. The
-  {\MatchSubtree} consists of $p$ {\TripleGadgets}, one per each triple from $P$ and $k$
-  {\UnqGadgets}. The {\CoverSubtree} consist of~$3\cdot k$ {\ElGadgets}, one for each element $e\in X\cup Y\cup Z$.
-  \item {\TripleGadget} consists of four vertices: three leaves and the root of the gadget, as defined in the previous reduction in this section.
-  \item {\UnqGadget} consists of two vertices: the leaf and the root of the gadget.
+  root: the \emph{\MatchSubtree} and the \emph{\CoverSubtree}. The
+  {\MatchSubtree} consists of $p$ \emph{\TripleGadgets}, one per each triple from $P$ and $k$
+  \emph{\UnqGadgets}. The {\CoverSubtree} consist of~$3\cdot k$ {\ElGadgets}, one for each element $e\in X\cup Y\cup Z$.
+  \item The {\TripleGadget} consists of four vertices: three leaves and the root of the gadget, as defined in the previous reduction in this section.
+  \item The {\UnqGadget} consists of two vertices: the leaf and the root of the gadget.
   This keeps the tree balanced, and it also keeps leaves of
   {\UnqGadgets} far from each other.
   \item The {\ElGadget} for element $e$ consists of the
@@ -848,15 +846,15 @@ Namely, for each element of universe $e \in X \cup Y \cup Z$, we construct $\deg
 The other two sets of chunks has one replica, therefore those are called \emph{unique} chunks.
 We construct two types of unique chunks, distinguished by a different role in the construction.
 For unique chunks we simply identify the chunk with chunk replica.
-
-Concretely, we construct the following chunks:
 \begin{enumerate}
-  \item For each triple $t \in P$, we construct $3$ chunks, with two replicas each.
-  We construct different chunks for each triple $t$, which contain element $e$ (in total $\deg(e)$ chunks).
-  We refer to those replicas by $ch^{(1)}(e, t)$ and $ch^{(2)}(e, t)$.
-  In total we construct $2\cdot \sum_e\deg(e) = 6\cdot p$ chunk replicas.
+  \item For each triple $t \in P$, we construct $3$ chunks:~$c(t \cap X, t), c(t \cap Y, t), c(t \cap Z, t)$.
+  Each chunk $c(e, t)$ has two replicas: $c^{(1)}(e,t)$ and $c^{(2)}(e,t)$.
+  In total we construct $6\cdot p = 2\cdot \sum_e\deg(e)$ chunk replicas that we put in the matching subtree.
+  In the {\TripleGadget} for triple $t$ we put
+  three replicas:
+ ~$c^{(1)}(t \cap X, t), c^{(1)}(t \cap Y, t), c^{(1)}(t \cap Z, t)$, one per each leaf.
   \item We construct~$k$ additional chunks named
-  ~$u_1, \ldots, u_k$ with one replica each.
+  ~$u_1, \ldots, u_k$ with one replica each, and we place those at the leaves of \UnqGadgets (one chunk per leaf).
   \item For each element~$e\in X\cup Y\cup Z$,
   we construct additional~$3\cdot(\deg(e) - 1)$ chunks, with one replica each.
   We call this set~$\UniqueE$.
@@ -865,12 +863,12 @@ Those chunks are placed in the following parts of the tree:
 \begin{enumerate}
   \item \emph{Chunks in the Matching Subtree:} In {\TripleGadget} of triple $t$ we put
   three replicas:
- ~$ch^{(1)}(t \cap X, t), ch^{(1)}(t \cap Y, t), ch^{(1)}(t \cap Z, t)$, one per each leaf.
+ ~$c^{(1)}(t \cap X, t), c^{(1)}(t \cap Y, t), c^{(1)}(t \cap Z, t)$, one per each leaf.
   \item \emph{Chunks in the Unique Gadgets:} We place replicas
  ~$u_1,\ldots, u_k$ at the leaves of \UnqGadgets.
  \item \emph{Chunks in Element Gadgets:} Consider the \ElGadget{} for the element $e \in X\cup Y\cup Z$.
  We place two types of replicas in the leaves of the gadget.
- We put replicas $ch^{(2)}(t, e)$ for each $t \in P_e$.
+ We put replicas $c^{(2)}(t, e)$ for each $t \in P_e$.
  Additionally, we place all the replicas from set $\UniqueE$.
  In total, we place $4\cdot (\deg(e) - 1) + 1$ replicas, one per each leaf of the gadget.
 \end{enumerate}
