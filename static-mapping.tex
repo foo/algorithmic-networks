@@ -735,14 +735,14 @@ the~$\FP+\RS+\MA$ variant constructed as described above. We prove that~$\ICTE$ 
 ($\Leftarrow$)
 $\ITDPM$ has a~perfect matching (of size~$k$).
 
-($\Rightarrow$) Fix a feasible solution to~$\TDM$. We place a single node in every
+($\Rightarrow$) Fix a feasible solution for~$\ITDM$. We place a single node in every
 gadget that corresponds to the chosen triples (of arbitrary leaf of this gadget). In each of the corresponding
 gadgets, we match every chunk to the node in this gadget. This
 solution has
 cost exactly~$\Thr = 4\cdot k$: each of $k$ nodes processes $1$ chunk collocated with it, and $2$ chunks at the distance $2$. As every element of the universe is covered, every
 chunk is processed.
 
-($\Leftarrow$) Fix a solution to the~$\FP+\RS+\MA$ variant of cost at most $\Thr$. We
+($\Leftarrow$) Fix a solution for ~$\ICTE$ of cost at most $\Thr$. We
 choose triples that correspond to gadgets where there are nodes. Since
 all chunks are processed, every element of~$X$,~$Y$ and~$Z$ is matched. Each
 node must process chunks that
@@ -969,10 +969,10 @@ Hence, exactly $k$ \TripleGadgets{} are active.
 
 \begin{proof}
   
-  Let's take any instance $\ITDPM$ of~$\TDPM$.
+  Fix an instance $\ITDPM$ of~$\TDPM$.
   We show that~$\IVCEMB$ has a solution of cost~$\leq \Thr$ if and only if~$\ITDPM \in \TDPM$ (there exists a perfect 3D matching in $\ITDPM$).
 
-  ($\Leftarrow$) Let's take any feasible solution~$\STDPM$ to $\ITDPM$.
+  ($\Leftarrow$) Fix a feasible solution~$\STDPM$ for $\ITDPM$.
   We construct a solution~$\SVCEMB$ in the following way:
   \begin{enumerate}
     \item We place~$k$ nodes in~$k$ {\TripleGadgets} (one per gadget) that correspond to triples in~$\STDPM$.
@@ -990,7 +990,7 @@ Hence, exactly $k$ \TripleGadgets{} are active.
   In total, the cost incurred is $8\cdot k + 6\cdot (\Vms - k) = \Thr$.
   Hence, the solution is indeed feasible.
 
-  ($\Rightarrow$) Let's take any feasible solution~$\SVCEMB$ to~$\IVCEMB$ in the way described in the construction section.
+  ($\Rightarrow$) Fix a feasible solution~$\SVCEMB$ for~$\IVCEMB$ in the way described in the construction section.
   By Lemma~\ref{lem:n-active-ma}, exactly $k$ \TripleGadgets{} are active.
   We construct the solution $\STDPM$ from the set of triples that correspond to active \TripleGadgets{}.
 
@@ -1376,16 +1376,16 @@ Using the properties of the substrate network, we perform the reduction in the f
 \end{theorem}
 
 \begin{proof}
-  Let's take any instance $\ITDPM$ of~$\TDPM$.
+  Fix an instance $\ITDPM$ of~$\TDPM$.
   We show that~$\IVCEMB$ has a solution of cost~$\leq \Thr$ if and only if~$\ITDPM \in \TDPM$ (there exists a perfect 3D matching in $\ITDPM$).
 
 
-  Let's take an instance~$\ITDPM$ of~$\TDPM$ and construct an instance~$\ICTE$
+  Fix an instance~$\ITDPM$ of~$\TDPM$ and construct an instance~$\ICTE$
   of~$\RS(2)+\FP+\NI+\BW$ in the way described above.  We show that
  ~$\ICTE$ has solution of cost~$\leq \Thr$ if and only if~$I \in \TDPM$
   (there exists a perfect 3D matching).
 
-  ($\Leftarrow$) Let's take any feasible solution~$\STDPM$ to~$\ITDPM$ and
+  ($\Leftarrow$) Fix a feasible solution~$\STDPM$ for~$\ITDPM$ and
   produce a solution~$\SVCEMB$ to~$\IVCEMB$ in the way described in the construction section. We show that the cost of~$\SVCEMB$ is
   indeed~$\leq \Thr$.
   For each triple~from $P$ in~$\STDPM$, we put~$3$ nodes at
@@ -1397,7 +1397,7 @@ Using the properties of the substrate network, we perform the reduction in the f
   It is easy to see that~$\SVCEMB$ has cost exactly~$\Thr$ and no
   bandwidth constraint is violated. Each chunk is processed.
 
-  ($\Rightarrow$) Let's take any feasible solution~$\SVCEMB$ to~$\IVCEMB$ and
+  ($\Rightarrow$) Fix a feasible solution~$\SVCEMB$ for~$\IVCEMB$ and
   produce a solution~$\STDPM$ to~$\ITDPM$ by taking triples that correspond
   to active triple gadgets. Using Lemma~\ref{lem:full-or-empty}, we
   conclude that there are exactly~$k$ active triple gadgets. By
