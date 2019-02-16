@@ -735,21 +735,25 @@ the~$\FP+\RS+\MA$ variant constructed as described above. We prove that~$\ICTE$ 
 ($\Leftarrow$)
 $\ITDPM$ has a~perfect matching (of size~$k$).
 
-($\Rightarrow$) Fix a feasible solution for~$\ITDM$. We place a single node in every
+($\Rightarrow$) Fix a feasible solution for~$\ITDPM$. We place a single node in every
 gadget that corresponds to the chosen triples (of arbitrary leaf of this gadget). In each of the corresponding
 gadgets, we match every chunk to the node in this gadget. This
 solution has
 cost exactly~$\Thr = 4\cdot k$: each of $k$ nodes processes $1$ chunk collocated with it, and $2$ chunks at the distance $2$. As every element of the universe is covered, every
 chunk is processed.
 
-($\Leftarrow$) Fix a solution for ~$\ICTE$ of cost at most $\Thr$. We
-choose triples that correspond to gadgets where there are nodes. Since
-all chunks are processed, every element of~$X$,~$Y$ and~$Z$ is matched. Each
-node must process chunks that
-correspond to the triple, otherwise the
-cost must be larger than~$\Thr$ (high costs for chunk
-transportation).
-\todo{Uzasadnij}
+($\Leftarrow$) Fix a solution for ~$\ICTE$ of cost at most $\Thr$.
+We call the triple gadget \emph{active} if it hosts a node in one of its leaves.
+To construct the solution to $\ITDPM$, we pick triples, whose gadgets are active.
+Now, we claim that in each triple gadget there is at most one node.
+As every leaf hosts at most one chunk, hence each node can process at most $1$ of its $\MaFactor=3$ chunks for free.
+Hence, each node incurs the cost at least $4$ for the remaining $2$ chunks that are at distance at least $2$.
+Assume that two nodes $n_1$, $n_2$ are placed in the same triple gadget.
+As a triple gadget contains $3$ chunks, at least $2$ of $6$ chunks that they process are placed outside of this triple gadget.
+Hence, $n_1$ and $n_2$ incur a cost at least $4$ to reach each of those exterior chunks.
+In total, $n_1$ and $n_2$ incur a cost at least $12$, and the total cost $4\cdot k + 4$ exceeds the threshold $\Thr = 4\cdot k$.
+Therefore, exactly $k$ gadgets are active, and the solution to $\ITDPM$ consists of $k$ triples.
+Since all chunks are processed, every element of~$X$,~$Y$ and~$Z$ is matched.
 \end{proof}
 
 \subsubsection{Mult-Assignment with at most 2 replicas}
