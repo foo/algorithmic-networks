@@ -322,7 +322,7 @@ many edges,
 and for each edge we compute its weight. The shortest distances
 in a tree can be computed in time~$\mathcal{O}(t + q)$~\cite{offline-lca}, where $t$ is the size of a tree and $q$ is the number of queried pairs, which translates to the overall construction time~$\mathcal{O}(n_s + n_v\cdot \sum_{i=1}^\tau r_i)$.
 The state-of-the-art algorithm to compute matchings~\cite{matching-best} has a running time of $\tilde{\mathcal{O}}(|E|^{10/7}\cdot \log W)$, where $|E|$ is the number of edges, $W$ is the maximum weight of an edge, and $\tilde{\mathcal{O}}$ hides polylogarithmic (in terms of $|E|$) factors.
-The total running time is then $\tilde{\mathcal{O}}(\tau^{20/7}\cdot \log(n_s)) + \mathcal{O}(n_v\cdot \sum_{i=1}^\tau r_i)$.
+The total running time is then $\tilde{\mathcal{O}}(\tau^{20/7}\cdot \log(n_s)) + \mathcal{O}(n_s + n_v\cdot \sum_{i=1}^\tau r_i)$.
 The matching-based algorithm outperforms the flow-based algorithm.
 
 
