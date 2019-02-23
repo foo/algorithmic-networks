@@ -735,16 +735,21 @@ cost exactly~$\Thr = 4\cdot k$: each of $k$ nodes processes $1$ chunk collocated
 chunk is processed.
 
 ($\Leftarrow$) Fix a solution for ~$\ICTE$ of cost at most $\Thr$.
+We claim that the solution places at most one node in each triple gadget.
+Assume that two nodes $n_1$, $n_2$ are placed in the same triple gadget.
+First, we lower-bound the cost incurred by $n_1$ and $n_2$.
+In total, $n_1$ and $n_2$ process $2\cdot \MaFactor = 6$ chunks.
+Three of those chunks reside in this triple gadget, and the incurred cost for mapping them is at least $2$:
+at most $2$ chunks are co-located with the nodes (cost $0$), and one chunk incurs the cost~$2$ for the mapping inside the gadget.
+Remaining $3$ chunks that $n_1$ and $n_2$ process reside outside of this triple gadget and incur the cost $3 \cdot 4$.
+Second, we lower-bound the cost incurred by remaining $k-2$ nodes.
+Each node can process at most $1$ of its $\MaFactor=3$ chunks for free (every leaf hosts exactly one chunk),
+and it incurs the cost at least $4$ for the remaining $2$ chunks that are at distance at least $2$.
+In total, $n_1$ and $n_2$ incur a cost at least $14$, and the total cost $4\cdot k + 6$ exceeds the threshold $\Thr = 4\cdot k$.
+
 We call the triple gadget \emph{active} if it hosts a~node in one of its leaves.
 To construct the solution to $\ITDPM$, we pick triples, whose gadgets are active.
-Now, we claim that in each triple gadget there is at most one node.
-As every leaf hosts at most one chunk, hence each node can process at most $1$ of its $\MaFactor=3$ chunks for free.
-Hence, each node incurs the cost at least $4$ for the remaining $2$ chunks that are at distance at least $2$.
-Assume that two nodes $n_1$, $n_2$ are placed in the same triple gadget.
-As a triple gadget contains $3$ chunks, at least $2$ of $6$ chunks that they process are placed outside of this triple gadget.
-Hence, $n_1$ and $n_2$ incur a cost at least $4$ to reach each of those exterior chunks.
-In total, $n_1$ and $n_2$ incur a cost at least $12$, and the total cost $4\cdot k + 4$ exceeds the threshold $\Thr = 4\cdot k$.
-Therefore, exactly $k$ gadgets are active, and the solution to $\ITDPM$ consists of $k$ triples.
+As every gadget hosts at most one node, exactly $k$ gadgets are active, and the solution to $\ITDPM$ consists of $k$ triples.
 Since all chunks are processed, every element of~$X$,~$Y$ and~$Z$ is matched.
 \end{proof}
 
@@ -833,9 +838,9 @@ We construct the tree that has the following structure (see Figure~\ref{fig:red-
 \paragraph{Chunks.}
 We construct three sets of chunks.
 The first set corresponds to elements of the universe (that is, $X\cup Y\cup Z$).
-The construction of such chunks is similar to construction of chunks in Section~\ref{ssec:fprsma}, but to take into consideration the restricted replication factor, we change the construction.
+The construction of such chunks is similar to construction of chunks in Section~\ref{ssec:fprsma}, but it takes the restricted replication factor into consideration.
 Namely, for each element of universe $e \in X \cup Y \cup Z$, we construct $\deg(e)$ chunks, each having exactly two replicas.
-The other two sets of chunks has one replica, therefore those are called \emph{unique} chunks.
+The other two sets of chunks has one replica, and are called \emph{unique} chunks.
 We construct two types of unique chunks, distinguished by a different role in the construction.
 For unique chunks we simply identify the chunk with chunk replica.
 \begin{enumerate}
