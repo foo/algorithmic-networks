@@ -68,10 +68,10 @@ We define the \emph{footprint}~$\Cost(v)$ of a node~$v$ as follows:
 $$
 \Cost(v) = \underbrace{\sum_{\achunk \mid \mu(c) = v} \CostTrans \cdot \dist(v,\achunk)}_{\text{chunk access cost}} +  \underbrace{\frac{1}{2} \cdot \sum_{v' \in \VirtualNodes\setminus\{v\}} \CostCom \cdot \dist(v,v')}_{\text{node inter-connect cost}},
 $$
-where~$\mu(v)$ is the set of chunks assigned to~$v$.
+where~$\mu(c)$ is the node to which chunk $c$ is assigned.
 Our goal is to minimize the overall resource footprint $\Cost=\sum_{v\in V} \Cost(v)$.
 The solution must obey the capacity of the substrate network: (1)~the total number of nodes hosted at each server $s$ must not excced $\capacity(s)$, and (2)~the total bandwidth allocated at each link $e$ must not exceed its capacity $\capacity(e)$.
-%Finally, the solution must assign every chunk to some node, i.e. $\bigcup_v \mu(v) = \{ c_1, \ldots, c_{\tau} \}$.
+%Finally, the solution must assign every chunk to some node, i.e., $\bigcup_v \mu(v) = \{ c_1, \ldots, c_{\tau} \}$.
 
 \subsection{Problem Decomposition}
 
@@ -79,14 +79,14 @@ We introduced the $\CTE$ problem in its full generality.
 To fully chart the algorithmic complexity of $\CTE$, we decompose the problem into its fundamental components that can be activated or deactivated independently of each other, and we consider all possible variants.
 Concretely, we consider $5$ aspects of $\CTE$, namely multiple chunk assignment ($\MA$),
 replica selection ($\RS$), flexible node placement ($\FP$), node inter-connect ($\NI$),
-and bandwidth constraints ($\BW$), as~described in the following. 
+and bandwidth constraints ($\BW$), as~described below.
 
 \parag{Multiple Assignment ($\MA$).}
 In most applications, the number of chunks~$\tau$ is larger than the number of nodes, and the objective is to assign multiple chunks to each node.
-In each variant (regardless of $\MA$), we investigate assignments that balances chunks among nodes, i.e. where the number of chunks is divisible by the number of nodes, and each node processes an~identical integer number of chunks.
+In each variant (regardless of $\MA$), we investigate assignments that balances chunks among nodes, i.e., where the number of chunks is divisible by the number of nodes, and each node processes an~identical integer number of chunks.
 We require that the number of chunks processed by each node is equal to~$\MaFactor = \tau / n_V$, and we call $\MaFactor$ the multi-assignment factor.
-If the number of chunks exceeds the number of nodes, i.e. $\MaFactor > 1$, then we refer to such scenario as $\MA$.
-In~the~$\CTE$ variant without $\MA$, each node has exactly one chunk assigned, i.e. $\MaFactor = 1$.
+If the number of chunks exceeds the number of nodes, i.e., $\MaFactor > 1$, then we refer to such scenario as $\MA$.
+In~the~$\CTE$ variant without $\MA$, each node has exactly one chunk assigned, i.e., $\MaFactor = 1$.
 
 \parag{Replica Selection ($\RS$).}
 Distributed filesystems often utilize data redundancy for corruption detection and correction.
@@ -101,19 +101,19 @@ By $\FP$ we denote the flexibility of assignment of nodes to~physical machines.
 In the problem variant without $\FP$, the assignment of nodes to physical machines is given as an input.
 
 \parag{Node Inter-Connect ($\NI$).}
-In multiple computational tasks, it is sufficient to process data chunks independently of each other.
+In some computational tasks, it is sufficient to process data chunks independently of each other.
 However, more often the result of processing the individual chunks is combined afterwards.
 By $\NI$ we refer to the latter scenario, where the computation requires the nodes to cooperate.
-We investigate the scenario, where we reserve a bandwidth of volume $\CostCom$ between each pair of nodes, i.e. the node inter-connect is modelled as a complete graph, to account for the all-to-all communication patterns of batch processing applications such as MapReduce.
-In the problem variant without $\NI$, we optimize only the cost of transporting chunks to nodes, and the inter-node communication is set to zero, i.e. $\CostCom = 0$.
+We investigate the scenario, where we reserve a bandwidth of volume $\CostCom$ between each pair of nodes, i.e., the node inter-connect is modelled as a complete graph, to account for the all-to-all communication patterns of batch processing applications such as MapReduce.
+In the problem variant without $\NI$, we optimize only the cost of transporting chunks to nodes, and the inter-node communication is set to zero, i.e., $\CostCom = 0$.
 
 \parag{Bandwidth Capacities ($\BW$).}
 We distinguish between an uncapacitated and a capacitated scenario where each link $e$
-of the substrate network come with bandwidth
+of the substrate network comes with a bandwidth
 constraint $\capacity(e)$, and we refer to the bandwidth-constrained version by~$\BW$.
 Note that capacity constraints introduce infeasible problem instances, where it is impossible to
 allocate sufficient resources to~embed the virtual network.
-In the problem variant without $\BW$, each link has infinite capacity, i.e. for each edge $e$, $\capacity(e) = \infty$.
+In the problem variant without $\BW$, each link has infinite capacity, i.e., $\capacity(e) = \infty$ for each edge $e$.
 
 \section{Polynomial-Time Algorithms}\label{sec:poly}
 
@@ -133,7 +133,7 @@ the bandwidth required
 for the inter-connect network (NI) can be allocated upfront, 
 as it
 does not depend on the replica
-selection and assignment.
+selection and the assignment.
 Accordingly, we can reduce the variant~$RS+MA+NI+BW$ (as well as all its subproblems)
 to~$RS+MA+BW$ (resp.~its subproblems).
 \end{obs}
@@ -152,7 +152,7 @@ to~$RS+MA+BW$ (resp.~its subproblems).
 \centering
 \includegraphics[width=0.5\columnwidth]{figs/static-mapping/flow_ma_cv}
 \caption{An example of the extended substrate
-network~$\Tree^*$: The sink~$\Sink$ is connected to the two leaves, which host the
+network~$\Tree^*$: The sink~$\Sink$ is connected to the two leaves that host the
 nodes. The artificial nodes are depicted below the leaves, are labeled with
 their respective chunks (e.g.,~$\achunk_1$), and are connected to the source
 $\Source$ as well as to the leaves that contain replicas of their chunk.
@@ -194,16 +194,16 @@ we first remove the~$\NI$ component using Observation~\ref{obs:nofp}.
 Then, we construct
 an artificial graph~$\Tree^*$, extending the substrate network~$\Tree$.
 We transform bandwidth capacities so that they correspond to the maximal number of chunks that we can transfer through the link.
-Concretely, for~$\Tree^*$, for each link~$e\in E(\Tree)$, we set its new
+Concretely, for each link~$e\in E(\Tree)$, we set its new
 capacity in~$\Tree^*$ to~$\lfloor\capacity(e) / \CostTrans\rfloor$.
-After this normalization, we extend the topology~$\Tree$ by
+After this normalization, we extend the topology of~$\Tree$ by
 introducing an artificial vertex for each of $\tau$ chunks. Each of these artificial
 vertices is connected to each leaf (i.e., server) in~$\Tree$ where a replica
  of the respective chunk is located,
 connecting the replica by a link of capacity~$1$. In
 addition, we create a
 \emph{super-source}~$\Source$, and connect it to each of the artificial chunk
-vertices (with a link of capacity~$1$). Moreover, we create an artificial \emph{super-sink}~$\Sink$ and
+vertices with a link of capacity~$1$. Moreover, we create an artificial \emph{super-sink}~$\Sink$ and
 connect it to every leaf containing at least one node; the link capacity represents
 the number of nodes this server hosts times the~multi-assignment factor
 $\MaFactor$.
@@ -211,17 +211,17 @@ We additionally assign the following costs to edges of~$\Tree^*$:
 every edge of the original substrate network costs one unit, and all other artificial edges
 cost nothing.
 A solution to the~$\RS+\MA+\BW$ variant can now be computed
-from a solution to the \emph{min-cost~max-flow} problem between super-source
+from a~solution to the \emph{min-cost~max-flow} problem between super-source
 $\Source$ and
 super-sink~$\Sink$ on the artificial graph~$\Tree^*$.
 An illustration of this construction is presented in Figure~\ref{fig:flow_construction}.
 
 \parag{Algorithm.}
 Our algorithm to solve the~$\RS+\MA+\NI+\BW$ variant consists of three parts:
-First, we construct the normalized and extended graph~$\Tree^*$
+First, we construct the extended graph~$\Tree^*$
 described above and compute
-a~min-cost-max-flow solution.
-State-of-the-art min-cost-max-flow algorithm is the double scaling algorithm~\cite{mincostmaxflow-state}, which is based on the scaling technique~\cite{mincostmaxflow-1,mincostmaxflow-2}, .
+a~min-cost~max-flow solution.
+State-of-the-art~min-cost max-flow algorithm is the double scaling algorithm~\cite{mincostmaxflow-state}, which is based on the scaling technique~\cite{mincostmaxflow-1,mincostmaxflow-2}, .
 
 Second, we have to \emph{round} the resulting, possibly fractional flow, to
 integer values. Due~to the~\emph{integrality theorem}~\cite{flow-book},
@@ -229,7 +229,7 @@ there always exists an optimal integer solution on graphs with integer capacitie
 However, min-cost~max-flow algorithms may yield fractional solutions
 which need to be rounded to integral solutions (of the same cost)~\cite{electric-flows}.
 
-Third, given an integer min-cost-max-flow solution, we need to decompose
+Third, given an integer min-cost~max-flow solution, we need to decompose
 the integer flow into the paths
 representing matched chunk-node pairs:
 The assignment can be obtained by decomposing the flow allocated in the
@@ -244,11 +244,11 @@ We continue the pairing process until every chunk is assigned.
 
 \parag{Analysis.}
 The runtime of our algorithm consists of four parts: construction of~$\Tree^*$,
-computation of the min-cost-max-flow, flow rounding, and decomposition. The
+computation of the min-cost~max-flow, flow rounding, and decomposition. The
 dominant term in the~asymptotic runtime is the flow computation.
-Using the double scaling algorithm for min-cost-max-flow~\cite{mincostmaxflow-state}, we get a runtime of~$\mathcal{O}(|E|^2 \cdot\log\log U \cdot \log |E|)$
+Using the double scaling algorithm for min-cost~max-flow~\cite{mincostmaxflow-state}, we get a runtime of~$\mathcal{O}(|E|^2 \cdot\log\log U \cdot \log |E|)$
 where~$|E| = n_S+\sum_{i=1}^\tau r_i$ is the number of $\Tree^*$ edges, and~$U$ is the maximal link capacity. Note that in networks with high capacity
-and uncapacitated networks, we can simply set~$U=\tau$, so the resulting overall runtime is $\mathcal{O}(|E|^2 \cdot\log\log \tau \cdot \log |E|)$
+and uncapacitated networks, we can simply set~$U=\tau$, so the resulting overall runtime is $\mathcal{O}(|E|^2 \cdot\log\log \tau \cdot \log |E|)$.
 
 
 \subsection{Matching Algorithms}\label{ssec:match}
@@ -274,16 +274,16 @@ to its chunks as well as to other nodes ($\NI$).
 In order to solve the latter,
 we construct a bipartite
 graph between the set
-$\VirtualNodes$ of nodes and
+of nodes and
 the set of chunks.
-First, we clone each node~$\MaFactor$ times,
+First, we clone each node~$\MaFactor$ times
 as each node needs to process
 $\MaFactor$ chunks, and we aggregate all replicas of a given chunk in a
 single %$\ChunkType$
 super-vertex.
 Second, we link (cloned) nodes to (aggregated) replicas.
-In instances without $\BW$, mapping of any replica to any node is feasible, and hence, for a given mapping of chunks to nodes $\mu$, the minimum bandwidth is utilized if for each $c$, node $\mu(c)$ serves the closest replica of $c$.
-Therefore, for each node $v$ and chunk $c$, we connect $v$ and super-vertex $c$ with the link of cost $\min_i \dist(v,c^{(i)})$, i.e., the cost of reaching the closest replica.
+In instances without $\BW$, mapping of any replica to any node is feasible, and hence, for a given mapping $\mu$ of chunks to nodes, the minimum bandwidth is utilized if for each $c$, node $\mu(c)$ serves the closest replica of $c$.
+Therefore, for each node $v$ and chunk $c$, we connect each copy of $v$ and the super-vertex $c$ with the link of cost $\min_i \dist(v,c^{(i)})$, i.e., the cost of reaching the closest replica.
 Finally, on the resulting bipartite graph, we compute a~\emph{minimum weight
 perfect
 matching}:
@@ -297,8 +297,8 @@ An example instance is presented in Figure~\ref{fig:matching}.
   \centering
   \hspace{1cm}
   \includegraphics[width =0.39\columnwidth]{figs/static-mapping/matching}
-\caption{The~$\RS+\MA$ variant on the \emph{left} is converted into a
-  matching problem instance on the \emph{right}.
+\caption{The~$\RS+\MA$ variant on the left is converted into a
+  matching problem instance on the right.
 The figure illustrates
 an instance where two nodes are
 cloned into~$\MaFactor = 2$ nodes each,
@@ -308,8 +308,8 @@ The two replicas of each chunk are
 aggregated into a single chunk vertex~$\achunk_j$  in the matching instance;
 this gives a total of four chunk vertices in the matching graph. The costs
 on the links between all clones of a specific vertex and a chunk are set to
-the minimum distance. We can observe this for instance at the edges connecting
-the two clones of~$\VirtualNode_1$ to~$\achunk_2$: both weights are 0.
+the minimum distance. For instance, the weights of edges connecting
+the two clones of~$\VirtualNode_1$ to~$\achunk_2$ are 0.
 }
 \label{fig:matching}
 \end{figure}
@@ -320,23 +320,23 @@ the~actual matching computation. The constructed graph consists of
 $\MaFactor \cdot (n_V \cdot \ChunkType) = \tau^2$
 many edges,
 and for each edge we compute its weight. The shortest distances
-in a tree can be computed in time~$\mathcal{O}(t + q)$~\cite{offline-lca}, where $t$ is the size of a tree and $q$ is the number of queried pairs, which translates to the overall construction time~$\mathcal{O}(n_s + n_v\cdot \sum_{i=1}^\tau r_i)$.
-The state-of-the-art algorithm to compute matchings~\cite{matching-best} has a running time of $\tilde{\mathcal{O}}(|E|^{10/7}\cdot \log W)$, where $|E|$ is the number of edges, $W$ is the maximum weight of an edge, and $\tilde{\mathcal{O}}$ hides polylogarithmic (in terms of $|E|$) factors.
+in a tree of size $n_S$ can be computed in time~$\mathcal{O}(n_S + q)$~\cite{offline-lca}, where $q$ is the number of queried pairs, which translates to the overall construction time~$\mathcal{O}(n_s + n_v\cdot \sum_{i=1}^\tau r_i)$.
+The state-of-the-art algorithm to compute matchings in bipartite graph~\cite{matching-best} has a running time of $\tilde{\mathcal{O}}(|E|^{10/7}\cdot \log W)$, where $|E|$ is the number of edges, $W$ is the maximum weight of an edge, and $\tilde{\mathcal{O}}$ hides polylogarithmic (in terms of $|E|$) factors.
 The total running time is then $\tilde{\mathcal{O}}(\tau^{20/7}\cdot \log(n_s)) + \mathcal{O}(n_s + n_v\cdot \sum_{i=1}^\tau r_i)$.
 The matching-based algorithm outperforms the flow-based algorithm.
 
 
 \subsubsection{Local matching algorithm}
 
-In this section, we present the way to solve the~$\MA+\NI$ variant even faster by exploiting
-locality. Moreover, we show that we can
+Now, we present the way to solve the~$\MA+\NI$ variant even faster by using greedy approach.
+Moreover, we show that we can
 even solve
 $\MA+\NI+\BW$ variants by simply
 verifying feasibility.
 In~the~following, due to Observation~\ref{obs:nofp}, we can focus on
 the~$\MA$ and~$\MA+\BW$ variants, respectively.
 We start by lower-bounding the required bandwidth allocation.
-The \emph{uplink} of a subtree $T$, denoted $\Uplink(T)$ is an edge from the root of the subtree to its parent.
+The \emph{uplink} of a proper subtree $T'$, denoted $\Uplink(T')$ is an edge from the root of the subtree to its parent.
 
 %We first introduce the following definition.
 %\begin{defn}[Local Assignment (LA)]\label{def:loc}
@@ -371,7 +371,7 @@ The \emph{uplink} of a subtree $T$, denoted $\Uplink(T)$ is an edge from the roo
 
 
 \begin{lemma}\label{lem:uplink-alloc}
-Given the~$\MA$ variant and a subtree~$\Tree'$
+Given the~$\MA$ variant and a proper subtree~$\Tree'$
 containing~$x$
 chunks and~$y$ nodes, the bandwidth allocation of any
 assignment
@@ -382,21 +382,16 @@ $\VmChunkAssignment$ on the uplink of~$\Tree'$ is at~least $|x-y\cdot\MaFactor|\
 \begin{proof}
 In case the number of chunks equals the processing capacities of the
 nodes in the given subtree,
-the bandwidth allocation inflicted by the chunk access network on the uplink can
-be
-zero, since we can assign all chunks to nodes in the same subtree.
-Otherwise, we distinguish between two cases. If there are more chunks in the subtree, at least all of the excess chunks have to
-be transferred to a different subtree, which 
-inflicts costs~$\CostTrans$ per excess chunk on the uplink connecting~$\Tree'$
-with the
-remaining parts of~$\Tree$.
+the bandwidth allocation inflicted by the chunk access network on the uplink is zero, since we can assign all chunks to nodes in the same subtree.
+Otherwise, we distinguish between two cases. If there are more chunks in the subtree, at least all excess chunks have to
+be mapped to nodes outside $T'$, which 
+inflicts costs~$\CostTrans$ per excess chunk on the uplink of~$\Tree'$.
  Similar situation occurs if the processing capabilities exceed the
 amount of
 available chunks.
 Hence, the minimum bandwidth allocation for the chunk access on the uplink
 is the absolute difference between the number of chunks and the processing capabilities
-of the subtree, i.e.~$|x-y\cdot\MaFactor|$ times $\CostTrans$, the amount of bandwidth needed
-for a single transfer.
+of the subtree, i.e.,~$|x-y\cdot\MaFactor|$ times $\CostTrans$.
 \end{proof}
 
 
@@ -410,7 +405,7 @@ nodes~$S_v$ in~$\Tree'$. Both sets are initially empty.
 We associate a counter with each node that enters $S_v$, and we intitialize it to $\MaFactor$, the multi-assignment factor.
 
 
-We first process all the leaves, in an arbitrary order; subsequently, we process arbitrary inner vertices
+We first process all the leaves, in an arbitrary order; subsequently, we process inner vertices
 of~$\Tree$ whenever all their children have been processed.
 We process any leaf~$\ell$
 by adding any
@@ -425,9 +420,7 @@ Then, we remove $c$ from $S_c$, and we decrement the counter of $v$. If the coun
 \parag{Analysis.} For each
 vertex in the substrate graph,
 we build the union of the
-children's sets,
-and since each vertex can only be the child of one vertex,
-the amortized runtime per vertex is constant.
+children's sets.
 The number of all remove operations is equal to
 the number of chunks~$\mathcal{O}(\ChunkType)$.
 Hence the overall complexity of this construction amounts to
@@ -456,10 +449,10 @@ The local matching algorithm outperforms the previous algorithm that relied upon
 %on all other links, the non local assignment has a larger footprint.
 %\end{proof}
 
-The algorithm allocates the minimum possible bandwidth at an uplink of every subtree, as stated in Lemma~\ref{lemma:uplink}, and hence the algorithm is optimal.
+The algorithm allocates the minimum possible bandwidth at an uplink of every subtree, as stated in Lemma~\ref{lemma:uplink}, and hence the algorithm computes an optimal solution.
 Combined with a simple postprocessing step, this approach can also solve~$\MA+\BW$ variant. The central idea of this extension is
-that \emph{local} assignments allocate the minimal bandwidth
-on each individual edge. In consequence, each bandwidth constraint,
+that the algorithm allocates the minimal bandwidth
+on each individual edge. In consequence, any bandwidth constraint,
 which is lower than the allocation of a local assignment on one link, renders
 the problem infeasible. Hence, it is sufficient to temporarily omit the
 bandwidth limitations, compute an optimal assignment for an~$\MA$ instance, and
@@ -487,7 +480,7 @@ see mapping~$\NodeMapping_1$ in the left picture in
 Figure~\ref{fig:dynamic_motivation}: the four nodes are all
 collocated with chunks, resulting in a zero-cost chunk access network. As a
 result, the paths between the individual nodes are longer than in alternative
-node placements: each node has a distance of two hops to one other node,
+node placements: each node has a~distance of two hops to one other node,
 and four hops to two other nodes. Hence the resulting allocations for the
 node inter-connect sum up to~$20 \cdot \CostCom$.
 
@@ -500,11 +493,11 @@ node inter-connect sum up to~$20 \cdot \CostCom$.
 %\end{figure}
 
 The right picture in Figure~\ref{fig:dynamic_motivation} shows a different node
-mapping~$\NodeMapping_2$, which seeks to minimize the communication costs
+mapping~$\NodeMapping_2$, which seeks to minimize the inter-connect costs
 between the nodes, and places all nodes in one subtree. The distance between all
 nodes is two, which results in a total bandwidth allocation of~$12\cdot\CostCom$
 for the inter-connect. However, this reduced price comes at additional costs in
-the access network:~$c_3$ and~$c_4$ have to be communicated to~$v_3$ and~$v_4$,
+the access network:~$c_3$ and~$c_4$ have to be mapped to~$v_3$ and~$v_4$,
 which requires a total bandwidth allocation of~$8 \cdot \CostTrans$.
 
 
@@ -527,7 +520,7 @@ footprint. In other cases, one solution outperforms the other.}
 leverages the \emph{optimal substructure property} of the $\MA+\FP+\NI+\BW$ variant:
 as we will see, optimal solutions for subtrees
 can be efficiently combined into optimal solutions for the whole tree.
-For ease of presentation, we transform the
+First, we transform the
 substrate network~$\Tree$
 into a binary tree:
 we clone every higher-degree node,
@@ -540,49 +533,51 @@ recursive formula~$f$ for
 the minimal cost solution given any possible number of nodes
 embedded in a given subtree (the actual set of nodes does not matter,
 due to symmetry).
-The value of $f(T, x)$ corresponds to the bandwidth cost of placing $x$ nodes in a subtree $T$.
-The total bandwidth cost consists of the bandwidth allocated inside $T$, and the bandwidth conducted outside of $T$.
-The formula to calculate the fuction $f$ for a subtree containing only a leaf $\{ \ell \}$ is the following:
+The value of $f(T', x)$ corresponds to the minimum bandwidth cost of placing $x$ nodes in a subtree $T'$.
+The total bandwidth cost consists of the bandwidth allocated inside $T$, and the bandwidth allocated on the uplink of $T'$.
+The latter is equal to
+\[
+bw(T',x) = 
+\begin{cases}
+   \infty & \mbox{if } bw(T', x) > \capacity(\Uplink(T'))\enspace,\\
+    \CostTrans \cdot |x - \ChunkCount(T')| +\CostCom \cdot
+(\Vms - x) \cdot x & \mbox{otherwise}\enspace, \\
+  \end{cases}
+  \]
+  where $\ChunkCount(T')$ is the number of chunks in a~subtree~$T'$.
+  We set~$bw(T',x)$ to infinity if the required bandwidth
+$bw$ exceeds the capacity~$\capacity$ of the uplink of~$\{ l \}$.
+The first term of $bw$ represents the required bandwidth for the communication between the~$x$
+nodes inside~$T'$, and the~$\Vms - x$ nodes in the remaining parts of the substrate
+network.
+The second term represents
+the bandwidth necessary to transport the chunks in $T'$ from their location to
+nodes outside of $T'$ (see Lemma~\ref{lemma:uplink} for similar argument).
+Then, the formula to calculate the function $f$ for a subtree containing only a leaf $\{ \ell \}$ is the following:
 \[
 f(\{ \ell \}, x) =
 \begin{cases}
-   \infty & \mbox{if } x > cap(\ell)\enspace,\\
-   \infty & \mbox{if } bw(\{ \ell \}, x) > cap(\Uplink(\ell))\enspace,\\
-    bw(\{ \ell \}, x) & \mbox{otherwise}\enspace, \\
+   \infty & \mbox{if } x > \capacity(\ell)\enspace,\\
+    bw(\{ \ell \}, x) & \mbox{otherwise}\enspace. \\
   \end{cases}
   \]
-where $bw(T,x) := \CostTrans \cdot |x - \ChunkCount(T)| +\CostCom \cdot
-(\Vms - x) \cdot x$, and $\ChunkCount(T)$ is the number of chunks in a~subtree~$T$.
-The first term of $bw$ represents the required bandwidth for the communication between the~$x$
-nodes inside~$T$, and the~$\Vms - x$ nodes in the remaining parts of the substrate
-network.
-The second term represents
-the bandwidth necessary to transport the chunks in $T$ from their location to
-nodes outside of $T$ (see Lemma~\ref{lemma:uplink} for similar argument).
-We set~$f(\{ l \},x)$ to infinity if the required bandwidth
-$bw$ exceeds the capacity~$\capacity$ of the uplink of~$\{ l \}$, or $x$ exceeds the node hosting capacity of server $l$.
+We set~$f(\{ l \},x)$ to infinity if $x$ exceeds the node hosting capacity of server $l$.
 
-
-The formula to calculate the fuction $f$ for a non-leaf subtree $T$ is the following:
-\[
-  f(T, x) = 
-    \min_{0\leq r \leq x} \{  f\left(\textsc{Le}(T),
-x-r\right) +
-f\left(\textsc{Ri}(T), r\right) \} + bw(T,x)
-  \]
-To calculate the value of $f$ for non-leaf subtries, we split the~$x$ nodes
+The formula to calculate the fuction $f$ for a non-leaf subtree $T'$ is the following:
+To calculate the value of $f(T', x)$ for non-leaf subtries $T'$, we split the~$x$ nodes
 into two positive integer
 values, and we put~$r$ on the right and~$x - r$ on the left subtree.
 That is, we take the optimal cost
 (given recursively) of placing~$r$ nodes in
-the right subtree~$\textsc{Ri}(T')$ of~$T'$ and~$x-r$ nodes in left subtree~$\textsc{Le}(T')$ of
+the right subtree~$\textsc{Ri}(T')$ of~$T'$ and~$x-r$ nodes in the left subtree~$\textsc{Le}(T')$ of
 $T'$. Given the cheapest combination, we add the bandwidth requirements
-on the uplink of~$T'$ to generate the overall costs for placing~$x$ nodes in~$T'$.
-Therefore,~$f(T',x) =   \min_{0\leq r \leq x}$~$ \{  f\left(\textsc{Le}(T'),
-x-r\right) +$~$
-f\left(\textsc{Ri}(T'), r\right) \} + bw(T',x)$.
-Again, we set~$f(T',x)$ to infinity if the required bandwidth
-$bw$ exceeds the capacity~$\capacity$ of the uplink of~$T'$.
+on the uplink of~$T'$ to generate the overall costs for placing~$x$ nodes in~$T'$, obtaining
+\[
+  f(T', x) = 
+    \min_{0\leq r \leq x} \{  f\left(\textsc{Le}(T'),
+x-r\right) +
+f\left(\textsc{Ri}(T'), r\right) \} + bw(T,x)\enspace.
+  \]
 
 We compute~$f$ in a bottom-up manner. 
 To finally compute the actual optimal embedding,
@@ -631,15 +626,15 @@ In particular, we
 show that variants become NP-hard if flexibly placeable nodes ($\FP$) have to be assigned to one of multiple replicas ($\RS$), either with multiple chunks per node ($\MA$ in Section~\ref{ssec:fprsma}) or with communication among nodes ($\NI$ in Section~\ref{ssec:fprscc}).
 Both results hold even in uncapacitated networks, and even in small-diameter
 substrate networks (namely two- or three-level trees).
-The hardness of variants $\FP+\RS+\MA$ and~$\FP+\RS+\NI$ imply
-the hardness of four additional, more general variants.
+Clearly, the hardness of variants $\FP+\RS+\MA$ and~$\FP+\RS+\NI$ imply
+the hardness of more general variants.
 
-In addition to hardness results for aforementioned $\CTE$ variants, we study the influence of restricting number of replicas of a chunk on computational tractability on those variants.
-Namely, we introduce the restricted replica selection component $\RS(r_{max})$, parametrized by an integer $r_{max}$, that restricts the number of replicas of any chunk: for every chunk $c_i$ we have $r_i < r_{max}$.
+In addition to hardness results for the aforementioned $\CTE$ variants, we study the influence of restricting number of replicas of a chunk on computational tractability on those variants.
+Namely, we introduce the restricted replica selection component $\RS(r_{max})$, parametrized by an~integer $r_{max}$, that restricts the number of replicas of any chunk: for every chunk $c_i$ we have $r_i \leq r_{max}$.
 We consider $\RS(2)$ component in relation with Multi-Assignment ($\MA$) and Node-Interconnect ($\NI$).
 Concretely, in Section~\ref{ssec:fprsma} we first present the NP-hardness of unrestricted scenario $\FP+\RS+\MA$ (Theorem~\ref{th:ma-unlimited}) as a warm-up,
 and then we present more refined hardness result for $\FP+\RS(2)+\MA$ (Theorem~\ref{th:ma-reduction}). In Section~\ref{ssec:fprscc} we present the NP-hardness of unrestricted scenario $\FP+\RS+\NI$ (Theorem~\ref{theorem:fp_rs_cc}).
-However, restricted replica selection $\RS(2)$ in combination with Node-Interconnect required additional ways to control the placement of nodes, and the NP-hardness result uses bandwidth constraints $\BW$.
+However, restricted replica selection $\RS(2)$ in combination with Node-Interconnect required additional ways to control the placement of nodes, and the NP-hardness result uses bandwidth constraints $\BW$ (Theorem~\ref{th:ni-reduction2}).
 
 \subsection{Introduction to 3D Perfect Matching}
 \label{sec:3dm_intro}
@@ -664,7 +659,7 @@ elements of~$X \cup Y \cup Z$ exactly once.
 \subsubsection{Warm-up: Multi-Assignment with Unrestricted Number of Replicas}
 
 Our proof that the variant $\FP+\RS+\MA$ of the $\CTE$ problem is NP-hard is based on the following construction.
-Let~$I$ be an instance of~$\TDM$ with $p$ triples and set cardinality $k$ (where $k = |X| = |Y| = |Z|$).
+Let~$I$ be an instance of~$\TDM$ with $p$ triples and set cardinality~$k$ (where $k = |X| = |Y| = |Z|$).
 We construct an instance~$\ICTE$ of the $\CTE$ problem in the following way:
 \begin{itemize}
 \item \emph{Tree construction:} We create a tree consisting of a root,
@@ -679,12 +674,9 @@ corresponding to the elements of the triple.
 $\CostTrans = 1$, and the the multi-assignment factor
 $\MaFactor=3$.
 \item \emph{Threshold.} In order to turn the optimization problem into a decision problem, we use
-a cost threshold~$\Thr = 4\cdot k$. The cost threshold is met by all
-assignments which assign all three chunks of each triple gadget to a
-node which is collocated with one of the chunks. Assignments which connect a
-chunk to a node in a different triple have a larger footprint, and are
-considered to be infeasible.
-
+a cost threshold~$\Thr = 4\cdot k$. As we will show, the cost threshold is met by all
+assignments that assign all three chunks of each triple gadget to a
+node which is collocated with one of these chunks, and only by such assignments.
 \end{itemize}
 
 %\parag{Example.} Figure~\ref{fig:fprsma} shows an example of our construction: In an~instance~$\ITDPM$
@@ -726,7 +718,7 @@ indicated by the grey triples. \textit{Right:} The corresponding instance and an
 \parag{Correctness.}
 Given these concepts, we can now show the computational hardness.
 \begin{theorem}
-  Variant $\FP+\RS+\MA$ of the $\CTE$ problem is NP-hard.
+  The variant $\FP+\RS+\MA$ of the $\CTE$ problem is NP-hard.
   \label{th:ma-unlimited}
 \end{theorem}
 \begin{proof}
@@ -736,14 +728,14 @@ the~$\FP+\RS+\MA$ variant constructed as described above. We prove that~$\ICTE$ 
 $\ITDPM$ has a~perfect matching (of size~$k$).
 
 ($\Rightarrow$) Fix a feasible solution for~$\ITDPM$. We place a single node in every
-gadget that corresponds to the chosen triples (of arbitrary leaf of this gadget). In each of the corresponding
+gadget that corresponds to the chosen triples (of an arbitrary leaf of this gadget). In each of the corresponding
 gadgets, we match every chunk to the node in this gadget. This
 solution has
-cost exactly~$\Thr = 4\cdot k$: each of $k$ nodes processes $1$ chunk collocated with it, and $2$ chunks at the distance $2$. As every element of the universe is covered, every
+cost exactly~$\Thr = 4\cdot k$: each of $k$ nodes processes $1$ chunk collocated with it, and $2$ chunks at the distance $2$. As every element of the universe $X \cup Y \cup Z$ is covered, every
 chunk is processed.
 
 ($\Leftarrow$) Fix a solution for ~$\ICTE$ of cost at most $\Thr$.
-We call the triple gadget \emph{active} if it hosts a node in one of its leaves.
+We call the triple gadget \emph{active} if it hosts a~node in one of its leaves.
 To construct the solution to $\ITDPM$, we pick triples, whose gadgets are active.
 Now, we claim that in each triple gadget there is at most one node.
 As every leaf hosts at most one chunk, hence each node can process at most $1$ of its $\MaFactor=3$ chunks for free.
@@ -958,7 +950,7 @@ Hence, exactly $k$ \TripleGadgets{} are active.
 \end{proof}
 
 \begin{theorem}
-  The $\RS(2)+\MA+\FP$ variant of the $\CTE$ problem is NP-hard.
+  The variant $\RS(2)+\MA+\FP$ of the $\CTE$ problem is NP-hard.
   \label{th:ma-reduction}
 \end{theorem}
 
@@ -1025,7 +1017,7 @@ chunk replicas placed in the same way.
 \item The communication cost in the inter-connect is set to~$\CostCom = 1$.
 \item The number of nodes (virtual machines) is~$\Vms = 3 \cdot k$, where~$k$ is the set cardinality.
 \item Only solutions which place a node in each leaf of~$k$ gadgets, can
-be converted into solutions for the 3-DM problem. We use the cost threshold
+be converted into solutions for the $\TDPM$ problem. We use the cost threshold
 $\Thr =  6 \cdot k + 18 \cdot
 (k - 1) \cdot k$, to verify whether a solution achieves this, transforming
 the~$\FP+\RS+\NI$ variant into a decision problem. A~detailed explanation of this value can
@@ -1063,7 +1055,7 @@ among more than~$k$ gadgets.
 
 \begin{theorem}
 \label{theorem:fp_rs_cc}
-The $\FP+\RS+\NI$ variant of $\CTE$ problem is NP-hard.
+The variant $\FP+\RS+\NI$ of $\CTE$ problem is NP-hard.
 \end{theorem}
 \begin{proof}
 Let~$\ITDPM$ be an instance of~$\TDM$ and let~$\ICTE$ be an instance of
@@ -1367,7 +1359,8 @@ placed nodes.
 Using the properties of the substrate network, we perform the reduction in the following way.
 
 \begin{theorem}
- The $\RS(2)+\FP+\NI+\BW$ variant of the $\CTE$ problem is NP-hard.
+  The variant $\RS(2)+\FP+\NI+\BW$ of the $\CTE$ problem is NP-hard.
+  \label{th:ni-reduction2}
 \end{theorem}
 
 \begin{proof}
