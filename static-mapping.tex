@@ -650,8 +650,8 @@ which can be seen as a generalization of bipartite matchings to 3-uniform
 hypergraphs. We refer to this problem by~$\TDM$, and for completeness,
 review it quickly:
 $\TDM$ is defined as follows. We are given three finite and disjoint
-sets~$X$,~$Y$, and~$Z$ of cardinality~$k$, as well as a subset of triples~$P\subseteq
-X \times Y \times Z$, and $p = |P|$.  Set~$M \subseteq P$ is a 3-dimensional matching
+sets~$X$,~$Y$, and~$Z$ of cardinality~$k$, as well as a~subset of triples~$P\subseteq
+X \times Y \times Z$.  Set~$M \subseteq P$ is a 3-dimensional matching
 if and only if, for any two distinct triples~$t_1=(x_1, y_1, z_1) \in M$
 and~$t_2=(x_2, y_2, z_2) \in M$, it holds that~$x_1\neq x_2$,~$y_1\neq
 y_2$, and~$z_1\neq z_2$. Our goal is to decide if we can construct
@@ -665,57 +665,59 @@ elements of~$X \cup Y \cup Z$ exactly once.
 
 Our proof that the variant $\FP+\RS+\MA$ of the $\CTE$ problem is NP-hard is based on the following construction.
 Let~$I$ be an instance of~$\TDM$ with $p$ triples and set cardinality $k$ (where $k = |X| = |Y| = |Z|$).
-We construct an instance~$I'$ in the following way:
+We construct an instance~$\ICTE$ of the $\CTE$ problem in the following way:
 \begin{itemize}
-\item \emph{Tree Construction:} We create a tree consisting of a root,
-and for each triple, we create a gadget which we directly attach as
-child of the root. The gadget is of height 2,
-and consists of an inner node (a router) and three leaves.
-\item \emph{Chunks and chunk replicas:} For each element in~$X$,~$Y$ and~$Z$,
+\item \emph{Tree construction:} We create a tree consisting of a root,
+and for each triple from $P$, we create a \emph{triple gadget} which we directly attach as
+a child of the root. The gadget is of height 2,
+and consists of an inner node and three leaves.
+\item \emph{Chunks:} For each element in~$X$,~$Y$ and~$Z$,
  we create a chunk
-($3 \cdot k$ in total). Every gadget contains three chunk replicas (one per leaf),
+($3 \cdot k$ chunks in total). Every gadget contains three chunk replicas (one per leaf),
 corresponding to the elements of the triple.
-\item \emph{Other properties:} We set the number of to-be-embedded nodes to~$k$,
-$\CostTrans$ to~$1$, and the number of chunk slots in each node to the multi-assignment factor
+\item \emph{Other properties:} We set the number of to-be-embedded nodes $n_V = k$,
+$\CostTrans = 1$, and the the multi-assignment factor
 $\MaFactor=3$.
 \item \emph{Threshold.} In order to turn the optimization problem into a decision problem, we use
-a cost threshold~$\Thr$. The cost threshold is met by all
-assignments which assign all three chunks of each triple to a
+a cost threshold~$\Thr = 4\cdot k$. The cost threshold is met by all
+assignments which assign all three chunks of each triple gadget to a
 node which is collocated with one of the chunks. Assignments which connect a
 chunk to a node in a different triple have a larger footprint, and are
 considered to be infeasible.
-We use the~threshold~$\Thr= 4\cdot k$.
 
 \end{itemize}
 
-\parag{Example.} Figure~\ref{fig:fprsma} shows an example of our construction: In an~instance~$I$
-of 3-DM sets $X, Y, Z$ consist of the following elements: $X = \{ x_1, x_2 \}, Y = \{ y_1, y_2 \}$ and $Z = \{ z_1, z_2 \}$.
-Set of triples $P$ contains three triples
-$(x_1, y_1,
-z_1)$,~$(x_2, y_1, z_2)$, and~$(x_2, y_2, z_2)$. This instance has only one solution:~$M =
-\{(x_1,y_1,z_1),(x_2,y_2,z_2))\}$.
+%\parag{Example.} Figure~\ref{fig:fprsma} shows an example of our construction: In an~instance~$\ITDPM$
+%of 3-DM sets $X, Y, Z$ consist of the following elements: $X = \{ x_1, x_2 \}, Y = \{ y_1, y_2 \}$ and $Z = \{ z_1, z_2 \}$.
+%Set of triples $P$ contains three triples
+%$(x_1, y_1,
+%z_1)$,~$(x_2, y_1, z_2)$, and~$(x_2, y_2, z_2)$. This instance has only one solution:~$M =
+%\{(x_1,y_1,z_1),(x_2,y_2,z_2))\}$.
+%
+%To construct the corresponding instance~$\ICTE$ of the $\CTE$ problem, we
+%create a gadget for each triple in~$P$. For each variable which occurs in a
+%triple, the corresponding gadget contains a~chunk of the
+%type of the variable. The triple
+%$(x_2, y_1, z_2)$ of the instance is represented by the middle gadget in
+%Figure~\ref{fig:fprsma}. The objective of~$\ICTE$ is to allocate~$k=2$ nodes
+%with the smallest possible footprint. If the total footprint is at most $4\cdot k$, we can construct a solution to~$\ITDPM$ from the solution to~$\ICTE$.
+%The footprint consists of the costs which occur when a node is embedded in a~gadget, and the three chunks of that gadget which are assigned to that node: one of
+%the chunks is collocated with the node, the other two have to be transferred
+%via two hops, incurring unit costs on each hop.
 
-To construct the corresponding instance~$I'$ of the $\CTE$ problem, we
-create a gadget for each triple in~$P$. For each variable which occurs in a
-triple, the corresponding gadget contains a~chunk of the
-type of the variable. The triple
-$(x_2, y_1, z_2)$ of the instance is represented by the middle gadget in
-Figure~\ref{fig:fprsma}. The objective of~$I'$ is to allocate~$k=2$ nodes
-with the smallest possible footprint. If the total footprint is at most $4\cdot k$, we can construct a solution to~$I$ from the solution to~$I'$.
-The footprint consists of the costs which occur when a node is embedded in a~gadget, and the three chunks of that gadget which are assigned to that node: one of
-the chunks is collocated with the node, the other two have to be transferred
-via two hops, incurring unit costs on each hop.
+Figure~\ref{fig:fprsma} shows an example of our construction.
 
 \begin{figure}[t]
+  \centering
+\includegraphics[width = 0.21\columnwidth]{figs/static-mapping/tdm-horizontal}
+\hspace{1cm}
+\centering
+\includegraphics[width = 0.4\columnwidth]{figs/static-mapping/np_3dm_construction}
 \hfill
-\includegraphics[width = 0.3\columnwidth]{figs/static-mapping/np_3dm_formular}
-\hfill
-\includegraphics[width = 0.5\columnwidth]{figs/static-mapping/np_3dm_construction}
-\caption{\textit{Left:} A~$\TDM$ instance with three triples:
+\caption{\textit{Left:} A~$\TDM$ instance of cardinality $k=2$ with three triples:
 $(x_1, y_1, z_1)$,~$(x_2, y_1, z_2)$, and~$(x_2, y_2, z_2)$. The solution is
-indicated by the grey triples; the dashed triple is not used for the
-solution. \textit{Right:} The corresponding problem and solution for~$\FP + \MA
-+ \RS$ of $\CTE$ problem.}
+indicated by the grey triples. \textit{Right:} The corresponding instance and an optimal solution for the~$\FP + \MA
++ \RS$ of the $\CTE$ problem. Each triple corresponds to a single triple gadget.}
 \hfill
 \label{fig:fprsma}
 \end{figure}
@@ -728,30 +730,35 @@ Given these concepts, we can now show the computational hardness.
   \label{th:ma-unlimited}
 \end{theorem}
 \begin{proof}
-Let~$I$ be an instance of~$\TDM$ and let~$I'$ be an instance of
-the~$\FP+\RS+\MA$ variant constructed as described above. We prove that~$I'$ has a solution of cost at most $\Thr = 4 \cdot k$ if ($\Rightarrow$) and only if
+Let~$\ITDPM$ be an instance of~$\TDM$ and let~$\ICTE$ be an instance of
+the~$\FP+\RS+\MA$ variant constructed as described above. We prove that~$\ICTE$ has a solution of cost at most $\Thr = 4 \cdot k$ if ($\Rightarrow$) and only if
 ($\Leftarrow$)
-$I$ has a~matching of size~$k$.
+$\ITDPM$ has a~perfect matching (of size~$k$).
 
-($\Rightarrow$) Let us take a feasible solution to~$\TDM$. We place a node in every
-gadget that corresponds to the chosen triples. In each of the corresponding
+($\Rightarrow$) Fix a feasible solution for~$\ITDPM$. We place a single node in every
+gadget that corresponds to the chosen triples (of arbitrary leaf of this gadget). In each of the corresponding
 gadgets, we match every chunk to the node in this gadget. This
 solution has
-cost exactly~$\Thr$. As every element of the universe is covered, every
+cost exactly~$\Thr = 4\cdot k$: each of $k$ nodes processes $1$ chunk collocated with it, and $2$ chunks at the distance $2$. As every element of the universe is covered, every
 chunk is processed.
 
-($\Leftarrow$) Let us take a solution to the~$\FP+\RS+\MA$ variant of cost at most $\Thr$. We
-choose triples that correspond to gadgets where there are nodes. Since
-all chunks are processed, every element of~$X$,~$Y$ and~$Z$ is matched. Each
-node must process chunks that
-correspond to the triple, otherwise the
-cost must be larger than~$\Thr$ (high costs for chunk
-transportation).
+($\Leftarrow$) Fix a solution for ~$\ICTE$ of cost at most $\Thr$.
+We call the triple gadget \emph{active} if it hosts a node in one of its leaves.
+To construct the solution to $\ITDPM$, we pick triples, whose gadgets are active.
+Now, we claim that in each triple gadget there is at most one node.
+As every leaf hosts at most one chunk, hence each node can process at most $1$ of its $\MaFactor=3$ chunks for free.
+Hence, each node incurs the cost at least $4$ for the remaining $2$ chunks that are at distance at least $2$.
+Assume that two nodes $n_1$, $n_2$ are placed in the same triple gadget.
+As a triple gadget contains $3$ chunks, at least $2$ of $6$ chunks that they process are placed outside of this triple gadget.
+Hence, $n_1$ and $n_2$ incur a cost at least $4$ to reach each of those exterior chunks.
+In total, $n_1$ and $n_2$ incur a cost at least $12$, and the total cost $4\cdot k + 4$ exceeds the threshold $\Thr = 4\cdot k$.
+Therefore, exactly $k$ gadgets are active, and the solution to $\ITDPM$ consists of $k$ triples.
+Since all chunks are processed, every element of~$X$,~$Y$ and~$Z$ is matched.
 \end{proof}
 
 \subsubsection{Mult-Assignment with at most 2 replicas}
 
-We have seen that replica selection flexibilities can render embeddings computationally hard.
+We have seen that replica selection flexibility can render embeddings computationally hard.
 Now, we provide a more detailed look at this hardness result
 and explore the minimal requirements for rendering replica selection hard.
 In particular, we show that already two replicas for each chunk are sufficient for computational intractability.
@@ -797,16 +804,15 @@ In particular, we show that already two replicas for each chunk are sufficient f
 %Hence, exactly $1$ node is placed on a chunk of family $F_c$ outside the gadget $G_c$, and exactly $r_c-1$ nodes cover the remaining $r_c-1$ chunks inside gadget $G_c$.
 %All chunks are processed, the replication factor is reduced to $2$, and the size of construction grows polynomially.
 
-\parag{Introduction to the reduction.} As we already stated, we modify the construction from Section~\ref{ssec:fprsma}.
-As a way to deal with replication, we use the families of chunks using the unique chunks on the comb.
-We extend the construction of a gadget for chunk with redundancy, by incorporating the fact that the multi-assignment factor is $4$.
-For the construction to remain correct given such a multi-assignment factor, we introduce further chunks with one chunk replica to place in the chunk gadget and use the excessive $3$ data processing capacities.
+%\parag{Introduction to the reduction.} As we already stated, we modify the construction from Section~\ref{ssec:fprsma}.
+%As a way to deal with replication, we use the families of chunks using the unique chunks on the comb.
+%We extend the construction of a gadget for chunk with redundancy, by incorporating the fact that the multi-assignment factor is $4$.
+%For the construction to remain correct given such a multi-assignment factor, we introduce further chunks with one chunk replica to place in the chunk gadget and use the excessive $3$ data processing capacities.
 
-\parag{Construction.} For an arbitrary instance~$\ITDPM$ of~$\TDM$ we construct a~$\RS(2)+\MA(4)+\FP$ variant instance~$\IVCEMB$ the way described in the remainder of this section.
-Let $k = |X|=|Y|=|Z|$.
-By $P$ we denote the set of all triples of $\ITDPM$.
+\parag{Construction.} For an arbitrary instance~$\ITDPM$ of the~$\TDM$ problem we construct a~$\RS(2)+\MA+\FP$ variant instance~$\IVCEMB$ the following way.
+Let $k = |X|=|Y|=|Z|$ and $p = |P|$.
 For each $e\in X\cup Y\cup Z$, by $P_e$ we denote the set of all triples that contain element $e$.
-Let $\deg(e) = |P_e|$, and note that $\sum_e \deg(e) = 3\cdot |T|$.
+Let $\deg(e) = |P_e|$, and note that $\sum_e \deg(e) = 3\cdot |P|$.
 We proceed with the construction as follows.
 
 \paragraph{Tree.}
@@ -819,16 +825,15 @@ We construct the tree that has the following structure (see Figure~\ref{fig:red-
   \label{fig:red-ma2}
 \end{figure}
 
-
 \begin{enumerate}
   \item The physical network consists of two subtrees connected to the
-  root: the {\MatchSubtree} and the {\CoverSubtree}. The
-  {\MatchSubtree} consists of $p$ {\TripleGadgets}, one per each triple $t\in P$ and $k$
-  {\UnqGadgets}. The {\CoverSubtree} consist of~$3\cdot k$ {\ElGadgets}, one for each element $e\in X\cup Y\cup Z$.
-  \item {\TripleGadget} consists of four vertices: three leaves and the root of the gadget.
-  \item {\UnqGadget} consists of two vertices: the leaf and the root of the gadget.
-  We construct the root node of the gadget not only to keep the tree balanced, but also to keep leaves of
-  {\UnqGadgets} far from leaves of other \UnqGadgets.% Note that \UnqGadgets{} form a comb.
+  root: the \emph{\MatchSubtree} and the \emph{\CoverSubtree}. The
+  {\MatchSubtree} consists of $p$ \emph{\TripleGadgets}, one per each triple from $P$ and $k$
+  \emph{\UnqGadgets}. The {\CoverSubtree} consist of~$3\cdot k$ {\ElGadgets}, one for each element $e\in X\cup Y\cup Z$.
+  \item The {\TripleGadget} consists of four vertices: three leaves and the root of the gadget, as defined in the previous reduction in this section.
+  \item The {\UnqGadget} consists of two vertices: the leaf and the root of the gadget.
+  This keeps the tree balanced, and it also keeps leaves of
+  {\UnqGadgets} far from each other.
   \item The {\ElGadget} for element $e$ consists of the
   root and~$4\cdot(\deg(e)-1)+1$ leaves.
 \end{enumerate}
@@ -836,37 +841,27 @@ We construct the tree that has the following structure (see Figure~\ref{fig:red-
 \paragraph{Chunks.}
 We construct three sets of chunks.
 The first set corresponds to elements of the universe (that is, $X\cup Y\cup Z$).
-The construction of such chunks is similar to construction of chunks in Section~\ref{ssec:fprsma}, but to take into consideration the restricted replication factor, we construct the familiy of chunks (as described in the introduction to this section).
-Namely, for each element of universe $e$, we construct as many chunks as there are occurences of $e$ in triples of $\ITDPM$.
-Each such chunk has exactly two replicas.
+The construction of such chunks is similar to construction of chunks in Section~\ref{ssec:fprsma}, but to take into consideration the restricted replication factor, we change the construction.
+Namely, for each element of universe $e \in X \cup Y \cup Z$, we construct $\deg(e)$ chunks, each having exactly two replicas.
 The other two sets of chunks has one replica, therefore those are called \emph{unique} chunks.
 We construct two types of unique chunks, distinguished by a different role in the construction.
-For unique chunks we simply co-notate the chunk with chunk replica.
-
-Concretely, we construct the following chunks:
+For unique chunks we simply identify the chunk with chunk replica.
 \begin{enumerate}
-  \item For each triple $t \in P$, we construct $3$ chunks, with two replicas each.
-  We construct different chunks for each triple $t$, which contain element $e$ (in total $\deg(e)$ chunks).
-  We refer to those replicas by $ch^{(1)}(e, t)$ and $ch^{(2)}(e, t)$.
-  In total we construct $2\cdot \sum_e\deg(e) = 6\cdot p$ chunk replicas.
-  \item We construct~$k$ additional chunks named
-  ~$u_1, \ldots, u_k$ with one replica each.
-  \item For each element~$e\in X\cup Y\cup Z$,
-  we construct additional~$3\cdot(\deg(e) - 1)$ chunks, with one replica each.
-  We call this set~$\UniqueE$.
-\end{enumerate}
-Those chunks are placed in the following parts of the tree:
-\begin{enumerate}
-  \item \emph{Chunks in the Matching Subtree:} In {\TripleGadget} of triple $t$ we put
+  \item For each triple $t \in P$, we construct $3$ chunks:~$c(t \cap X, t), c(t \cap Y, t), c(t \cap Z, t)$.
+  Each chunk $c(e, t)$ has two replicas: $c^{(1)}(e,t)$ and $c^{(2)}(e,t)$.
+  First replicas ($c^{(1)}(e,t)$) are placed in the matching subtree:
+  we place
   three replicas:
- ~$ch^{(1)}(t \cap X, t), ch^{(1)}(t \cap Y, t), ch^{(1)}(t \cap Z, t)$, one per each leaf.
-  \item \emph{Chunks in the Unique Gadgets:} We place replicas
- ~$u_1,\ldots, u_k$ at the leaves of \UnqGadgets.
- \item \emph{Chunks in Element Gadgets:} Consider the \ElGadget{} for the element $e \in X\cup Y\cup Z$.
- We place two types of replicas in the leaves of the gadget.
- We put replicas $ch^{(2)}(t, e)$ for each $t \in P_e$.
- Additionally, we place all the replicas from set $\UniqueE$.
- In total, we place $4\cdot (\deg(e) - 1) + 1$ replicas, one per each leaf of the gadget.
+  ~$c^{(1)}(t \cap X, t), c^{(1)}(t \cap Y, t), c^{(1)}(t \cap Z, t)$ in the {\TripleGadget} for triple $t\in P$, one per each leaf.
+  Second replicas ($c^{(2)}(e,t)$) are placed in the cover subtree:
+  we place replicas $c^{(2)}(t, e)$ in the leaves of \ElGadget{} for the element $e \in X\cup Y\cup Z$ for each $t \in P_e$.
+  In total we construct $6\cdot p = 2\cdot \sum_e\deg(e)$ replicas of those chunks.
+  \item We construct~$k$ additional chunks named
+  ~$u_1, \ldots, u_k$ with one replica each, and we place those at the leaves of \UnqGadgets (one chunk per leaf).
+  \item For each element~$e\in X\cup Y\cup Z$
+  we construct additional set $\UniqueE$ of $3\cdot(\deg(e) - 1)$ chunks, with one replica each, and we place those replicas in $3\cdot (\deg(e)-1)$ out of $4\cdot (\deg(e)-1)+1)$ leaves of $e$'s element gadget.
+  In remaining leaves of $e$'s element gadget we place $\deg(e)$
+ replicas $c^{(2)}(t, e)$ for each $t \in P_e$. In total, we place $4\cdot (\deg(e) - 1) + 1$ replicas in $e$'s element gadget.
 \end{enumerate}
 
 \paragraph{Other properties of the instance.}
@@ -876,7 +871,7 @@ Those chunks are placed in the following parts of the tree:
  ~$\numNodes = k + \sum_{e}(\deg(e)-1) = 3\cdot p - 2\cdot k$.
  \item \emph{Threshold:} We set the following threshold:
  ~$\Thr = 18\cdot p - 10\cdot k$.
- This value corresponds to the cost of solution, where $k$ nodes are matched to $4$ chunks that are in distance: $0, 2, 2$ and $4$ to the node, and remaining $\Vms-k$ nodes are matched to $4$ chunks that are in distance: $0, 2, 2$ and $2$ to the node.
+ This value corresponds to the cost of solution, where $k$ nodes are matched to $4$ chunks that are in distances: $0, 2, 2$ and $4$ to the node, and remaining $\Vms-k$ nodes are matched to $4$ chunks that are in distances: $0, 2, 2$ and $2$ to the node.
 \end{enumerate}
 
 \parag{The reduction.}
@@ -889,7 +884,7 @@ This part is the easier of the two, and mainly consists of placing nodes in Trip
 In the second stage, given $\SVCEMB$, we construct the $\STDPM$.
 In this stage, the main difficulty lies in showing that $\SVCEMB$ has certain structure.
 
-We call the {\TripleGadget} \textit{active}, if it contains a node at any leaf, and we call the node \textit{active} if it is placed in {\TripleGadget}.
+We call the {\TripleGadget} \textit{active}, if it contains a node at some leaf, and we call the node \textit{active} if it is placed in {\TripleGadget}.
 Our goal is to show that in every feasible solution, exactly $k$ \TripleGadgets{} are active (Lemma~\ref{lem:n-active-ma}), and hence we can construct $\STDPM$ from the triples that correspond to active \TripleGadgets{} in $\SVCEMB$.
 
 In $\IVCEMB$, chunks can be matched to nodes at distance $0, 2, 4$ or $6$.
@@ -897,18 +892,20 @@ In $\IVCEMB$, chunks can be matched to nodes at distance $0, 2, 4$ or $6$.
   In addition we call the matches at distance $0$ or $2$ the \emph{short matches}, and the matches at distance $4$ or $6$ the \emph{long matches}.
   We call the distance between the pair of leaves the \emph{short distance}, if the distance between them is at most $2$, otherwise we call said distance the \emph{long distance}.
 
+\begin{lemma}
+  A feasible solution $\SVCEMB$ to $\IVCEMB$ has exactly $k$ nodes placed in the \MatchSubtree.
+  \label{lem:n-matchsubtree-ma}
+\end{lemma}
+
+\begin{proof}
+  \todo{ten dowod jest niegotowy}
+  
 Proving the existance of more than $k$ long matches is sufficient to show that the instance is infeasible, as its cost exceeds the threshold.
 To see this, note that the threshold value $\Thr$ corresponds to the cost of solution, where $k$ nodes has $1$ free match, $2$ neighbouring matches and $1$ long match at distance of $4$ hops, and remaining $\Vms-k$ nodes has $1$ free match and $3$ neighbouring matches assigned.
 Note that the limit of $\Vms$ free matches is exhausted, hence excessive long matches cannot be compensated in any way.
 Hence, at most $k$ long matches are present in any feasible solution.
 
 
-\begin{lemma}
-  In $\SVCEMB$ there are have exactly $k$ nodes placed in the \MatchSubtree.
-  \label{lem:n-matchsubtree-ma}
-\end{lemma}
-
-\begin{proof}
  We claim that each node placed in the \MatchSubtree{} results in at least one long match.
 This fact is a consequence of the structure of the tree and the fact that multi-assignment factor is set to $4$.
 For each node placed in the \MatchSubtree{}, by the construction of the tree, the node has at most $3$ leaves in short distance, hence at least one of the matches is long.
@@ -930,7 +927,7 @@ Hence we deduce that $i = 0$, as otherwise the number of long matches would exce
 \end{proof}
 
 \begin{lemma}
-  In $\SVCEMB$ no node were placed in \UnqGadget{}.
+  A feasible solution $\SVCEMB$ to $\IVCEMB$ has no nodes placed in \UnqGadget{}.
   \label{lem:no-unq-ma}
 \end{lemma}
 \begin{proof}
@@ -967,10 +964,10 @@ Hence, exactly $k$ \TripleGadgets{} are active.
 
 \begin{proof}
   
-  Let's take any instance $\ITDPM$ of~$\TDPM$.
+  Fix an instance $\ITDPM$ of~$\TDPM$.
   We show that~$\IVCEMB$ has a solution of cost~$\leq \Thr$ if and only if~$\ITDPM \in \TDPM$ (there exists a perfect 3D matching in $\ITDPM$).
 
-  ($\Leftarrow$) Let's take any feasible solution~$\STDPM$ to $\ITDPM$.
+  ($\Leftarrow$) Fix a feasible solution~$\STDPM$ for $\ITDPM$.
   We construct a solution~$\SVCEMB$ in the following way:
   \begin{enumerate}
     \item We place~$k$ nodes in~$k$ {\TripleGadgets} (one per gadget) that correspond to triples in~$\STDPM$.
@@ -988,7 +985,7 @@ Hence, exactly $k$ \TripleGadgets{} are active.
   In total, the cost incurred is $8\cdot k + 6\cdot (\Vms - k) = \Thr$.
   Hence, the solution is indeed feasible.
 
-  ($\Rightarrow$) Let's take any feasible solution~$\SVCEMB$ to~$\IVCEMB$ in the way described in the construction section.
+  ($\Rightarrow$) Fix a feasible solution~$\SVCEMB$ for~$\IVCEMB$ in the way described in the construction section.
   By Lemma~\ref{lem:n-active-ma}, exactly $k$ \TripleGadgets{} are active.
   We construct the solution $\STDPM$ from the set of triples that correspond to active \TripleGadgets{}.
 
@@ -1020,7 +1017,7 @@ their assigned chunks. We leverage the fact that any solution which does not
 assign 0 or 3 chunks to each gadget, has higher communication costs.
 
 \parag{Construction.}
-Let~$I$ be an instance of~$\TDM$ with $p$ triples and set cardinality $k$ ($k = |X| = |Y| = |Z|$). We create an instance~$I'$
+Let~$\ITDPM$ be an instance of~$\TDM$ with $p$ triples and set cardinality $k$ ($k = |X| = |Y| = |Z|$). We create an instance~$\ICTE$
 for the~$\FP+\RS+\NI$ variant as follows:
 \begin{itemize}
 \item We construct the same tree as in Section~\ref{ssec:fprsma} with
@@ -1045,7 +1042,7 @@ Intuitively, in order to minimize embedding costs,
 nodes should be placed on near-by replicas. We use the following
 helper lemma.
 \begin{lemma}\label{lemma:helper}
-In every valid solution of~$I'$ of cost~$\leq \Thr$, each gadget
+In every valid solution of~$\ICTE$ of cost~$\leq \Thr$, each gadget
 falls in one of two categories:
 $k$ gadgets have exactly
 $3$ nodes, and~$p-k$ gadgets remain empty.
@@ -1069,14 +1066,14 @@ among more than~$k$ gadgets.
 The $\FP+\RS+\NI$ variant of $\CTE$ problem is NP-hard.
 \end{theorem}
 \begin{proof}
-Let~$I$ be an instance of~$\TDM$ and let~$I'$ be an instance of
+Let~$\ITDPM$ be an instance of~$\TDM$ and let~$\ICTE$ be an instance of
 the~$\FP+\RS+\NI$ variant constructed as described above.
-We prove that~$I'$ has solution of cost~$\leq \Thr$ if ($\Rightarrow$) and only if
+We prove that~$\ICTE$ has solution of cost~$\leq \Thr$ if ($\Rightarrow$) and only if
 ($\Leftarrow$)
-$I$ has a~solution.
+$\ITDPM$ has a~solution.
 
 ($\Rightarrow$) In order to compute a solution
-for~$I'$ given a solution for~$I$, we proceed as follows.
+for~$\ICTE$ given a solution for~$\ITDPM$, we proceed as follows.
 Given an exact covering set of triples~$S = \{t_1, t_2,
 \ldots, t_k\}$, we place three nodes in each gadget that
 corresponds to every triple of~$S$. Chunks are matched to the nodes which are located
@@ -1094,8 +1091,8 @@ The solution has the following cost:
   as we count each pair twice, we need to divide by two in the end.
 Summing up over all~$k$ gadgets, we get exactly~$\Thr$.
 
-($\Leftarrow$) Given a solution for~$I'$,
-we can exploit Lemma~\ref{lemma:helper} to construct a solution for~$I$.
+($\Leftarrow$) Given a solution for~$\ICTE$,
+we can exploit Lemma~\ref{lemma:helper} to construct a solution for~$\ITDPM$.
 We know that in any solution of cost at most~$\Thr$,
 $k$ gadgets contain exactly 3 nodes. These gadgets correspond to a valid
 3D Perfect Matching: exactly one replica of every chunk is processed and
@@ -1374,16 +1371,16 @@ Using the properties of the substrate network, we perform the reduction in the f
 \end{theorem}
 
 \begin{proof}
-  Let's take any instance $\ITDPM$ of~$\TDPM$.
+  Fix an instance $\ITDPM$ of~$\TDPM$.
   We show that~$\IVCEMB$ has a solution of cost~$\leq \Thr$ if and only if~$\ITDPM \in \TDPM$ (there exists a perfect 3D matching in $\ITDPM$).
 
 
-  Let's take an instance~$I$ of~$\TDPM$ and construct an instance~$I'$
+  Fix an instance~$\ITDPM$ of~$\TDPM$ and construct an instance~$\ICTE$
   of~$\RS(2)+\FP+\NI+\BW$ in the way described above.  We show that
- ~$I'$ has solution of cost~$\leq \Thr$ if and only if~$I \in \TDPM$
+ ~$\ICTE$ has solution of cost~$\leq \Thr$ if and only if~$I \in \TDPM$
   (there exists a perfect 3D matching).
 
-  ($\Leftarrow$) Let's take any feasible solution~$\STDPM$ to~$\ITDPM$ and
+  ($\Leftarrow$) Fix a feasible solution~$\STDPM$ for~$\ITDPM$ and
   produce a solution~$\SVCEMB$ to~$\IVCEMB$ in the way described in the construction section. We show that the cost of~$\SVCEMB$ is
   indeed~$\leq \Thr$.
   For each triple~from $P$ in~$\STDPM$, we put~$3$ nodes at
@@ -1395,7 +1392,7 @@ Using the properties of the substrate network, we perform the reduction in the f
   It is easy to see that~$\SVCEMB$ has cost exactly~$\Thr$ and no
   bandwidth constraint is violated. Each chunk is processed.
 
-  ($\Rightarrow$) Let's take any feasible solution~$\SVCEMB$ to~$\IVCEMB$ and
+  ($\Rightarrow$) Fix a feasible solution~$\SVCEMB$ for~$\IVCEMB$ and
   produce a solution~$\STDPM$ to~$\ITDPM$ by taking triples that correspond
   to active triple gadgets. Using Lemma~\ref{lem:full-or-empty}, we
   conclude that there are exactly~$k$ active triple gadgets. By
