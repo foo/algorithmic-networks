@@ -150,7 +150,7 @@ $\DET(\sigma) \leq O(k^2 \cdot \ell^2) \cdot \OPT(\sigma) + O(k^2 \cdot
 \section{Algorithm {\sc Crep}}
 \label{sec:crep}
 
-In this section, we present the main result of this paper, a
+In this section, we present the main result of this chapter, a
 \emph{Component-based REPartitioning algorithm (\CREP)} which achieves a
 competitive ratio of $O((1 + 1/\eps) \cdot k \log k)$ with augmentation
 $2+\eps$, for any~$\eps \geq 1/k$ (i.e., the augmented cluster
@@ -1296,10 +1296,23 @@ negligible as the length of $\sigma$ grows.
 
 \section{Conclusions}\label{sec:conclusion-dynamic}
 
-In this chapter we introduced a formal model for studying a placement of communicating virtual machines in a data center.
-For this model, we proposed and analysed an algorithm that uses minimal resource augmentation to structure groups of communicating virtual machines in a way that guarantees efficiency of moving the group to a different physical machine.
-This approach limits the total number of virtual machines in the data center in favor of reducing network usage by allowing efficient reconfiguration of interacting virtual machines.
-From the theoretical point of view, we designed the algorithm for the resource augmented scenario with competitive ratio $O(k\log k)$ (where $k$ is the capacity of a physical cluster), and we provided a lower-bound of $\Omega(k)$ for the competitive ratio of any deterministic algorithm that holds even in resource-augmented scenario.
+%In this chapter we introduced a formal model for studying a placement of communicating virtual machines in a data center.
+%For this model, we proposed and analysed an algorithm that uses minimal resource augmentation to structure groups of communicating virtual machines in a way that guarantees efficiency of moving the group to a different physical machine.
+%This approach limits the total number of virtual machines in the data center in favor of reducing network usage by allowing efficient reconfiguration of interacting virtual machines.
+%From the theoretical point of view, we designed the algorithm for the resource augmented scenario with competitive ratio $O(k\log k)$ (where $k$ is the capacity of a physical cluster), and we provided a lower-bound of $\Omega(k)$ for the competitive ratio of any deterministic algorithm that holds even in resource-augmented scenario.
+
+In this chapter we introduced a formal model for studying a natural dynamic partitioning problem which
+finds applications, e.g., in the context of virtualized distributed systems
+subject to changing communication patterns. We derived upper and lower bounds,
+both for the general case as well as for a special case, related to a dynamic
+matching problem. The natural research direction is to develop better
+deterministic algorithms for the non-augmented variant of the general case,
+improving over the straightforward $O(k^2 \cdot \ell^2)$-competitive algorithm
+given in \cref{sec:upper}. While the linear dependency on $k$ is
+inevitable (cf.~\cref{sec:lower}), it is not known whether
+an~algorithm whose competitive ratio is independent of~$\ell$ is possible. We
+resolved this issue for the $O(1)$-augmented variant, for which we gave an
+$O(k \log k)$-competitive algorithm.
 The disparity between the performance of the algorithm and the lower bound encourages future research on improving either one of those.
 
 In our model, we assumed a simplified view of a data center, in particular we neglect the substrate network topology, by assuming that the distance among all physical machines is equal.
