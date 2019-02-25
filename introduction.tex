@@ -73,8 +73,24 @@ In particular, absolute control over the underlying virtual hardware allows to s
 Such functionality provides building blocks for the feature of \emph{migration}, which transfers the complete virtual machine to~a~different physical machine.
 This is possible without shutting down the guest operating system, and hence it provides a powerful resource-management tool that is transparent to clients.
 
-Such mechanisms play an~important role in load balancing in the data center and allow for sophisticated optimizations such as \emph{reducing network distance between communicating virtual machines}.
-In this thesis, we focus on migration capabilities provided by modern virtualization techologies used for efficient usage of important resource in the data center --- the network bandwidth.
+Distributed cloud applications, including batch processing
+applications such as MapReduce, streaming applications such as Apache Flink or
+Apache Spark, and scale-out databases and key-value stores such as Cassandra,
+generate a~significant amount of network traffic and a considerable fraction
+of their runtime is due to network activity~\cite{MogPop12}. For example,
+traces of jobs from a Facebook cluster reveal that network transfers on
+average account for 33\% of the execution time~\cite{ChZMJS11}. In such
+applications, it is desirable that frequently communicating virtual machines
+are \emph{collocated}, i.e., mapped to the same physical server: 
+communication across the network (i.e., inter-server communication) induces
+network load and latency. However, migrating virtual machines between servers
+also comes at a price: the state transfer is bandwidth intensive, and may even
+lead to short service interruptions. Therefore the goal is to design online
+algorithms that find a good trade-off between the inter-server communication
+cost and the migration cost.
+%
+%Such mechanisms play an~important role in load balancing in the data center and allow for sophisticated optimizations such as \emph{reducing network distance between communicating virtual machines}.
+%In this thesis, we focus on migration capabilities provided by modern virtualization techologies used for efficient usage of important resource in the data center --- the network bandwidth.
 The problem central to the first part of this thesis is stated as follows:
 
 \begin{center}
