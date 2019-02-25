@@ -21,8 +21,7 @@ we assume that a request $(u_t,v_t)$ occurs at time $t \geq 1$. At any time~$t
 \geq 1$, an online algorithm needs to serve the~communication
 request~$(u_t,v_t)$. Right before serving the request, the online algorithm
 can \emph{re}partition the nodes into new clusters. We assume that
-a~communication request between two collocated nodes costs 0. The cost of a
-communication request between two nodes located in different clusters is
+a~communication request between two collocated nodes costs 0. The cost of a~communication request between two nodes located in different clusters is
 normalized to~1, and the cost of migrating a node from one cluster to another
 is~$\alpha \geq 1$, where $\alpha$ is a parameter (an integer). For any
 algorithm \ALG, we denote its total cost (consisting of communication plus
@@ -111,8 +110,8 @@ incremented anymore. Hence the weight of any edge is at most $\alpha$.
 Second, observe that the graph induced by saturated edges always constitutes 
 a~forest. Suppose that, at a time $t$,
 two nodes $x$ and~$y$, which are not
-connected by a saturated edge, become connected by a path of saturated edges.
-From that time onward, \DET stores them in a single cluster. Hence, the
+connected by a~saturated edge, become connected by a path of saturated edges.
+From that time onward, \DET stores them in a~single cluster. Hence, the
 weight~$w(x,y)$ cannot increase at subsequent time points, and $(x,y)$ may
 not become saturated. The forest property implies that the number of saturated
 edges is smaller than $k \cdot \ell$.
@@ -128,11 +127,10 @@ by the first observation, it is at most $\binom{k \cdot \ell}{2}
 for the last one), it holds that $\DET(P) = O(k^2 \cdot \ell^2 \cdot \alpha)$.
 
 Now we lower-bound the cost of \OPT on any phase $P$ but the last one. If \OPT
-performs a node swap in $P$, it pays $2 \cdot \alpha$. Otherwise its assignment of
-nodes to clusters is fixed throughout $P$. Recall that at the end of $P$, \DET
+performs a~node swap in $P$, it pays $2 \cdot \alpha$. Otherwise its assignment of
+nodes to clusters is fixed throughout~$P$. Recall that at the end of $P$, \DET
 failed to reorganize the nodes. This means that for any static mapping of the
-nodes to clusters (in particular the one chosen by \OPT), there is a
-saturated inter-cluster edge. The communication cost over such an~edge incurred
+nodes to clusters (in particular the one chosen by \OPT), there is a~saturated inter-cluster edge. The communication cost over such an~edge incurred
 by \OPT is at least $\alpha$ (it can be also strictly greater than~$\alpha$ as
 the edge weight only counts the communication requests paid by \DET).
 
@@ -205,7 +203,7 @@ different components of~$\set$. We call a component-set \emph{trivial} if it
 contains only one component; $w(\set) = 0$ in this case.
 
 Initially, all components are singleton components and all edge weights are
-zero. At time $t$, upon a~communication request between a pair of nodes $x$
+zero. At time~$t$, upon a~communication request between a pair of nodes $x$
 and $y$, if $x$ and $y$ lie in the same cluster, the corresponding cost is~$0$
 and \CREP does nothing. Otherwise, the cost entailed to \CREP is $1$, nodes
 $x$ and $y$ lie in different clusters (and hence also in different
@@ -225,7 +223,7 @@ arbitrarily. Weights of all intra-$\set$ edges are reset to zero, and thus
 intra-component edge weights are always zero. A mergeable set $\set$ induces
 a~sequence of $|\set|-1$ \emph{merge actions}:
 \CREP iteratively replaces two arbitrary components 
-from~$\set$ by a component being their union (this constitutes a single merge
+from~$\set$ by a component being their union (this constitutes a~single merge
 action).
 
 \item \emph{Split action.} If the component resulting from merge action(s)
@@ -262,7 +260,7 @@ We may assume that $C_x$ and $C_y$ are in different clusters as otherwise
 then $C_x$ is migrated to this cluster. Otherwise, \CREP finds a cluster that
 has at~most $k$ nodes, and moves both $C_x$ and $C_y$ there. We call the
 corresponding actions \emph{component migrations}. By an~averaging argument,
-there always exists a cluster that has at most $k$ nodes, and hence, with
+there always exists a~cluster that has at most $k$ nodes, and hence, with
 $(2+\eps)$-augmentation, component migrations are always feasible.
 
 
@@ -283,15 +281,15 @@ $w(\set) < \alpha \cdot (|\set|-1)$ for any non-trivial component-set $\set$.
 \begin{proof}
 We prove the lemma by an induction on steps. Clearly, the lemma holds before an
 input sequence starts as then $w(\set) = 0 \leq \alpha - 1 < \alpha \cdot
-(|\set|-1)$ for any non-trivial set $\set$. We assume that it holds at time $t-1$
+(|\set|-1)$ for any non-trivial set~$\set$. We assume that it holds at time $t-1$
 and show it for time $t$.
 
 At time $t$, only a single weight, say $w(x,y)$, may be incremented. If after
 the increment, \CREP does not merge any component, then clearly $w(\set) < \alpha
-\cdot (|\set|-1)$ for any non-trivial set $\set$. Otherwise, at time $t$, \CREP
+\cdot (|\set|-1)$ for any non-trivial set~$\set$. Otherwise, at time $t$, \CREP
 merges a~component-set $\A$ into a new component $C_\A$, and then possibly
 splits $C_\A$ into singleton components. We show that
-the lemma statement holds then for any non-trivial component-set $\set$. We
+the lemma statement holds then for any non-trivial component-set~$\set$. We
 consider three cases.
 
 \begin{enumerate}
@@ -459,8 +457,10 @@ at the beginning of an input sequence.
 
 \begin{lemma}
 \label{lem:opt_recursive_bound}
-For any non-trivial component $C$, it holds that $\OPT(C) \geq (|Y_C| - 1)
-\cdot \alpha - \sum_{B \in \set(C)} (|Y_B| - 1) \cdot \alpha$.
+For any non-trivial component $C$, it holds that \[
+\OPT(C) \geq (|Y_C| - 1)
+\cdot \alpha - \sum_{B \in \set(C)} (|Y_B| - 1) \cdot \alpha\enspace.
+\]
 \end{lemma}
 
 \begin{proof}
@@ -584,8 +584,10 @@ sides remain unchanged.
 
 \begin{lemma}
 \label{lem:crep_mig}
-For any input $\sigma$, with $(2+\eps)$-augmentation, 
-$\CREPmig(\sigma) \leq (1+4/\eps) \cdot \alpha \cdot \sum_{m \in M(\sigma)} \size(m)$.
+For any input $\sigma$ with $(2+\eps)$-augmentation, it holds that
+\[
+\CREPmig(\sigma) \leq (1+4/\eps) \cdot \alpha \cdot \sum_{m \in M(\sigma)} \size(m)\enspace.
+\]
 \end{lemma}
 
 \begin{proof}
@@ -608,13 +610,12 @@ as a potential function.
 The proof of \eqref{eq:crep_migrations} follows by an induction on all
 requests in $\sigma$. Clearly, \eqref{eq:crep_migrations} holds trivially at the
 beginning, as there are no overflows, and thus both sides of
-\eqref{eq:crep_migrations} are zero. Assume that \eqref{eq:crep_migrations}
+\eqref{eq:crep_migrations} are zero. Assume that~\eqref{eq:crep_migrations}
 holds for a~sequence $\sigma$ and we show it for sequence $\sigma \cup \{ r \}$,
 where $r$ is some request.
 
 We may focus on a request $r$ which triggers the migration of
-component(s), as otherwise
-\eqref{eq:crep_migrations} holds trivially. Such a migration is triggered by a
+component(s), as otherwise~\eqref{eq:crep_migrations} holds trivially. Such a migration is triggered by a
 real merge action $m$ of two components $C_x$ and $C_y$. We assume that $|C_x|
 \leq |C_y|$, and hence $\size(m) = |C_x|$. Note that $|C_x| + |C_y| \leq k$,
 as otherwise the resulting component would be split and no migration would
@@ -696,9 +697,11 @@ merge actions that led to the creation of the split component.
 \begin{lemma}
 \label{lem:bounding_merges}
 For any input $\sigma$, it holds that 
-$\sum_{m \in M(\sigma)} \size(m) 
+\[
+\sum_{m \in M(\sigma)} \size(m) 
 	\leq \sum_{C \in \spl(\sigma)} |C| \cdot \log k +
-	\sum_{C \in \final(\sigma)} |C| \cdot \log |C|$,
+	\sum_{C \in \final(\sigma)} |C| \cdot \log |C|,
+        \]
 where all logarithms are binary.
 \end{lemma}
 
@@ -822,10 +825,10 @@ are always zero and weights of inter-cluster edges are related to the number
 of paid communication requests between edge endpoints. 
 
 When facing an inter-cluster request between nodes $x$
-and~$y$, $\GREEDY$ increments the weight $w(e)$, where $e = (x,y)$. Let $x'$
+and~$y$, $\GREEDY$ increments the weight~$w(e)$, where $e = (x,y)$. Let $x'$
 and $y'$ be the nodes collocated with $x$ and~$y$, respectively. If after the
 weight increase, it holds that $w(x,y) + w(x',y') \geq \lambda
-\cdot \alpha$, $\GREEDY$ performs a swap: it places $x$ and $y$ in one
+\cdot \alpha$, $\GREEDY$ performs a~swap: it places $x$ and $y$ in one
 cluster and $x'$ and~$y'$ in another; afterwards, it resets the weights of
 edges $(x,y)$ and $(x',y')$ to 0. Finally, \GREEDY pays for the request
 between $x$ and $y$. Note that if the request triggered a migration, then
@@ -947,7 +950,7 @@ $\Delta \GREEDY + \Delta \Phi(e_c) = 0 \leq \Delta \OPT$.
 \item If $e_c \notin \MGREEDY$, then let $\Delta w(e_c) \leq 1$ denote the increase 
 of the weight of edge~$e_c$. Note that $\Delta \GREEDY \leq \Delta w(e_c)$: 
 either no migration is triggered and $\Delta \GREEDY = \Delta w(e_c) = 1$
-or a migration is triggered and then \GREEDY does not pay for the request.
+or a~migration is triggered and then \GREEDY does not pay for the request.
 
 If $e_c \in \MOPT$, then $\Delta \OPT = 0$ and $\Delta \Phi(e_c) = -w(e_c)$.
 Thus, $\Delta \GREEDY + \Delta \Phi(e_c) \leq 0 = \Delta \OPT$. Otherwise, 
