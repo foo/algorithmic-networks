@@ -1,7 +1,7 @@
 
-For a certain computational task, one places an adequate number of workers, whose task is to select their data portion, process them, and aggregate the result by cooperation with other workers.
+For executing a certain computation, one places an adequate number of workers, whose task is to select their data portion, process them, and aggregate the result by cooperation with other workers.
 Workers establish a network connection called a virtual network, formed to peform a~given computational task, and in such setting the worker is referred to as a node of a virtual network.
-While these nodes can be placed at~any feasible physical machine in the data center, the performance of the processing is heavily influenced by their placement.
+While these nodes can be placed at~any feasible physical machine in the data center, the processing performance processing is heavily influenced by their placement.
 Placing nodes closely to each other reduces network latency and bandwidth reservations in the data center.
 In this chapter, we investigate mapping a virtual network onto the physical infrastructure: a~task of~assigning the nodes of a virtual network to~physical machines in a network-efficient way.
 
@@ -37,7 +37,7 @@ Each node can be placed (or, synonymously, embedded) on an arbitrary server and 
 to optimization.
 Furthermore, to enable nodes to process the data, we provide the virtual network with network connections.
 The \emph{(node) inter-connect network} forms a~complete network (a clique) among nodes,
-and the \emph{(chunk) access network} consists of links from each active replica to the node that is assigned to processes it.
+and the \emph{(chunk) access network} consists of links from each active replica to the node that is assigned to process it.
 In order to ensure a predictable application performance, both those networks require certain minimal bandwidth guarantees.
 Concretely, we assume that each chunk
 is connected to its processing node at a~bandwidth~$\CostTrans$, and each node is connected to any other node
@@ -70,7 +70,7 @@ $$
 $$
 where~$\mu(c)$ is the node to which chunk $c$ is assigned.
 Our goal is to minimize the overall resource footprint $\Cost=\sum_{v\in V} \Cost(v)$.
-The solution must obey the capacity of the substrate network: (1)~the total number of nodes hosted at each server $s$ must not excced $\capacity(s)$, and (2)~the total bandwidth allocated at each link $e$ must not exceed its capacity $\capacity(e)$.
+The solution must obey the capacity of the substrate network: (1)~the total number of nodes hosted at each server $s$ must not exceed $\capacity(s)$, and (2)~the total bandwidth allocated at each link $e$ must not exceed its capacity $\capacity(e)$.
 %Finally, the solution must assign every chunk to some node, i.e., $\bigcup_v \mu(v) = \{ c_1, \ldots, c_{\tau} \}$.
 
 \subsection{Problem Decomposition}
@@ -193,7 +193,7 @@ In order to solve the~$\RS+\MA+\NI+\BW$ variant of the {\CTE} problem,
 we first remove the~$\NI$ component using Observation~\ref{obs:nofp}.
 Then, we construct
 an artificial graph~$\Tree^*$, extending the substrate network~$\Tree$.
-We transform bandwidth capacities so that they correspond to the maximal number of chunks that we can transfer through the link.
+We transform bandwidth capacities, so that they correspond to the maximal number of chunks that we can transfer through the link.
 Concretely, for each link~$e\in E(\Tree)$, we set its new
 capacity in~$\Tree^*$ to~$\lfloor\capacity(e) / \CostTrans\rfloor$.
 After this normalization, we extend the topology of~$\Tree$ by
@@ -247,7 +247,7 @@ The runtime of our algorithm consists of four parts: construction of~$\Tree^*$,
 computation of the min-cost~max-flow, flow rounding, and decomposition. The
 dominant term in the~asymptotic runtime is the flow computation.
 Using the double scaling algorithm for min-cost~max-flow~\cite{mincostmaxflow-state}, we get a runtime of~$\mathcal{O}(|E|^2 \cdot\log\log U \cdot \log |E|)$
-where~$|E| = n_S+\sum_{i=1}^\tau r_i$ is the number of $\Tree^*$ edges, and~$U$ is the maximal link capacity. Note that in networks with high capacity
+where~$|E| = n_S+\sum_{i=1}^\tau r_i + n_V$ is the number of $\Tree^*$ edges, and~$U$ is the maximal link capacity. Note that in networks with high capacity
 and uncapacitated networks, we can simply set~$U=\tau$, so the resulting overall runtime is $\mathcal{O}(|E|^2 \cdot\log\log \tau \cdot \log |E|)$.
 
 
@@ -336,7 +336,7 @@ verifying feasibility.
 In~the~following, due to Observation~\ref{obs:nofp}, we can focus on
 the~$\MA$ and~$\MA+\BW$ variants, respectively.
 We start by lower-bounding the required bandwidth allocation.
-The \emph{uplink} of a~proper subtree $T'$, denoted $\Uplink(T')$ is an edge from the root of the subtree to its parent.
+The \emph{uplink} of a~proper subtree $T'$, denoted $\Uplink(T')$ is an edge from the root of $T'$ to its parent.
 
 %We first introduce the following definition.
 %\begin{defn}[Local Assignment (LA)]\label{def:loc}
@@ -372,11 +372,10 @@ The \emph{uplink} of a~proper subtree $T'$, denoted $\Uplink(T')$ is an edge fro
 
 \begin{lemma}\label{lem:uplink-alloc}
 Given the~$\MA$ variant and a proper subtree~$\Tree'$
-containing~$x$
-chunks and~$y$ nodes, the bandwidth allocation of any
+containing~$\tau(T')$
+chunks and~$x$ nodes, the bandwidth allocation of any
 assignment
-$\VmChunkAssignment$ on the uplink of~$\Tree'$ is at~least $|x-y\cdot\MaFactor|\cdot
-\CostTrans$.
+$\VmChunkAssignment$ on the uplink of~$\Tree'$ is at~least $\CostTrans\cdot|\tau(T')-x\cdot\MaFactor|$.
 \label{lemma:uplink}
 \end{lemma}
 \begin{proof}
@@ -391,7 +390,7 @@ amount of
 available chunks.
 Hence, the minimum bandwidth allocation for the chunk access on the uplink
 is the absolute difference between the number of chunks and the processing capabilities
-of the subtree, i.e.,~$|x-y\cdot\MaFactor|$ times $\CostTrans$.
+of the subtree, i.e.,~$|\tau(T')-x\cdot\MaFactor|$ times $\CostTrans$.
 \end{proof}
 
 
@@ -411,7 +410,7 @@ We process any leaf~$\ell$
 by adding any
 nodes or chunks which are located on~$\ell$ to the corresponding sets~$S_c$ and~$S_v$.
 A non-leaf vertex~$u$ is processed in the following way: we take the union of
-the sets of~$u$'s children, i.e., the sets contain the unmatched chunks and nodes
+the sets corresponding to~$u$'s children, i.e., the sets contain the unmatched chunks and nodes
 in this subtree.
 For both leaves and inner nodes, whenever
 both sets are non-empty, we greedily match an arbitrary chunk $c$ in~$S_c$ with an arbitrary node $v$ in~$S_v$.
@@ -534,26 +533,22 @@ the minimal cost solution given any possible number of nodes
 embedded in a given subtree (the actual set of nodes does not matter,
 due to symmetry).
 The value of $f(T', x)$ corresponds to the minimum bandwidth cost of placing $x$ nodes in a subtree $T'$.
-The total bandwidth cost consists of the bandwidth allocated inside $T$, and the bandwidth allocated on the uplink of $T'$.
+It is defined as the bandwidth allocated inside $T$ plus the bandwidth allocated on the uplink of $T'$.
 The latter is equal to
 \[
 bw(T',x) = 
-\begin{cases}
-   \infty & \mbox{if } bw(T', x) > \capacity(\Uplink(T'))\enspace,\\
-    \CostTrans \cdot |x - \ChunkCount(T')| +\CostCom \cdot
-(\Vms - x) \cdot x & \mbox{otherwise}\enspace, \\
-  \end{cases}
+    \CostTrans\cdot|\tau(T')-x\cdot\MaFactor| +\CostCom \cdot
+(\Vms - x) \cdot x\enspace, \\
   \]
-  where $\ChunkCount(T')$ is the number of chunks in a~subtree~$T'$.
-  We set~$bw(T',x)$ to infinity if the required bandwidth
-$bw$ exceeds the capacity~$\capacity$ of the uplink of~$\{ l \}$.
-The first term of $bw$ represents the required bandwidth for the communication between the~$x$
-nodes inside~$T'$, and the~$\Vms - x$ nodes in the remaining parts of the substrate
-network.
-The second term represents
+  where $\tau(T')$ is the number of chunks in a~subtree~$T'$.
+  If~$bw(T',x)$ exceeds the capacity~$\capacity$ of the uplink of $T'$, we set $\b(T', x) = \infty$.
+  The first term represents
 the bandwidth necessary to transport the chunks in $T'$ from their location to
 nodes outside of $T'$ (see Lemma~\ref{lemma:uplink} for similar argument).
-Then, the formula to calculate the function $f$ for a subtree containing only a leaf $\{ \ell \}$ is the following:
+The second term of $bw$ represents the required bandwidth for the communication between the~$x$
+nodes inside~$T'$, and the~$\Vms - x$ nodes in the remaining parts of the substrate
+network.
+Then, the formula to calculate the function $f$ for a subtree containing only a leaf $\{ \ell \}$ is
 \[
 f(\{ \ell \}, x) =
 \begin{cases}
@@ -561,12 +556,11 @@ f(\{ \ell \}, x) =
     bw(\{ \ell \}, x) & \mbox{otherwise}\enspace. \\
   \end{cases}
   \]
-We set~$f(\{ l \},x)$ to infinity if $x$ exceeds the node hosting capacity of server $l$.
+We set~$f(\{ \ell \},x)$ to infinity if $x$ exceeds the node hosting capacity of server $\ell$.
 
-The formula to calculate the fuction $f$ for a non-leaf subtree $T'$ is the following:
-To calculate the value of $f(T', x)$ for non-leaf subtries $T'$, we split the~$x$ nodes
+To calculate the value of $f(T', x)$ for non-leaf subtree $T'$, we split the~$x$ nodes
 into two positive integer
-values, and we put~$r$ on the right and~$x - r$ on the left subtree.
+values $r$ and $x-r$, and we put~$r$ on the right and~$x - r$ on the left subtree.
 That is, we take the optimal cost
 (given recursively) of placing~$r$ nodes in
 the right subtree~$\textsc{Ri}(T')$ of~$T'$ and~$x-r$ nodes in the left subtree~$\textsc{Le}(T')$ of
@@ -576,7 +570,7 @@ on the uplink of~$T'$ to generate the overall costs for placing~$x$ nodes in~$T'
   f(T', x) = 
     \min_{0\leq r \leq x} \{  f\left(\textsc{Le}(T'),
 x-r\right) +
-f\left(\textsc{Ri}(T'), r\right) \} + bw(T,x)\enspace.
+f\left(\textsc{Ri}(T'), r\right) \} + bw(T',x)\enspace.
   \]
 
 We compute~$f$ in a bottom-up manner. 
