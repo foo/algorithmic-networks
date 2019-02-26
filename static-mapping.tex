@@ -1050,7 +1050,7 @@ in the same server.
 
 The solution has the following cost:
 (1) the inter-connect cost inside a gadget is~$2 \cdot {3 \choose 2}$,
-  as a distance between every pair of nodes there is $2$;
+  as a~distance between every pair of nodes there is $2$;
   (2) the the inter-connect cost from each gadget to all other gadgets is~$4
   \cdot 3 \cdot 3 \cdot (k - 1) / 2$, where the factor~$4$ corresponds to the distance of~$4$ hops, the factor~$3$
   corresponds to the number of nodes per gadget, and
@@ -1060,7 +1060,7 @@ Summing up over all~$k$ gadgets, we get exactly~$\Thr$.
 
 ($\Leftarrow$) Given a solution for~$\ICTE$,
 we use Lemma~\ref{lemma:helper} to construct a solution for~$\ITDPM$: in any solution of cost at most~$\Thr$,
-$k$ gadgets contain exactly 3 nodes. These gadgets correspond to a valid
+$k$ gadgets contain exactly 3 nodes. These gadgets correspond to a~valid
 3D Perfect Matching, as exactly one replica of every chunk is processed and
 hence every element is covered exactly once.
 \end{proof}
