@@ -1,10 +1,10 @@
 % general macros
 
 
-\newtheorem{lemma}{Lemma}
 \newtheorem{theorem}{Theorem}
-\newtheorem{corollary}{Corollary}
-
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\numberwithin{theorem}{chapter}
 
 \newcommand{\margcomm}[1]{\marginpar{\footnotesize\raggedright #1}}
 \definecolor{blueLink}{rgb}{0,0.2,0.8}
