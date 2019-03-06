@@ -201,9 +201,9 @@ introducing an artificial vertex for each of $\tau$ chunks. Each of these artifi
 vertices is connected to each leaf (i.e., server) in~$\Tree$ where a~replica
  of the respective chunk is located,
 connecting the replica by a link of capacity~$1$. In
-addition, we create a
+addition, we construct a
 \emph{super-source}~$\Source$, and connect it to each of the artificial chunk
-vertices with a link of capacity~$1$. Moreover, we create an artificial \emph{super-sink}~$\Sink$ and
+vertices with a link of capacity~$1$. Moreover, we construct an artificial \emph{super-sink}~$\Sink$ and
 connect it to every leaf containing at least one node; the link capacity represents
 the number of nodes this server hosts times the~multi-assignment factor
 $\MaFactor$.
@@ -656,12 +656,12 @@ The proof of hardness of the $\FP+\RS+\MA$ variant of the $\CTE$ problem is base
 Let~$\ITDPM$ be an instance of~$\TDM$ with $p$ triples and set cardinality~$k = |X| = |Y| = |Z|$.
 We construct an instance~$\ICTE$ of the $\CTE$ problem in the following way:
 \begin{enumerate}
-\item \emph{Substrate network:} We create a tree consisting of a root,
-and for each triple from $P$, we create a \emph{triple gadget} which we directly attach as
+\item \emph{Substrate network:} We construct a substrate network in form of a tree consisting of a root,
+and for each triple from $P$, we construct a \emph{triple gadget} which we directly attach as
 a child of the root. The gadget is of height 2,
 and consists of an inner node and three leaves.
 \item \emph{Chunks:} For each element in~$X$,~$Y$ and~$Z$,
- we create a chunk
+ we construct a chunk
 ($3 \cdot k$ chunks in total). Every gadget contains three chunk replicas (one per leaf),
 corresponding to the elements of the triple.
 \item \emph{Other properties of the instance:} We set the number of to-be-embedded nodes $n_V = k$,
@@ -749,10 +749,10 @@ Since all chunks are processed by exactly one node, every element of~$X$,~$Y$ an
 
 \subsection{Hardness of Multi-Assignments with at Most Two Replicas}
 
-We have seen that replica selection flexibility can render embeddings computationally hard.
-Now, we provide a more detailed look at this hardness result
+%We have seen that replica selection flexibility can render embeddings computationally hard.
+We provide a more detailed look at this hardness result
 and explore the minimal requirements for rendering replica selection hard.
-In particular, we show that already two replicas for each chunk are sufficient for computational intractability.
+Concretely, we show that already two replicas for each chunk are sufficient for computational intractability.
 
 % We now show that the 2-replica selection variant is even NP-hard
 %without capacity constraints.  In particular, we consider the 
@@ -806,12 +806,11 @@ For each element $e\in X\cup Y\cup Z$, by $P_e$ we denote the set of all triples
 Let $\deg(e) = |P_e|$, and note that $\sum_e \deg(e) = 3\cdot p$.
 We proceed with the construction as follows.
 \paragraph{Substrate network.}
-We construct the tree that has the following structure (see Figure~\ref{fig:red-ma2}).
-It consists of two subtrees connected to the
+We construct the substrate network that consists of two subtrees connected to the
   root: a \emph{\MatchSubtree} and a \emph{\CoverSubtree}. The
-  {\MatchSubtree} consists of $p$ \emph{\TripleGadgets}, one per each triple from $P$ and $k$
-  \emph{\UnqGadgets}. The {\CoverSubtree} consist of~$3\cdot k$ \emph{\ElGadgets} $G(e)$, one for each element $e\in X\cup Y\cup Z$.
-
+  {\MatchSubtree} consists of $p$ \emph{\TripleGadgets} (one per each triple from $P$) and $k$
+  \emph{\UnqGadgets}. The {\CoverSubtree} consists of~$3\cdot k$ \emph{\ElGadgets} $G(e)$, one for each element $e\in X\cup Y\cup Z$.
+  The contruction is depicted in Figure~\ref{fig:red-ma2}.
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.9\columnwidth]{figs/static-mapping/overview}
@@ -819,6 +818,7 @@ It consists of two subtrees connected to the
   \label{fig:red-ma2}
 \end{figure}
 
+\noindent Gadgets are constructed in the following way:
 \begin{enumerate}
   \item Each {\TripleGadget} consists of four vertices: three leaves and the root of the gadget, as defined in the reduction for the $\FP+\RS+\MA$ variant in Section~\ref{ssec:fprsma}.
   \item Each {\UnqGadget} consists of two vertices: the leaf and the root of the gadget.
@@ -844,7 +844,7 @@ The first set corresponds to elements of the universe $X\cup Y\cup Z$, and their
   Second replicas are placed in the cover subtree:
   for each element $e \in X\cup Y\cup Z$, for each $t \in P_e$,
   we place replicas $c^{(2)}(e, t)$ in the leaves of the gadget $G(e)$.
-  \item \emph{Unique chunks}. We construct~$k$ unique chunks~$u_1, \ldots, u_k$ with one replica each, and we place these replicas at the leaves of {\UnqGadgets} (one chunk per leaf).
+  \item \emph{Unique chunks}. We construct~$k$ unique chunks with one replica each, and we place these replicas at the leaves of {\UnqGadgets} (one chunk per leaf).
   \item \emph{Dummy chunks}. For each element~$e\in X\cup Y\cup Z$,
   we construct an additional set of $3\cdot(\deg(e) - 1)$ dummy chunks, with one replica each, and we place these replicas in arbitrary $3\cdot (\deg(e)-1)$ leaves of $G(e)$ (one chunk per leaf).
   Recall that the remaining $\deg(e)$ leaves of $G(e)$ contain replicas $c^{(2)}(t, e)$ for each $t \in P_e$. In total, we place $4\cdot (\deg(e) - 1) + 1$ replicas in $G(e)$, one replica at each leaf of the gadget $G(e)$.
@@ -854,19 +854,25 @@ The first set corresponds to elements of the universe $X\cup Y\cup Z$, and their
 The multi-assignment factor is $m=4$, and the number of nodes to embed is~$\numNodes = k + \sum_{e}(\deg(e)-1) = k + \sum_{e}\deg(e)-3\cdot k = 3\cdot p - 2\cdot k$.
  We set the cost threshold~$\Thr = 8\cdot k + (n_V-k)\cdot 6 = 18\cdot p - 10\cdot k$.
 
-\parag{The reduction.}
-Given any $\TDPM$ instance $\ITDPM$, we produce the corresponding instance $\IVCEMB$ of the $\RS(2)+\MA+\FP$ variant, in the way described above.
-The reduction (Theorem~\ref{th:ma-reduction}) unfolds in two parts.
-First, given a solution $\STDPM$ to $\ITDPM$, we construct a solution $\SVCEMB$ to $\IVCEMB$.
-This simply consists of placing nodes in triple gadgets for triples chosen in $\STDPM$.
-Next, given $\SVCEMB$, we construct the $\STDPM$.
-In this part, the main difficulty lies in showing that $\SVCEMB$ has certain structure.
+%\parag{The reduction.}
+%Given any $\TDPM$ instance $\ITDPM$, we produce the corresponding instance $\IVCEMB$ of the $\RS(2)+\MA+\FP$ variant, in the way described above.
+%The reduction (Theorem~\ref{th:ma-reduction}) consists of two parts.
+%First, given a solution $\STDPM$ to $\ITDPM$, we construct a solution $\SVCEMB$ to $\IVCEMB$.
+%This simply consists of placing nodes in triple gadgets for triples chosen in $\STDPM$.
+%Next, given $\SVCEMB$, we construct the $\STDPM$.
+%In this part, the main difficulty lies in showing that $\SVCEMB$ has certain structure.
 
-We call a {\TripleGadget} \textit{active}, if it contains a single node at some leaf, and we call the node \textit{active} if it is placed in {\TripleGadget}.
-Our goal is to show that in every feasible solution, exactly $k$ \TripleGadgets{} are active, and triples from $P$ that correspond to active \TripleGadgets{} in $\SVCEMB$ are the feasible solution to $\ITDPM$.
+ \bigskip
+ 
+Given any $\TDPM$ instance $\ITDPM$, we produce the corresponding instance $\IVCEMB$ of the $\RS(2)+\MA+\FP$ variant, in the way described above.
+We call a {\TripleGadget} \textit{active}, if it contains a single node at one of its leafs, and we call the node \textit{active} if it is placed in {\TripleGadget}.
+In Lemma~\ref{lem:n-active-ma}, we show that in the construction presented in this section, feasible solutions to $\IVCEMB$ have similar structure to solutions Thorem~\ref{th:ma-unlimited}:
+in every feasible solution to $\IVCEMB$, exactly $k$ \TripleGadgets{} are active.
 
 In the instance $\IVCEMB$, chunks can be matched to nodes at distance $0, 2, 4$ or $6$.
 We call the matches at distance $0$ the \emph{free matches}, the ones at distance $2$ the \emph{neighbouring matches}, and the ones at distance $4$ or $6$ the \emph{long matches}.
+In Lemma~\ref{lem:short-ma}, we determine the matches present in $\IVCEMB$.
+
 \todo{Nazwij 6 match remote match}
 \todo{Zmodyfikuj lemat lem:infeasible tak zeby pokazac ze sa tylko co najwyzej k matche o dlugosci 4 (a nie ze co najwyzej k matchow o dlugosci 4 lub 6)}
   
