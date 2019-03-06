@@ -38,7 +38,7 @@ to optimization.
 Furthermore, to enable nodes to process the data, we provide the virtual network with network connections.
 The \emph{(node) inter-connect network} forms a~complete network (a clique) among nodes,
 and the \emph{(chunk) access network} consists of links from each active replica to the node that is assigned to process it.
-In order to ensure a predictable application performance, both those networks require certain minimal bandwidth guarantees.
+In order to ensure a predictable application performance, both these networks require certain minimal bandwidth guarantees.
 Concretely, we assume that each chunk
 is connected to its processing node at a~bandwidth~$\CostTrans$, and each node is connected to any other node
 at  bandwidth~$\CostCom$.
@@ -623,7 +623,7 @@ substrate networks (namely two- or three-level trees).
 Clearly, the hardness of variants $\FP+\RS+\MA$ and~$\FP+\RS+\NI$ imply
 the hardness of more general variants.
 
-In addition to hardness results for the aforementioned $\CTE$ variants, we study the influence of restricting number of replicas of a chunk on computational tractability on those variants.
+In addition to hardness results for the aforementioned $\CTE$ variants, we study the influence of restricting number of replicas of a chunk on computational tractability on these variants.
 Namely, we introduce the restricted replica selection component $\RS(r_{max})$, parametrized by an~integer $r_{max}$, that restricts the number of replicas of any chunk: for every chunk $c_i$ we have $r_i \leq r_{max}$.
 We consider $\RS(2)$ component in relation with Multi-Assignment ($\MA$).
 Concretely, in Section~\ref{ssec:fprsma}, we first present the NP-hardness of the unrestricted scenario $\FP+\RS+\MA$ (Theorem~\ref{th:ma-unlimited}) as a warm-up,
@@ -870,12 +870,9 @@ In Lemma~\ref{lem:n-active-ma}, we show that in the construction presented in th
 in every feasible solution to $\IVCEMB$, exactly $k$ \TripleGadgets{} are active.
 
 In the instance $\IVCEMB$, chunks can be matched to nodes at distance $0, 2, 4$ or $6$.
-We call the matches at distance $0$ the \emph{free matches}, the ones at distance $2$ the \emph{neighbouring matches}, and the ones at distance $4$ or $6$ the \emph{long matches}.
-In Lemma~\ref{lem:short-ma}, we determine the matches present in $\IVCEMB$.
-
-\todo{Nazwij 6 match remote match}
-\todo{Zmodyfikuj lemat lem:infeasible tak zeby pokazac ze sa tylko co najwyzej k matche o dlugosci 4 (a nie ze co najwyzej k matchow o dlugosci 4 lub 6)}
-  
+We call the matches at distance $0$ or $2$ the \emph{short matches}, and the ones at distance $4$ or $6$ the \emph{long matches}.
+In Lemma~\ref{lem:short-ma}, we determine the matches present in $\SVCEMB$, to obtain the structure of the solution in Lemma~\ref{lem:one-unique-per-node}, which we apply in the reduction (Theorem~\ref{th:ma-reduction}).
+ 
   \begin{lemma}
     Any solution to $\IVCEMB$ with more than $k$ long matches is infeasible.
     \label{lem:infeasible}
@@ -918,9 +915,11 @@ In Lemma~\ref{lem:short-ma}, we determine the matches present in $\IVCEMB$.
 \end{lemma}
 \begin{proof}
   By Lemma~\ref{lem:n-matchsubtree-ma}, exactly $k$ nodes were placed in the \MatchSubtree{}.
-Suppose that out of $k$ nodes in the \MatchSubtree{}, $j>0$ nodes were placed in the \UnqGadgets{}.
-From the fact that each leaf of \UnqGadget{} has long distance to every other leaf, every node placed in \UnqGadget{} result in at least $3$ long matches.
-Hence, the total number of long matches would be then at least $k-j + 3\cdot j > k$, which by Lemma~\ref{lem:infeasible} would lead to infeasibility of $\SVCEMB$.
+  Suppose that $j>0$ of these nodes were placed in the \UnqGadgets{}.
+  Every leaf of every unique gadget is at distance at least $4$ from every other leaf of the substrate network.
+  Hence, each of $j$ nodes placed in a unique gadget has at least $3$ out of its $\MaFactor = 4$ chunks matched by a long match.
+  As triple gadgets consists of $3$ leaves, each of remaining $k-j$ nodes placed in the triple gadget uses at least $1$ long match.
+  In total, the number of long matches would be then at least $k-j + 3\cdot j > k$, which by Lemma~\ref{lem:infeasible} would lead to infeasibility of $\SVCEMB$.
 \end{proof}
 
 \begin{lemma}
@@ -928,18 +927,40 @@ Hence, the total number of long matches would be then at least $k-j + 3\cdot j >
   \label{lem:n-active-ma}
 \end{lemma}
 \begin{proof}
-  By Lemmas~\ref{lem:no-unq-ma} and \ref{lem:n-matchsubtree-ma} we conclude that $k$ nodes was placed in the \TripleGadgets.
+  By Lemma~\ref{lem:n-matchsubtree-ma}, exactly $k$ nodes were placed in the \MatchSubtree{}.
+  By Lemma~\ref{lem:no-unq-ma}, these $k$ nodes are placed in the triple gadgets and not in the unique gadgets.
 As there are exactly $3$ replicas in each \TripleGadget{}, placing more than one node in a single \TripleGadget{} results in at least additional $3$ long matches (the argument is the same as in the proof of Theorem~\ref{th:ma-unlimited}).
-Hence, exactly $k$ \TripleGadgets{} are active.
+Therefore, exactly $k$ \TripleGadgets{} are active.
 \end{proof}
 
 \begin{lemma}
-  In a feasible solution $\SVCEMB$ to $\IVCEMB$, all but the unique chunks are matched by a short match.
+  In a feasible solution $\SVCEMB$ to $\IVCEMB$, the unique chunks are matched by long matches at distance 4, and remaining chunks are matched by short matches (at distance 0~or~2).
   \label{lem:short-ma}
 \end{lemma}
 \begin{proof}
-  By Lemma~\ref{lem:infeasible}, in $\SVCEMB$ we have at most $k$ long matches.
-  By Lemma~\ref{lem:no-unq-ma}, $k$ long matches are depleted by $k$ unique chunks, and remaining chunks are matched by a short match.
+  By Lemma~\ref{lem:infeasible}, in $\SVCEMB$ there are at most $k$ long matches.
+  By Lemma~\ref{lem:no-unq-ma}, these $k$ long matches are depleted by $k$ unique chunks, and remaining chunks are matched by a short match.
+
+  Now we show that the unique chunks are matched at distance $4$ (and not at distance $6$).
+  Assume that a unique chunk is matched by a match at distance $6$ by a node $x$.
+  Then, $n_V - k$ nodes that do not process unique chunks incur the cost at least $6$ each,
+  and $k$ nodes that process the unique chunks incur the cost at least $k\cdot 8$.
+  Moreover, the node $x$ incur the cost at least $10$.
+  In total,the solution cost is at least $8\cdot (k-1) + 10 + (n_V-k)\cdot 6 > 8\cdot k + (n_V-k)\cdot 6 = \Thr$, i.e., the solution cost exceeds the threshold, a contradiction.
+\end{proof}
+
+\begin{lemma}
+  In a feasible solution $\SVCEMB$ to $\IVCEMB$, each node in the matching subtree processes one unique chunk and three chunks that are placed in the triple gadget the node is located at.
+  \label{lem:one-unique-per-node}
+\end{lemma}
+\begin{proof}
+  By Lemmas~\ref{lem:n-matchsubtree-ma} and \ref{lem:no-unq-ma}, $k$ nodes in the matching subtree are placed in triple gadgets.
+  As triple gadgets have at most $3$ leaves, each of these nodes results in at least one long match.
+  If a node would process $i>1$ unique chunks, then the total number of long matches is at least $k-1+i>k$, and by Lemma~\ref{lem:infeasible} the solution would be infeasible.
+
+  If a node would process $0$ unique chunks, it still causes a long match.
+  By Lemma~\ref{lem:short-ma}, each of $k$ unique chunks causes a long match, and in total we would have at least $k+1$ long matches,  and by Lemma~\ref{lem:infeasible} the solution would be infeasible.
+
 \end{proof}
 
 \begin{theorem}
@@ -974,13 +995,11 @@ Hence, exactly $k$ \TripleGadgets{} are active.
 
   It remains to show that $\STDPM$ matches every element of $X\cup Y\cup Z$.
 
-  \todo{czesc 1}
-  \todo{pokaz to:}
-  each active node processes three chunks that are placed in its \TripleGadget and one unique chunk.
-  \todo{trzeba uzyc ``at most k matches of distance 4'' i ``k active gadgets'' i ``no nodes in unique''}
-  \todo{kazdy node przetwarza co najwyzej jeden z unique; jesli tak nie jest to istnieje pewien active node, ktory nie ma budzetu na long match (pidgeon), a ma tylko 3 w short distance}
-  \todo{argumentuj, dlaczego jakis node nie przetwarza z innego gadzetu: niewystarczajaco long matches na unique i przetwarzanie spoza}
-
+  \todo{wyjasnij dokladniej i opisz tutaj strukture gadzetu element}
+  Chunks have two replicas; one replica is not processed in element gadget (indivisible argument).
+  The other replica is processed in the matching subtree by active nodes.
+\todo{uzyj 1 unique per node}
+  In total all are processed.
  % By Lemma~\ref{lem:infeasible}, we have at most $k$ long matches and,
 %  by Lemma~\ref{lem:no-unq-ma}, all these long matches are depleted by $k$ unique chunks.
 %  Therefore, all but the unique chunks are matched by a short match.
@@ -989,8 +1008,6 @@ Hence, exactly $k$ \TripleGadgets{} are active.
 %  Hence, each active node processes three chunks that are placed in its \TripleGadget, and collectively active nodes process $3 \cdot k$ chunks.
 
 
-
-  \todo{czesc 2 (to po prostu przepisz)}
   The number of chunks $4\cdot(\deg(e) - 1) + 1$ in each element gadget $G(e)$ is non-divisible by $\MaFactor = 4$, i.e.,
   $4 | 4\cdot(\deg(e) - 1) + 1 = 1$.
   As all matches in the element subtree are short, in each element gadget 
