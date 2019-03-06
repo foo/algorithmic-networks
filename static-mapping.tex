@@ -128,13 +128,13 @@ In Figure~\ref{fig:venn_full}, we either summarize the fastest method to solve t
  
 First, let us make a simplifying observation:
 \begin{obs}\label{obs:nofp}
-In CTE variants without flexible placement (FP),
+In $\CTE$ variants without flexible placement (FP),
 the bandwidth required
 for the inter-connect network (NI) can be allocated upfront, 
 as it
 does not depend on the replica
 selection and the assignment.
-Accordingly, we can reduce the variant~$RS+MA+NI+BW$ (as well as all its subproblems)
+Accordingly, we can reduce the $RS+MA+NI+BW$ variant (as well as all its subproblems)
 to~$RS+MA+BW$ (resp.~its subproblems).
 \end{obs}
 
@@ -620,7 +620,7 @@ In particular, we
 show that variants become NP-hard if flexibly placeable nodes ($\FP$) have to be assigned to one of multiple replicas ($\RS$), either with multiple chunks per node ($\MA$ in Section~\ref{ssec:fprsma}) or with communication among nodes ($\NI$ in Section~\ref{ssec:fprscc}).
 Both results hold even in uncapacitated networks, and even in small-diameter
 substrate networks (namely two- or three-level trees).
-Clearly, the hardness of variants $\FP+\RS+\MA$ and~$\FP+\RS+\NI$ imply
+Clearly, the hardness of $\FP+\RS+\MA$ and~$\FP+\RS+\NI$ variants imply
 the hardness of more general variants.
 
 In addition to hardness results for the aforementioned $\CTE$ variants, we study the influence of restricting number of replicas of a chunk on computational tractability on these variants.
@@ -723,8 +723,8 @@ $\ITDPM$ has a~perfect matching (of size~$k$).
 
 ($\Rightarrow$) Fix a solution $\STDPM$ for~$\ITDPM$, i.e., the set of triples that form a perfect matching. To construct the solution $\SVCEMB$ to $\IVCEMB$, we place a single node in every
 gadget that corresponds to triples in $\STDPM$ (at an arbitrary leaf of this gadget). In each gadget, we match all three chunks to the node located in this gadget. This
-solution costs exactly~$\Thr = 4\cdot k$: each of $k$ nodes processes one chunk collocated with it and two chunks at the distance $2$.
-The solution $\STDPM$ matches every element of the universe $X \cup Y \cup Z$, hence every chunk is processed by exactly one node, and $\SVCEMB$ is feasible.
+solution costs exactly~$\Thr = 4\cdot k$: each of $k$ nodes is matched to one chunk collocated with it and to two chunks at the distance $2$.
+The solution $\STDPM$ matches every element of the universe $X \cup Y \cup Z$, hence every chunk is matched to exactly one node, and $\SVCEMB$ is feasible.
 
 \medskip
 
@@ -732,19 +732,19 @@ The solution $\STDPM$ matches every element of the universe $X \cup Y \cup Z$, h
 We call the triple gadget \emph{active} if it hosts a single node in one of its leaves.
 We claim that $\SVCEMB$ places at most one node in each triple gadget.
 Assume that two nodes $x_1$, $x_2$ are placed in the same triple gadget.
-First, we lower-bound the cost incurred by $x_1$ and $x_2$ that collectively process $2\cdot \MaFactor = 6$ chunks.
+First, we lower-bound the cost incurred by $x_1$ and $x_2$ that collectively match to $2\cdot \MaFactor = 6$ chunks.
 At most two of these chunks are co-located with $x_1$ or $x_2$ and cost $0$, and remaining four chunks incur a cost at least $2$ each.
 Moreover, at least three of these chunks are placed outside of this triple gadget and incur the cost at least $4$ each.
 In total, $x_1$ and $x_2$ incur the cost at least $2\cdot 0+2+3\cdot 4=14$.
 Second, we lower-bound the cost incurred by remaining $k-2$ nodes.
-Each node can process at most $1$ of its $\MaFactor=3$ chunks for free (every leaf hosts exactly one chunk),
+Each node can match at most $1$ of its $\MaFactor=3$ chunks for free (every leaf hosts exactly one chunk),
 and it incurs the cost at least $4$ for the remaining~$2$ chunks that are at distance at least~$2$.
 The total chunk mapping cost $4\cdot k + 6$ exceeds the threshold $\Thr = 4\cdot k$, a contradiction.
 As $n_V = k$, we conclude that in $\SVCEMB$, exactly $k$ active gadgets.
 
 To construct the solution $\STDPM$ to $\ITDPM$, we pick the set of triples whose gadgets are active.
 The solution $\STDPM$ consists of $k$ triples.
-Since all chunks are processed by exactly one node, every element of~$X$,~$Y$ and~$Z$ is matched, and $\STDPM$ form a 3-dimensional perfect matching of $X \cup Y\cup Z$.
+Since all chunks are matched to exactly one node, every element of~$X$,~$Y$ and~$Z$ is matched, and $\STDPM$ form a 3-dimensional perfect matching of $X \cup Y\cup Z$.
 \end{proof}
 
 \subsection{Hardness of Multi-Assignments with at Most Two Replicas}
@@ -929,7 +929,7 @@ In Lemma~\ref{lem:short-ma}, we determine the matches present in $\SVCEMB$, to o
 \begin{proof}
   By Lemma~\ref{lem:n-matchsubtree-ma}, exactly $k$ nodes were placed in the \MatchSubtree{}.
   By Lemma~\ref{lem:no-unq-ma}, these $k$ nodes are placed in the triple gadgets and not in the unique gadgets.
-As there are exactly $3$ replicas in each \TripleGadget{}, placing more than one node in a single \TripleGadget{} results in at least additional $3$ long matches (the argument is the same as in the proof of Theorem~\ref{th:ma-unlimited}).
+As there are exactly $3$ replicas in each \TripleGadget{}, placing more than one node in a single \TripleGadget{} causes at least additional $3$ long matches (the argument is the same as in the proof of Theorem~\ref{th:ma-unlimited}).
 Therefore, exactly $k$ \TripleGadgets{} are active.
 \end{proof}
 
@@ -955,16 +955,16 @@ Therefore, exactly $k$ \TripleGadgets{} are active.
 \end{lemma}
 \begin{proof}
   By Lemmas~\ref{lem:n-matchsubtree-ma} and \ref{lem:no-unq-ma}, $k$ nodes in the matching subtree are placed in triple gadgets.
-  As triple gadgets have at most $3$ leaves, each of these nodes results in at least one long match.
+  As triple gadgets have at most $3$ leaves, each of these nodes causes at least one long match.
   If a node would process $i>1$ unique chunks, then the total number of long matches is at least $k-1+i>k$, and by Lemma~\ref{lem:infeasible} the solution would be infeasible.
-
   If a node would process $0$ unique chunks, it still causes a long match.
   By Lemma~\ref{lem:short-ma}, each of $k$ unique chunks causes a long match, and in total we would have at least $k+1$ long matches,  and by Lemma~\ref{lem:infeasible} the solution would be infeasible.
 
+  Remaining $3$ of $\MaFactor=4$ chunks matched to each node in the matching subtree are matched by the short match, and the only chunks in distance at most $2$ are the chunks located in the same gadget that the node is located at.
 \end{proof}
 
 \begin{theorem}
-  The variant $\RS(2)+\MA+\FP$ of the $\CTE$ problem is NP-hard.
+  The $\RS(2)+\MA+\FP$ variant of the $\CTE$ problem is NP-hard.
   \label{th:ma-reduction}
 \end{theorem}
 
@@ -1075,7 +1075,7 @@ among more than~$k$ gadgets.
 
 \begin{theorem}
 \label{theorem:fp_rs_cc}
-The variant $\FP+\RS+\NI$ of $\CTE$ problem is NP-hard.
+The $\FP+\RS+\NI$ variant of $\CTE$ problem is NP-hard.
 \end{theorem}
 \begin{proof}
 Let~$\ITDPM$ be an instance of~$\TDM$ and let~$\ICTE$ be an instance of
@@ -1086,9 +1086,9 @@ $\ITDPM$ has a~solution.
 
 ($\Rightarrow$) In order to compute a solution
 for~$\ICTE$ given a solution for~$\ITDPM$, we proceed as follows.
-Given an exact covering set of triples~$S = \{t_1, t_2,
+Given an exact covering set of triples~$\STDPM = \{t_1, t_2,
 \ldots, t_k\}$, we place three nodes in each gadget that
-corresponds to every triple of~$S$. Chunks are matched to the nodes which are co-located
+corresponds to every triple of~$\STDPM$. Chunks are matched to the nodes which are co-located
 in the same server.
 
 The solution has the following cost:
@@ -1109,7 +1109,7 @@ hence every element is covered exactly once.
 \end{proof}
 
 \paragraph{Remark on two replicas and inter-connects.}
-It is worth noting that the variant $\FP+\RS(2)+\NI+\BW$ is NP-hard~\cite{my-tcs}.
+It is worth noting that the $\FP+\RS(2)+\NI+\BW$ variant is NP-hard~\cite{my-tcs}.
 The reduction uses similar construction to the reduction from Section~\ref{ssec:fprsma},
 with augmention of bandwidth constraints that allow to control the number of nodes placed in a subtree.
 
