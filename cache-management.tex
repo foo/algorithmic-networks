@@ -7,10 +7,10 @@ Modern routers consist of two logical components. Those two components use disjo
 
 The forwarding component has finite memory, and in multiple scenarios the size of forwarding table exceeds the size of available memory.
 One of the solutions is to store only a part of a~forwarding table on the forwarding device, that acts as a cache for the complete forwarding table that is stored in the control plane, see Figure~\ref{fig:router}.
-However, this might result in the situation, where the forwarding device do not posess sufficient information to proceed (\emph{a cache miss}).
+However, this might result in the situation, where the forwarding device do not possess sufficient information to proceed (\emph{a cache miss}).
 
 Even upon the cache miss, the packet still needs to reach its destination.
-The common way to handle the situation is to redirect the packet to the control plane component, which posseses the complete forwarding table.
+The common way to handle the situation is to redirect the packet to the control plane component, which possesses the complete forwarding table.
 However, the packet cannot be forwarded by the control plane, hence it is supplemented with forwarding informations and sent back to the forwarding plane.
 The forwarding device overrides the usual procedure of forwarding table lookup, and instead it uses the supplemented information to forward the packet.
 
