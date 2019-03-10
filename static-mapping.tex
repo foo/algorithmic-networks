@@ -637,14 +637,14 @@ In Section~\ref{ssec:fprscc}, we present the NP-hardness of the unrestricted sce
 The hardness of both~$\FP+\RS+\MA$ and~$\FP+\RS+\NI$ variants of the $\CTE$ problem uses a reduction
 from the NP-complete problem of \emph{3D Perfect Matching}~\cite{3dmatch},
 which can be seen as a generalization of bipartite matchings to 3-uniform
-hypergraphs. We refer to this problem by~$\TDM$
+hypergraphs. We refer to this problem by~$\TDM$ and we
 review it quickly for completeness.
 $\TDM$ is defined as follows: we are given three finite and disjoint
 sets~$X$,~$Y$, and~$Z$ of cardinality~$k$, as well as a~subset of triples~$P\subseteq
 X \times Y \times Z$.  Set~$M \subseteq P$ is a 3-dimensional matching
 if and only if, for any two distinct triples~$t_1=\langle x_1, y_1, z_1\rangle \in M$
 and~$t_2= \langle x_2, y_2, z_2 \rangle \in M$, it holds that~$x_1\neq x_2$,~$y_1\neq
-y_2$, and~$z_1\neq z_2$. The goal is to decide if we can construct
+y_2$, and~$z_1\neq z_2$. The goal is to decide if there exists
 a subset of triples $M \subseteq P$ that is \emph{perfect}, i.e., covers all
 elements of~$X \cup Y \cup Z$ exactly once.
 
@@ -654,9 +654,9 @@ elements of~$X \cup Y \cup Z$ exactly once.
 %\subsubsection{Warm-up: Multi-Assignment with Unrestricted Number of Replicas}
 The proof of hardness of the $\FP+\RS+\MA$ variant of the $\CTE$ problem is based on the following construction.
 Let~$\ITDPM$ be an instance of~$\TDM$ with $p$ triples and set cardinality~${k = |X| = |Y| = |Z|}$.
-We construct an instance~$\ICTE$ of the $\CTE$ problem in the following way:
+We create an instance~$\ICTE$ of the $\CTE$ problem in the following way:
 \begin{enumerate}
-\item \emph{Substrate network:} We construct a substrate network in form of a tree consisting of a~root,
+\item \emph{Substrate network:} We construct a substrate network in a form of a tree consisting of a~root,
 and for each triple from $P$, we construct a \emph{triple gadget} which we directly attach as
 a child of the root. The gadget is of height 2,
 and consists of an inner node and three leaves.
@@ -664,6 +664,7 @@ and consists of an inner node and three leaves.
  we construct a chunk
 ($3 \cdot k$ chunks in total). Every gadget contains three chunk replicas (one per leaf),
 corresponding to the elements of the triple.
+Neto that the number of replicas for a chunk for element $e$ corresponds to the number of triples that contain $e$.
 \item \emph{Other properties of the instance:} We set the number of to-be-embedded nodes $n_V = k$,
 $\CostTrans = 1$, and the the multi-assignment factor
 $\MaFactor=3$.
@@ -740,18 +741,18 @@ In total, $x_1$ and $x_2$ incur the cost at least $2\cdot 0+2+3\cdot 4=14$.
 Second, we lower-bound the cost incurred by remaining $k-2$ nodes.
 Each node can match at most $1$ of its $\MaFactor=3$ chunks for free (every leaf hosts exactly one chunk),
 and it incurs the cost at least $4$ for the remaining~$2$ chunks that are at distance at least~$2$.
-The total chunk mapping cost $4\cdot k + 6$ exceeds the threshold $\Thr = 4\cdot k$, a contradiction.
-As $n_V = k$, we conclude that in $\SVCEMB$, exactly $k$ active gadgets.
+The total chunk mapping cost $4\cdot (k-2)+14 = 4\cdot k + 6$ exceeds the threshold $\Thr = 4\cdot k$, a contradiction.
+As $n_V = k$, we conclude that in $\SVCEMB$, there are exactly $k$ active gadgets.
 
 To construct the solution $\STDPM$ to $\ITDPM$, we pick the set of triples whose gadgets are active.
 The solution $\STDPM$ consists of $k$ triples.
-Since all chunks are matched to exactly one node, every element of~$X$,~$Y$ and~$Z$ is matched, and $\STDPM$ form a 3-dimensional perfect matching of $X \cup Y\cup Z$.
+Since all chunks are matched to exactly one node, every element of~$X$,~$Y$ and~$Z$ is matched, and $\STDPM$ forms a 3-dimensional perfect matching of $X \cup Y\cup Z$.
 \end{proof}
 
 \subsection{Hardness of Multi-Assignments with at Most Two Replicas}
 
 %We have seen that replica selection flexibility can render embeddings computationally hard.
-We provide a more detailed look at this hardness result
+Now we provide a more detailed look at this hardness result
 and explore the minimal requirements for rendering replica selection hard.
 Concretely, we show that already two replicas for each chunk are sufficient for computational intractability.
 
@@ -807,11 +808,11 @@ For each element $e\in X\cup Y\cup Z$, by $P_e$ we denote the set of all triples
 Let $\deg(e) = |P_e|$, and note that $\sum_e \deg(e) = 3\cdot p$.
 We proceed with the construction as follows.
 \paragraph{Substrate network.}
-We construct the substrate network that consists of two subtrees connected to the
+We construct a substrate network that consists of two subtrees connected to the
   root: a \emph{\MatchSubtree} and a \emph{\CoverSubtree}. The
   {\MatchSubtree} consists of $p$ \emph{\TripleGadgets} (one per each triple from $P$) and $k$
   \emph{\UnqGadgets}. The {\CoverSubtree} consists of~$3\cdot k$ \emph{\ElGadgets} $G(e)$, one for each element $e\in X\cup Y\cup Z$.
-  The contruction is depicted in Figure~\ref{fig:red-ma2}. Gadgets are constructed in the following way.
+  The construction is depicted in Figure~\ref{fig:red-ma2}. Gadgets are constructed in the following way.
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.9\columnwidth]{figs/static-mapping/overview}
@@ -825,7 +826,7 @@ We construct the substrate network that consists of two subtrees connected to th
   This keeps the tree balanced, and also keeps leaves of
   {\UnqGadgets} far from each other.
   \item The {\ElGadget} $G(e)$ for element $e$ consists of the
-  root and~$4\cdot(\deg(e)-1)+1$ leaves. There are $3\cdot k$ elements numbered from $e_1$ to $e_{3\cdot k}$, and $3\cdot k $ corresponding element gadgets.
+  root and~$4\cdot(\deg(e)-1)+1$ leaves. There are $3\cdot k$ elements numbered from $e_1$ to $e_{3\cdot k}$, and $3\cdot k $ corresponding element gadgets $G(e_1), \ldots, G(e_{3\cdot k})$.
 \end{enumerate}
 
 \paragraph{Chunks.}
@@ -836,18 +837,20 @@ The first set corresponds to elements of the universe $X\cup Y\cup Z$, and their
 %We place $3\cdot(\deg(e) - 1)$ \emph{dummy} chunks in the element gadgets; each node in the element subtree needs to processes only $1$ element chunk and remaining $3$ of $\MaFactor=4$ chunks are the dummy chunks.
 %Unique and dummy chunks have one replica, and we simply identify the chunk with chunk replica.
 \begin{enumerate}
-  \item \emph{Element chunks}. For each triple $t = \langle x, y, z \rangle \in P$, we construct $3$ chunks:~$c(x, t), c(y, t),$ $c(z, t)$, i.e., $\sum_e\deg(e)$ $=3\cdot p$ chunks in total,
+  \item \emph{Element chunks}. For each triple $t = \langle x, y, z \rangle \in P$, we construct $3$ chunks:~$x_t, y_t,$ and $z_t$, i.e., $\sum_e\deg(e)$ $=3\cdot p$ chunks in total,
   each having two replicas.
   First replicas are placed in the matching subtree:
   we place
-  three replicas: $c^{(1)}(x, t), c^{(1)}(y, t)$ and $c^{(1)}(z, t)$ in the {\TripleGadget} for triple $t\in P$, one per each leaf.
+  three replicas: $x_t^{(1)}, y_t^{(1)}$ and $z_t^{(1)}$ in the {\TripleGadget} for triple $t\in P$, one per each leaf.
   Second replicas are placed in the cover subtree:
   for each element $e \in X\cup Y\cup Z$, for each $t \in P_e$,
-  we place replicas $c^{(2)}(e, t)$ in the leaves of the gadget $G(e)$.
+  we place replicas $e_t^{(2)}$ in different leaves of the gadget $G(e)$.
+  In total, we place $\deg(e)$ replicas of element chunks in the leaves of the gadget $G(e)$.
   \item \emph{Unique chunks}. We construct~$k$ unique chunks with one replica each, and we place these replicas at the leaves of {\UnqGadgets} (one chunk per leaf).
   \item \emph{Dummy chunks}. For each element~$e\in X\cup Y\cup Z$,
-  we construct an additional set of $3\cdot(\deg(e) - 1)$ dummy chunks, with one replica each, and we place these replicas in arbitrary $3\cdot (\deg(e)-1)$ leaves of $G(e)$ (one chunk per leaf).
-  Recall that the remaining $\deg(e)$ leaves of $G(e)$ contain replicas $c^{(2)}(t, e)$ for each $t \in P_e$. In total, we place $4\cdot (\deg(e) - 1) + 1$ replicas in $G(e)$, one replica at each leaf of the gadget $G(e)$.
+  we construct an additional set of $3\cdot(\deg(e) - 1)$ dummy chunks, with one replica each, and we place these replicas in $3\cdot (\deg(e)-1)$ leaves of $G(e)$ (one chunk per leaf),
+  not occupied by (the second) replicas of element chunks.
+  Recall that the remaining $\deg(e)$ leaves of $G(e)$ contain replicas $c^{(2)}(t, e)$ for each $t \in P_e$. In total, we place $4\cdot (\deg(e) - 1) + 1$ replicas in $G(e)$, one replica at each leaf.
 \end{enumerate}
 
 \paragraph{Other properties of the instance.}
