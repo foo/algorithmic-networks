@@ -1,6 +1,6 @@
 
 For executing a certain computation, one places an adequate number of workers, whose task is to select their data portion, process them, and aggregate the result by cooperation with other workers.
-Workers establish a network connection called a virtual network, formed to peform a~given computational task, and in such setting the worker is referred to as a node of a virtual network.
+Workers establish a network connection called a virtual network, formed to perform a~given computational task, and in such setting the worker is referred to as a node of a virtual network.
 While these nodes can be placed at~any feasible physical machine in the data center, the processing performance processing is heavily influenced by their placement.
 Placing nodes closely to each other reduces network latency and bandwidth reservations in the data center.
 In this chapter, we investigate mapping a virtual network onto the physical infrastructure: a~task of~assigning the nodes of a virtual network to~physical machines in a network-efficient way.
@@ -53,7 +53,7 @@ Note that our definition extends the notion of the virtual cluster studied by ot
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.79\columnwidth]{figs/static-mapping/data_locality_no_legend.pdf}
-\caption{Overview: a 9-server datacenter storing~$\tau=4$ different chunks~$\{c_1,\ldots,c_4\}$ (depicted as \emph{circles}), each having two replicas. The replicas need to be selected and assigned to the two
+\caption{Overview: a 9-server data center storing~$\tau=4$ different chunks~$\{c_1,\ldots,c_4\}$ (depicted as \emph{circles}), each having two replicas. The replicas need to be selected and assigned to the two
  virtual machines~$v_1$ and~$v_2$; the virtual machines are depicted as \emph{squares}, and
  the network connecting them to chunks (using bandwidth~$\CostTrans$) is \emph{dashed}. In addition, the virtual machines are inter-connected among
  each other using bandwidth~$\CostCom$ (\emph{dotted}). The objective of the embedding algorithm is to minimize the overall bandwidth allocation.}\label{fig:overview}
@@ -61,7 +61,7 @@ Note that our definition extends the notion of the virtual cluster studied by ot
 
 
 \parag{Optimization Objective.} 
-Our goal is to design algoriths that minimize the resource \emph{footprint}, the most common objective function considered in the literature \cite{fischer-survey}.
+Our goal is to design algorithms that minimize the resource \emph{footprint}, the most common objective function considered in the literature \cite{fischer-survey}.
 Formally, let~$\dist(v,\achunk)$ denote the~distance (in the underlying physical network~$\Tree$) between a~node~$v$ and
 its assigned (active) replica~$\achunk$, and let~$\dist(v_1,v_2)$ denote the distance between the two nodes~$v_1$ and~$v_2$.
 We define the \emph{footprint}~$\Cost(v)$ of a node~$v$ as follows:
@@ -401,7 +401,7 @@ For each subtree~$\Tree'$, we maintain
 two sets~$S_c,S_v$ in order to match unmatched
 chunks~$S_c$ in the subtree~$\Tree'$ to unmatched
 nodes~$S_v$ in~$\Tree'$. Both sets are initially empty.
-We associate a counter with each node that enters $S_v$, and we intitialize it to $\MaFactor$, the multi-assignment factor.
+We associate a counter with each node that enters $S_v$, and we initialize it to $\MaFactor$, the multi-assignment factor.
 
 
 We first process all the leaves, in an arbitrary order; subsequently, we process inner vertices
@@ -449,14 +449,14 @@ The local matching algorithm outperforms the previous algorithm that relied upon
 %\end{proof}
 
 The algorithm allocates the minimum possible bandwidth at an uplink of every subtree, as stated in Lemma~\ref{lemma:uplink}, and hence the algorithm computes an optimal solution.
-Combined with a~simple postprocessing step, this approach can also solve~$\MA+\BW$ variant. The central idea of this extension is
+Combined with a~simple post-processing step, this approach can also solve~$\MA+\BW$ variant. The central idea of this extension is
 that the algorithm allocates the minimal bandwidth
 on each individual edge. In consequence, any bandwidth constraint,
 which is lower than the allocation of a local assignment on one link, renders
 the problem infeasible. Hence, it is sufficient to temporarily omit the
 bandwidth limitations, compute an optimal assignment for an~$\MA$ instance, and
 verify that the resulting allocations do not violate any capacities. The
-postprocessing step scales linearly with the number of edges in the substrate
+post-processing step scales linearly with the number of edges in the substrate
 graph.
 
 
@@ -624,7 +624,7 @@ Clearly, the hardness of $\FP+\RS+\MA$ and~$\FP+\RS+\NI$ variants imply
 the hardness of more general variants.
 
 In addition to hardness results for the aforementioned $\CTE$ variants, we study the influence of restricting number of replicas of a chunk on computational tractability on these variants.
-Namely, we introduce the restricted replica selection component $\RS(r_{max})$, parametrized by an~integer $r_{max}$, that restricts the number of replicas of any chunk: for every chunk $c_i$ we require $r_i \leq r_{max}$.
+Namely, we introduce the restricted replica selection component $\RS(r_{max})$, parameterized by an~integer $r_{max}$, that restricts the number of replicas of any chunk: for every chunk $c_i$ we require $r_i \leq r_{max}$.
 We consider $\RS(2)$ component in relation with Multi-Assignment ($\MA$).
 Concretely, in Section~\ref{ssec:fprsma}, we first present the NP-hardness of the unrestricted scenario $\FP+\RS+\MA$ (Theorem~\ref{th:ma-unlimited}) as a warm-up,
 and then we present more refined hardness result for ${\FP+\RS(2)+\MA}$ (Theorem~\ref{th:ma-reduction}).
@@ -664,7 +664,7 @@ and consists of an inner node and three leaves.
  we construct a chunk
 ($3 \cdot k$ chunks in total). Every gadget contains three chunk replicas (one per leaf),
 corresponding to the elements of the triple.
-Neto that the number of replicas for a chunk for element $e$ corresponds to the number of triples that contain $e$.
+Note that the number of replicas for a chunk for element $e$ corresponds to the number of triples that contain $e$.
 \item \emph{Other properties of the instance:} We set the number of to-be-embedded nodes $n_V = k$,
 $\CostTrans = 1$, and the the multi-assignment factor
 $\MaFactor=3$.
@@ -869,7 +869,7 @@ The multi-assignment factor is $m=4$, and the number of nodes to embed is~$\numN
  
 Given any $\TDPM$ instance $\ITDPM$, we produce the corresponding instance $\IVCEMB$ of the $\RS(2)+\MA+\FP$ variant, in the way described above.
 We call a {\TripleGadget} \textit{active}, if it contains a~single node at one of its leafs, and we call the node \textit{active} if it is placed in {\TripleGadget}.
-In Lemma~\ref{lem:n-active-ma}, we show that in the construction presented in this section, feasible solutions to $\IVCEMB$ have similar structure to solutions Thorem~\ref{th:ma-unlimited}:
+In Lemma~\ref{lem:n-active-ma}, we show that in the construction presented in this section, feasible solutions to $\IVCEMB$ have similar structure to solutions Theorem~\ref{th:ma-unlimited}:
 in every feasible solution to $\IVCEMB$, exactly $k$ \TripleGadgets{} are active.
 
 In the instance $\IVCEMB$, chunks can be matched to nodes at distance $0, 2, 4$ or $6$.
@@ -900,13 +900,13 @@ In Lemma~\ref{lem:short-ma}, we determine the matches present in $\SVCEMB$, to o
   Therefore, more than $k$ nodes in the matching subtree would lead to more than $k$ long matches, and by Lemma~\ref{lem:infeasible}, the solution would be infeasible.
   
   As at most $k$ nodes are placed in the \MatchSubtree{}, at least $\Vms-k$ nodes are placed in the \CoverSubtree.
-  Now we claim that the cover subrtee contains exactly $n_V-k$ of them.
+  Now we claim that the cover subtree contains exactly $n_V-k$ of them.
   Suppose the contrary, i.e., that $\Vms-k+i$ nodes were placed in the \CoverSubtree{} for $i > 0$.
   With each element gadget $G(e)$ we associate its \emph{volume} $\deg(e) - 1$.
   The volume corresponds to the maximum number of nodes that can be placed inside the gadget without causing a long match.
   More precisely, if $\deg(e) - 1 + j_e$ nodes are placed in $G(e)$ for $j_e > 0$, the number of chunks in the gadget, $4\cdot (\deg(e)-1)+1$ is smaller the number of chunks that these nodes should process, $4 \cdot (\deg(e)-1+j_e)$.
   These nodes process remaining $4\cdot j_e - 1$ chunks using long matches.
-  By the pidgeon-hole principle, at least $i = \sum_e j_e$ nodes surpass the volume of its gadget.
+  By the pigeon-hole principle, at least $i = \sum_e j_e$ nodes surpass the volume of its gadget.
   As $\sum_e (4\cdot j_e - 1) \geq 3 \cdot i$, the nodes in the cover subtree have at least $3\cdot i$ long matches (of cost at least $4$).
   Recall that each of $k-i$ nodes in the matching subtree result in one long match.
   In total we have at least $k+2\cdot i$ long matches and by Lemma~\ref{lem:infeasible}, the solution is infeasible, a~contradiction.
@@ -988,8 +988,8 @@ Therefore, exactly $k$ \TripleGadgets{} are active.
 
   We can observe that every chunk was processed, exactly $n_V = k + \sum_e(\deg(e) - 1)$ nodes are placed, and each of the nodes process exactly $4$ chunk replicas.
   To see that indeed the produced solution do not exceed the threshold $\Thr$, we sum up the total transportation cost.
-  The $k$ nodes placed in \TripleGadgets{} have $1$ free match and $2$ neighbouring matches to chunk replicas within the \TripleGadget{}, and $1$ long match of cost $4$ (to some \UnqGadget{}).
-  The remaining $\Vms-k$ nodes placed in the \CoverSubtree{} have $1$ free match and $3$ neighbouring matches.
+  The $k$ nodes placed in \TripleGadgets{} have $1$ free match and $2$ neighboring matches to chunk replicas within the \TripleGadget{}, and $1$ long match of cost $4$ (to some \UnqGadget{}).
+  The remaining $\Vms-k$ nodes placed in the \CoverSubtree{} have $1$ free match and $3$ neighboring matches.
   In total, the cost incurred is $8\cdot k + 6\cdot (\Vms - k) = \Thr$, i.e., the solution is feasible.
 
   ($\Rightarrow$) Fix a feasible solution~$\SVCEMB$ for~$\IVCEMB$ in the way described in the construction section.
@@ -1125,7 +1125,7 @@ hence every element is covered exactly once.
 \paragraph{Remark on two replicas and inter-connects.}
 It is worth noting that the $\FP+\RS(2)+\NI+\BW$ variant is NP-hard~\cite{my-tcs}.
 The reduction uses similar construction to the reduction from Section~\ref{ssec:fprsma},
-with augmention of bandwidth constraints that allow to control the number of nodes placed in a subtree.
+with the help of bandwidth constraints that allow to control the number of nodes placed in a subtree.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions}\label{sec:conclusion-static}
@@ -1133,10 +1133,10 @@ with augmention of bandwidth constraints that allow to control the number of nod
 
 In this chapter we have shown that despite the
 multiple dimensions of flexibility in terms of chunk assignment and node placement, 
-and despite the large scale of modern datacenters, 
+and despite the large scale of modern data centers, 
 many variants can be solved efficiently. However, we have also
 shown that several embedding variants are NP-hard already in two-
-and three-level trees---a practically relevant result given today's datacenter topologies~\cite{fattree}.
+and three-level trees---a practically relevant result given today's data center topologies~\cite{fattree}.
 
 
 %\begin{table}
@@ -1192,7 +1192,7 @@ and three-level trees---a practically relevant result given today's datacenter t
 
 Our results are summarized in
 Figure~\ref{fig:venn_full}.
-One interesting takeaway from this figure regards
+One interesting take away from this figure regards
 the question which properties render the problem
 NP-hard. For instance, we see that,~$\BW$
 does not influence the hardness of any variant,
