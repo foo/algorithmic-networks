@@ -624,10 +624,10 @@ Clearly, the hardness of $\FP+\RS+\MA$ and~$\FP+\RS+\NI$ variants imply
 the hardness of more general variants.
 
 In addition to hardness results for the aforementioned $\CTE$ variants, we study the influence of restricting number of replicas of a chunk on computational tractability on these variants.
-Namely, we introduce the restricted replica selection component $\RS(r_{max})$, parametrized by an~integer $r_{max}$, that restricts the number of replicas of any chunk: for every chunk $c_i$ we have $r_i \leq r_{max}$.
+Namely, we introduce the restricted replica selection component $\RS(r_{max})$, parametrized by an~integer $r_{max}$, that restricts the number of replicas of any chunk: for every chunk $c_i$ we require $r_i \leq r_{max}$.
 We consider $\RS(2)$ component in relation with Multi-Assignment ($\MA$).
 Concretely, in Section~\ref{ssec:fprsma}, we first present the NP-hardness of the unrestricted scenario $\FP+\RS+\MA$ (Theorem~\ref{th:ma-unlimited}) as a warm-up,
-and then we present more refined hardness result for $\FP+\RS(2)+\MA$ (Theorem~\ref{th:ma-reduction}).
+and then we present more refined hardness result for ${\FP+\RS(2)+\MA}$ (Theorem~\ref{th:ma-reduction}).
 In Section~\ref{ssec:fprscc}, we present the NP-hardness of the unrestricted scenario $\FP+\RS+\NI$ (Theorem~\ref{theorem:fp_rs_cc}).
 %However, restricted replica selection $\RS(2)$ in combination with Node-Interconnect requires additional ways to control the placement of nodes, and the NP-hardness result uses bandwidth constraints $\BW$~\cite{my-tcs}.
 
@@ -653,10 +653,10 @@ elements of~$X \cup Y \cup Z$ exactly once.
 
 %\subsubsection{Warm-up: Multi-Assignment with Unrestricted Number of Replicas}
 The proof of hardness of the $\FP+\RS+\MA$ variant of the $\CTE$ problem is based on the following construction.
-Let~$\ITDPM$ be an instance of~$\TDM$ with $p$ triples and set cardinality~$k = |X| = |Y| = |Z|$.
+Let~$\ITDPM$ be an instance of~$\TDM$ with $p$ triples and set cardinality~${k = |X| = |Y| = |Z|}$.
 We construct an instance~$\ICTE$ of the $\CTE$ problem in the following way:
 \begin{enumerate}
-\item \emph{Substrate network:} We construct a substrate network in form of a tree consisting of a root,
+\item \emph{Substrate network:} We construct a substrate network in form of a tree consisting of a~root,
 and for each triple from $P$, we construct a \emph{triple gadget} which we directly attach as
 a child of the root. The gadget is of height 2,
 and consists of an inner node and three leaves.
@@ -709,6 +709,7 @@ indicated by the grey triples. \textit{Right:} The corresponding instance and an
 
 Figure~\ref{fig:fprsma} shows an example of our construction.
 Given these concepts, we can now show the computational hardness of the considered variant of $\CTE$ (Theorem~\ref{th:ma-unlimited}).
+\newpage
 \begin{theorem}
   The $\FP+\RS+\MA$ variant of the $\CTE$ problem is NP-hard.
   \label{th:ma-unlimited}
@@ -810,7 +811,7 @@ We construct the substrate network that consists of two subtrees connected to th
   root: a \emph{\MatchSubtree} and a \emph{\CoverSubtree}. The
   {\MatchSubtree} consists of $p$ \emph{\TripleGadgets} (one per each triple from $P$) and $k$
   \emph{\UnqGadgets}. The {\CoverSubtree} consists of~$3\cdot k$ \emph{\ElGadgets} $G(e)$, one for each element $e\in X\cup Y\cup Z$.
-  The contruction is depicted in Figure~\ref{fig:red-ma2}.
+  The contruction is depicted in Figure~\ref{fig:red-ma2}. Gadgets are constructed in the following way.
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.9\columnwidth]{figs/static-mapping/overview}
@@ -818,7 +819,6 @@ We construct the substrate network that consists of two subtrees connected to th
   \label{fig:red-ma2}
 \end{figure}
 
-\noindent Gadgets are constructed in the following way:
 \begin{enumerate}
   \item Each {\TripleGadget} consists of four vertices: three leaves and the root of the gadget, as defined in the reduction for the $\FP+\RS+\MA$ variant in Section~\ref{ssec:fprsma}.
   \item Each {\UnqGadget} consists of two vertices: the leaf and the root of the gadget.
@@ -865,7 +865,7 @@ The multi-assignment factor is $m=4$, and the number of nodes to embed is~$\numN
  \bigskip
  
 Given any $\TDPM$ instance $\ITDPM$, we produce the corresponding instance $\IVCEMB$ of the $\RS(2)+\MA+\FP$ variant, in the way described above.
-We call a {\TripleGadget} \textit{active}, if it contains a single node at one of its leafs, and we call the node \textit{active} if it is placed in {\TripleGadget}.
+We call a {\TripleGadget} \textit{active}, if it contains a~single node at one of its leafs, and we call the node \textit{active} if it is placed in {\TripleGadget}.
 In Lemma~\ref{lem:n-active-ma}, we show that in the construction presented in this section, feasible solutions to $\IVCEMB$ have similar structure to solutions Thorem~\ref{th:ma-unlimited}:
 in every feasible solution to $\IVCEMB$, exactly $k$ \TripleGadgets{} are active.
 
@@ -957,8 +957,8 @@ Therefore, exactly $k$ \TripleGadgets{} are active.
   By Lemmas~\ref{lem:n-matchsubtree-ma} and \ref{lem:no-unq-ma}, $k$ nodes in the matching subtree are placed in triple gadgets.
   As triple gadgets have at most $3$ leaves, each of these nodes causes at least one long match.
   If a node would process $i>1$ unique chunks, then the total number of long matches is at least $k-1+i>k$, and by Lemma~\ref{lem:infeasible} the solution would be infeasible.
-  If a node would process $0$ unique chunks, it still causes a long match.
-  By Lemma~\ref{lem:short-ma}, each of $k$ unique chunks causes a long match, and in total we would have at least $k+1$ long matches,  and by Lemma~\ref{lem:infeasible} the solution would be infeasible.
+  If a node would process $0$ unique chunks, it still causes a~long match.
+  By Lemma~\ref{lem:short-ma}, each of $k$ unique chunks causes a~long match, and in total we would have at least $k+1$ long matches,  and by Lemma~\ref{lem:infeasible} the solution would be infeasible.
 
   Remaining $3$ of $\MaFactor=4$ chunks matched to each node in the matching subtree are matched by the short match, and the only chunks in distance at most $2$ are the chunks located in the same gadget that the node is located at.
 \end{proof}
@@ -993,13 +993,24 @@ Therefore, exactly $k$ \TripleGadgets{} are active.
   By Lemma~\ref{lem:n-active-ma}, exactly $k$ \TripleGadgets{} are active.
   We construct the solution $\STDPM$ from the set of triples that correspond to active \TripleGadgets{}.
 
-  It remains to show that $\STDPM$ matches every element of $X\cup Y\cup Z$.
-
-  \todo{wyjasnij dokladniej i opisz tutaj strukture gadzetu element}
-  Chunks have two replicas; one replica is not processed in element gadget (indivisible argument).
-  The other replica is processed in the matching subtree by active nodes.
-\todo{uzyj 1 unique per node}
-  In total all are processed.
+  Now, we show that $\STDPM$ is feasible, i.e., it matches every element of $X\cup Y\cup Z$ exactly once.
+  By Lemma~\ref{lem:one-unique-per-node}, every active node is matched to the three chunks located at the gadget it is placed at.
+  Hence, the chunks $c(x,t)$, $c(y,t)$ and $c(z,t)$ matched to an active node correspond to the triple $t = \langle x, y, z \rangle \in P$.
+  
+  For every element $e\in X\cup Y \cup Z$, we constructed $\deg(e)$ element chunks, with two replicas each: one in the matching subtree and one in the cover subtree.
+  In each element gadget $G(e)$, we match exactly $\deg(e) - 1$ element chunks, and the remaining $1$ element chunk is matched in a triple gadget.
+  Hence, the set of active nodes processes $1$ of $\deg(e)$ element chunks for each $e\in X\cup Y\cup Z$, and $\STDPM$ matches each $e\in X\cup Y\cup Z$ exactly once.
+ 
+%  Each of $3\cdot p = \sum_e \deg(e)$ element chunks has two replicas: one in the matching subtree and one in the cover subtree.
+%  By Lemma~\ref{lem:one-unique-per-node}, $3\cdot k$ element chunks are matched in the matching subtree.
+%  From Lemma~\ref{lem:n-active-ma}, $n_V - k = \sum_e (\deg(e) - 1)$ nodes are placed in the cover subtree.
+%  Nodes in the cover subtree 
+%
+%  \todo{wyjasnij dokladniej i opisz tutaj strukture gadzetu element}
+%  Chunks have two replicas; one replica is not processed in element gadget (indivisible argument).
+%  The other replica is processed in the matching subtree by active nodes.
+%\todo{uzyj 1 unique per node}
+%  In total all are processed.
  % By Lemma~\ref{lem:infeasible}, we have at most $k$ long matches and,
 %  by Lemma~\ref{lem:no-unq-ma}, all these long matches are depleted by $k$ unique chunks.
 %  Therefore, all but the unique chunks are matched by a short match.
@@ -1008,18 +1019,18 @@ Therefore, exactly $k$ \TripleGadgets{} are active.
 %  Hence, each active node processes three chunks that are placed in its \TripleGadget, and collectively active nodes process $3 \cdot k$ chunks.
 
 
-  The number of chunks $4\cdot(\deg(e) - 1) + 1$ in each element gadget $G(e)$ is non-divisible by $\MaFactor = 4$, i.e.,
-  $4 | 4\cdot(\deg(e) - 1) + 1 = 1$.
-  As all matches in the element subtree are short, in each element gadget 
-  
-  Let $\tau(G(e)) = 4\cdot(\deg(e) - 1) + 1$ be the number of chunks placed in a gadget $G(e)$ for an element $e\in X\cup Y\cup Z$.
-  By construction, $4 | \tau(G(e)) = 1$.
-  Recall that all matches (besides unique chunks) are short.
-  Hence, in each $G(e)$, there exists a chunk $c(e, t)$ for some $t \in P$ that is not matched.
-  Let's call this chunk~$\Unmatched(e)$, and let~$\Unmatched := \cup_e \Unmatched(e)$.
-  Note that~$|\Unmatched| = 3\cdot k$.
-  The solution $\SVCEMB$ is feasible, hence every chunk is matched, and $\Unmatched(e)$ is covered by its second replica, placed in the matching subtree.
-  The set~$\Unmatched$ is covered by \ActiveNodes{}, and hence the set of triples in $\STDPM$ form a 3D Perfect Matching of $X\cup Y\cup Z$.
+%  The number of chunks $4\cdot(\deg(e) - 1) + 1$ in each element gadget $G(e)$ is non-divisible by $\MaFactor = 4$, i.e.,
+%  $4 | 4\cdot(\deg(e) - 1) + 1 = 1$.
+%  As all matches in the element subtree are short, in each element gadget 
+%  
+%  Let $\tau(G(e)) = 4\cdot(\deg(e) - 1) + 1$ be the number of chunks placed in a gadget $G(e)$ for an element $e\in X\cup Y\cup Z$.
+%  By construction, $4 | \tau(G(e)) = 1$.
+%  Recall that all matches (besides unique chunks) are short.
+%  Hence, in each $G(e)$, there exists a chunk $c(e, t)$ for some $t \in P$ that is not matched.
+%  Let's call this chunk~$\Unmatched(e)$, and let~$\Unmatched := \cup_e \Unmatched(e)$.
+%  Note that~$|\Unmatched| = 3\cdot k$.
+%  The solution $\SVCEMB$ is feasible, hence every chunk is matched, and $\Unmatched(e)$ is covered by its second replica, placed in the matching subtree.
+%  The set~$\Unmatched$ is covered by \ActiveNodes{}, and hence the set of triples in $\STDPM$ form a 3D Perfect Matching of $X\cup Y\cup Z$.
 \end{proof}
 
 
