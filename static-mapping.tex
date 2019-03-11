@@ -1069,7 +1069,7 @@ Let~$\ITDPM$ be an instance of~$\TDM$ with $p$ triples and set cardinality $k = 
 We use the identical substrate network as in Section~\ref{ssec:fprsma} with
 identical chunk replicas placed in the same way.
 This time, however, the inter-connect cost is~$\CostCom = 1$, and the number of nodes (virtual machines) is~$\Vms = 3 \cdot k$, where~$k$ is the set cardinality.
-The threshold value is $\Thr := 6\cdot k + 18\cdot (k-1)\cdot k$, and we set the access cost~$\CostTrans$ to a chunk replica to $\Thr + 1$.
+The threshold value is $\Thr := 6\cdot k + 18\cdot (k-1)\cdot k = 2\cdot (3\cdot k) + 4\cdot({ 3\cdot k \choose 2} - (3\cdot k))$, and we set the access cost~$\CostTrans$ to a chunk replica to $\Thr + 1$.
 High matching cost forces each node to be collocated with the replica it processes.
 %Intuitively, in order to minimize embedding costs,
 %nodes should be placed in near-by leaves of the substrate network.
@@ -1080,17 +1080,16 @@ $3$ nodes each, and~$p-k$ gadgets remain empty.
 \end{lemma}
 \begin{proof}
 The~$n_V = 3\cdot k$ nodes have to be placed
-directly at different $3\cdot k$ chunks, resulting in 0 costs for the access network.
-Consider any pair of nodes
-communicating over the
-inter-connect; due to our construction, the communication cost
-for each such pair is either
-$2$ hops (if they belong to the same gadget) or $4$ hops (if they belong
-to different gadgets).
-The lemma then follows from the observation that~$\Thr$
-is chosen so that it is never possible to distribute nodes
-among more than~$k$ gadgets.
-\todo{sformalizuj}
+directly at different $3\cdot k$ chunks, resulting in no cost for the access network.
+The $3\cdot k$ nodes are distributed among at least $k$ gadgets, as each gadget can host at most $3$ nodes.
+
+Suppose that $3\cdot k$ nodes were distributed among more than $k$ gadgets.
+Then, less nodes are placed closely to other nodes, and for some $i>0$, $3\cdot k - i$ pairs of nodes belong to the same gadget.
+The inter-connect cost
+for each of ${3\cdot k \choose 2}$ pairs of nodes is either
+$2$ hops, if they belong to the same gadget, or $4$ hops, if they belong
+to different gadgets.
+Hence, the total cost is then $2\cdot (3\cdot k - i) + 4 \cdot ({3 \cdot k \choose 2} - (3\cdot k - i)) = 6\cdot k + 4 \cdot ({3 \cdot k \choose 2} - 3\cdot k) + 2\cdot i = \Thr + 2\cdot i$, and the solution exceeds the threshold $\Thr$.
 \end{proof}
 
 \begin{theorem}
@@ -1112,14 +1111,14 @@ corresponds to every triple of~$\STDPM$ (one node per leaf). Chunks are matched 
 in the same server.
 
 The solution has the following cost:
-(1) the inter-connect cost inside a gadget is~$2 \cdot {3 \choose 2}$,
+(1) the inter-connect cost inside a~single gadget is~$2 \cdot {3 \choose 2} = 6$,
   as a~distance between every pair of nodes there is $2$;
-  (2) the the inter-connect cost from each gadget to all other gadgets is~$4
-  \cdot 3 \cdot 3 \cdot (k - 1) / 2$, where the factor~$4$ corresponds to the distance $4$, the factor~$3$
+  (2) the the inter-connect cost from a~single gadget to all other gadgets is~$4
+  \cdot 3 \cdot 3 \cdot (k - 1) / 2 = 18\cdot (k-1)$, where the factor~$4$ corresponds to the distance $4$, the factor~$3$
   corresponds to the number of nodes per gadget, and
  ~$3 \cdot (k-1)$ is the number of nodes in remote gadgets;
   as we count each pair twice, we need to divide by two.
-Summing up over all~$k$ gadgets, we get exactly~$\Thr$.
+Summing up over all~$k$ gadgets, we the total cost is $6\cdot k + 18\cdot(k-1)\cdot k = \Thr$.
 
 ($\Leftarrow$) Given a solution for~$\ICTE$,
 we use Lemma~\ref{lemma:helper} to construct a solution for~$\ITDPM$: in any solution of cost at most~$\Thr$,
