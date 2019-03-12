@@ -710,7 +710,6 @@ indicated by the grey triples $t_1$ and $t_4$. \textit{Right:} The corresponding
 
 Figure~\ref{fig:fprsma} shows an example of our construction.
 Given these concepts, we can now show the computational hardness of the considered variant of $\CTE$ (Theorem~\ref{th:ma-unlimited}).
-\newpage
 \begin{theorem}
   The $\FP+\RS+\MA$ variant of the $\CTE$ problem is NP-hard.
   \label{th:ma-unlimited}
@@ -898,7 +897,13 @@ In Lemma~\ref{lem:short-ma}, we determine the matches present in $\SCTE$, to obt
   Summing up, the cost incurred is $8\cdot k + 6\cdot (\Vms - k) = \Thr$, i.e., the solution is feasible.
 \end{proof}
 
-\todo{obrazek}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=1\columnwidth]{figs/static-mapping/cte-ma2.pdf}
+\caption{An instance of $\FP+\MA+\RS(2)$ variant of $\CTE$ corresponding to the $\TDM$ instance from Figure~\ref{fig:fprsma}. Leaves containing dummy chunks are grey. The optimal solution maps chunks to nodes $v_1, \ldots v_7$ by the dashed lines.}\label{fig:overview}
+\end{figure}
+
 
   \begin{lemma}
     Any solution to $\ICTE$ with more than $k$ long matches is infeasible.
