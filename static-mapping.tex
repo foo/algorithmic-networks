@@ -35,7 +35,7 @@ replica as the \emph{active} (or selected) replica.
 \parag{The Virtual Network.} The virtual network $\VirtualNodes$ consists of $n_V=|\VirtualNodes|$ virtual machines, called \emph{nodes}.
 Each node can be placed (or, synonymously, embedded) on an arbitrary server and this placement is subject
 to optimization.
-Furthermore, to enable nodes to process the data, we provide the virtual network with network connections.
+Furthermore, to enable nodes to process the data, define network connections in a virtual network.
 The \emph{(node) inter-connect network} forms a~complete network (a clique) among nodes,
 and the \emph{(chunk) access network} consists of links from each active replica to the node that is assigned to process it.
 In order to ensure a predictable application performance, both these networks require certain minimal bandwidth guarantees.
@@ -124,7 +124,7 @@ we can solve many problem variants efficiently.
  which can roughly be categorized into
  \emph{flow} (Section~\ref{ssec:flow}), \emph{matching} (Section~\ref{ssec:match}) and \emph{dynamic programming}
  (Section~\ref{ssec:dyn}) approaches.
-In Figure~\ref{fig:venn_full}, we either summarize the fastest method to solve the computational problem or its computational intractability.
+In Figure~\ref{fig:venn_full}, we marked either the fastest method to solve the computational problem or its computational intractability.
  
 First, let us make a simplifying observation:
 \begin{obs}\label{obs:nofp}
@@ -233,7 +233,7 @@ Third, given an integer min-cost~max-flow solution, we need to decompose
 the integer flow into the paths
 representing matched chunk-node pairs:
 The assignment can be obtained by decomposing the flow allocated in the
-original substrate network. In order to identify a matched chunk-node pair,
+original substrate network. In order to identify a chunk-node assignment,
 we take an~arbitrary (loop-free) path~$p$ carrying a flow of value at least~$1$ from~$\Source$ to~$\Sink$:
 the first hop represents the chosen chunk, the second hop the chosen
 replica, and the penultimate hop represents the server: we assign
@@ -383,7 +383,7 @@ In case the number of chunks equals the processing capacities of the
 nodes in the given subtree,
 the bandwidth allocation inflicted by the chunk access network on the uplink is zero, since we can assign all chunks to nodes in the same subtree.
 Otherwise, we distinguish between two cases. If there are more chunks in the subtree, at least all excess chunks have to
-be mapped to nodes outside $T'$, which 
+be assigned to nodes outside $T'$, which 
 inflicts costs~$\CostTrans$ per excess chunk on the uplink of~$\Tree'$.
  Similar situation occurs if the processing capabilities exceed the
 amount of
@@ -398,8 +398,8 @@ of the subtree, i.e.,~$|\tau(T')-x\cdot\MaFactor|$ times $\CostTrans$.
 proceeds in a bottom-up fashion, traversing the~substrate network~$\Tree$
 from the leaves toward the root.
 For each subtree~$\Tree'$, we maintain
-two sets~$S_c,S_v$ in order to match unmatched
-chunks~$S_c$ in the subtree~$\Tree'$ to unmatched
+two sets~$S_c,S_v$ in order to map unassigned
+chunks~$S_c$ in the subtree~$\Tree'$ to 
 nodes~$S_v$ in~$\Tree'$. Both sets are initially empty.
 We associate a counter with each node that enters $S_v$, and we initialize it to $\MaFactor$, the multi-assignment factor.
 
@@ -410,7 +410,7 @@ We process any leaf~$\ell$
 by adding any
 nodes or chunks which are located on~$\ell$ to the corresponding sets~$S_c$ and~$S_v$.
 A non-leaf vertex~$u$ is processed in the following way: we take the union of
-the sets corresponding to~$u$'s children, i.e., the sets contain the unmatched chunks and nodes
+the sets corresponding to~$u$'s children, i.e., the sets contain the unassigned chunks and nodes
 in this subtree.
 For both leaves and inner nodes, whenever
 both sets are non-empty, we greedily match an arbitrary chunk $c$ in~$S_c$ with an arbitrary node $v$ in~$S_v$.
@@ -496,7 +496,7 @@ mapping~$\NodeMapping_2$, which seeks to minimize the inter-connect costs
 between the nodes, and places all nodes in one subtree. The distance between all
 nodes is two, which results in a total bandwidth allocation of~$12\cdot\CostCom$
 for the inter-connect. However, this reduced price comes at additional costs in
-the access network:~$c_3$ and~$c_4$ have to be mapped to~$v_3$ and~$v_4$,
+the access network:~$c_3$ and~$c_4$ have to be assigned to~$v_3$ and~$v_4$,
 which requires a total bandwidth allocation of~$8 \cdot \CostTrans$.
 
 
@@ -625,10 +625,10 @@ the hardness of more general variants.
 
 In addition to hardness results for the aforementioned $\CTE$ variants, we study the influence of restricting number of replicas of a chunk on computational tractability on these variants.
 Namely, we introduce the restricted replica selection component $\RS(r_{max})$, parameterized by an~integer $r_{max}$, that restricts the number of replicas of any chunk: for every chunk $c_i$ we require $r_i \leq r_{max}$.
-We consider $\RS(2)$ component in relation with Multi-Assignment ($\MA$).
+We consider the practically relevant $\RS(2)$ variant in relation with Multi-Assignment ($\MA$).
 Concretely, in Section~\ref{ssec:fprsma}, we first present the NP-hardness of the unrestricted scenario $\FP+\RS+\MA$ (Theorem~\ref{th:ma-unlimited}) as a warm-up,
 and then we present more refined hardness result for ${\FP+\RS(2)+\MA}$ (Theorem~\ref{th:ma-reduction}).
-In Section~\ref{ssec:fprscc}, we present the NP-hardness of the unrestricted scenario $\FP+\RS+\NI$ (Theorem~\ref{theorem:fp_rs_cc}).
+Finally, in Section~\ref{ssec:fprscc}, we present the NP-hardness of the unrestricted scenario $\FP+\RS+\NI$ (Theorem~\ref{theorem:fp_rs_cc}).
 %However, restricted replica selection $\RS(2)$ in combination with Node-Interconnect requires additional ways to control the placement of nodes, and the NP-hardness result uses bandwidth constraints $\BW$~\cite{my-tcs}.
 
 \subsection{Introduction to 3D Perfect Matching}
@@ -670,8 +670,8 @@ $\CostTrans = 1$, and the the multi-assignment factor
 $\MaFactor=3$.
 \item \emph{Threshold.} In order to turn the optimization problem into a decision problem, we use
 a~cost threshold~$\Thr = 4\cdot k$. As we will show, the cost threshold is met by all
-assignments that assign all three chunks of each triple gadget to a
-node which is collocated with one of these chunks, and only by such assignments.
+assignments that assign all three chunk replicas of each triple gadget to a
+node which is collocated with one of these replicas, and only by such assignments.
 \end{enumerate}
 
 %\parag{Example.} Figure~\ref{fig:fprsma} shows an example of our construction: In an~instance~$\ITDPM$
@@ -703,13 +703,13 @@ node which is collocated with one of these chunks, and only by such assignments.
 \caption{\textit{Left:} A~$\TDM$ instance of cardinality $k=2$ with three triples:
 $t_1 = \langle a, b, c \rangle$,~$t_2 = \langle a, e, f \rangle$, $t_3 = \langle d, b, f \rangle$, and $t_4 = \langle d, e, f \rangle$. The solution is
 indicated by the grey triples $t_1$ and $t_4$. \textit{Right:} The corresponding instance and an optimal solution for the~$\FP + \MA
-+ \RS$ variant of the $\CTE$ problem. Each triple corresponds to a single triple gadget.}
++ \RS$ variant of the $\CTE$ problem. We ommit the replica number in specifying the chunk location. Each triple corresponds to a single triple gadget.}
 \hfill
 \label{fig:fprsma}
 \end{figure}
 
 Figure~\ref{fig:fprsma} shows an example of our construction.
-Given these concepts, we can now show the computational hardness of the considered variant of $\CTE$ (Theorem~\ref{th:ma-unlimited}).
+Given these concepts, we can now show the computational hardness of the considered variant of $\CTE$.
 \begin{theorem}
   The $\FP+\RS+\MA$ variant of the $\CTE$ problem is NP-hard.
   \label{th:ma-unlimited}

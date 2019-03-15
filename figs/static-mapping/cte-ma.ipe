@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70005" creator="Ipe 7.1.4">
-<info created="D:20190312133959" modified="D:20190312151454"/>
+<info created="D:20190312133959" modified="D:20190315112515"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -277,9 +277,9 @@ h
 <path stroke="black" fill="white" pen="fat">
 12 -8 8 12 148 624 e
 </path>
-<text matrix="1 0 0 1 -4 4" transformations="translations" pos="68 612" stroke="black" type="label" width="24.304" height="15.214" depth="0" valign="baseline" size="LARGE">$a^{(1)}$</text>
-<text matrix="1 0 0 1 32 4" transformations="translations" pos="68 612" stroke="black" type="label" width="22.623" height="15.214" depth="0" valign="baseline" size="LARGE">$b^{(1)}$</text>
-<text matrix="1 0 0 1 68 4" transformations="translations" pos="68 612" stroke="black" type="label" width="22.71" height="15.214" depth="0" valign="baseline" size="LARGE">$c^{(1)}$</text>
+<text matrix="1 0 0 1 2.18944 4.68772" transformations="translations" pos="68 612" stroke="black" type="label" width="10.621" height="8.896" depth="0" valign="baseline" size="huge">$a$</text>
+<text matrix="1 0 0 1 38.1894 4.68772" transformations="translations" pos="68 612" stroke="black" type="label" width="8.602" height="14.349" depth="0" valign="baseline" size="huge">$b$</text>
+<text matrix="1 0 0 1 74.1894 4.68772" transformations="translations" pos="68 612" stroke="black" type="label" width="8.707" height="8.896" depth="0" valign="baseline" size="huge">$c$</text>
 <path matrix="1 0 0 1 116 0" stroke="black" pen="heavier">
 112 704 m
 76 624 l
@@ -301,9 +301,9 @@ h
 <path stroke="black" fill="white" pen="fat">
 12 -8 8 12 264 624 e
 </path>
-<text matrix="1 0 0 1 112 4" transformations="translations" pos="68 612" stroke="black" type="label" width="24.304" height="15.214" depth="0" valign="baseline" size="LARGE">$a^{(1)}$</text>
-<text matrix="1 0 0 1 148 4" transformations="translations" pos="68 612" stroke="black" type="label" width="23.268" height="15.214" depth="0" valign="baseline" size="LARGE">$e^{(1)}$</text>
-<text matrix="1 0 0 1 184 4" transformations="translations" pos="68 612" stroke="black" type="label" width="25.603" height="15.211" depth="3.35" valign="baseline" size="LARGE">$f^{(1)}$</text>
+<text matrix="1 0 0 1 118.189 4.68772" transformations="translations" pos="68 612" stroke="black" type="label" width="10.621" height="8.896" depth="0" valign="baseline" size="huge">$a$</text>
+<text matrix="1 0 0 1 154.189 4.68772" transformations="translations" pos="68 612" stroke="black" type="label" width="9.377" height="8.896" depth="0" valign="baseline" size="huge">$e$</text>
+<text matrix="1 0 0 1 190.189 4.68772" transformations="translations" pos="68 612" stroke="black" type="label" width="12.179" height="14.347" depth="4.02" valign="baseline" size="huge">$f$</text>
 <path matrix="1 0 0 1 236 0" stroke="black" pen="heavier">
 112 704 m
 76 624 l
@@ -325,9 +325,9 @@ h
 <path stroke="black" fill="white" pen="fat">
 12 -8 8 12 384 624 e
 </path>
-<text matrix="1 0 0 1 232 4" transformations="translations" pos="68 612" stroke="black" type="label" width="24.215" height="15.214" depth="0" valign="baseline" size="LARGE">$d^{(1)}$</text>
-<text matrix="1 0 0 1 268 4" transformations="translations" pos="68 612" stroke="black" type="label" width="22.623" height="15.214" depth="0" valign="baseline" size="LARGE">$b^{(2)}$</text>
-<text matrix="1 0 0 1 304 4" transformations="translations" pos="68 612" stroke="black" type="label" width="25.603" height="15.211" depth="3.35" valign="baseline" size="LARGE">$f^{(2)}$</text>
+<text matrix="1 0 0 1 238.189 4.68772" transformations="translations" pos="68 612" stroke="black" type="label" width="10.513" height="14.349" depth="0" valign="baseline" size="huge">$d$</text>
+<text matrix="1 0 0 1 275.565 4.68772" transformations="translations" pos="68 612" stroke="black" type="label" width="8.602" height="14.349" depth="0" valign="baseline" size="huge">$b$</text>
+<text matrix="1 0 0 1 310.189 4.68772" transformations="translations" pos="68 612" stroke="black" type="label" width="12.179" height="14.347" depth="4.02" valign="baseline" size="huge">$f$</text>
 <path matrix="1 0 0 1 356 0" stroke="black" pen="heavier">
 112 704 m
 76 624 l
@@ -349,9 +349,9 @@ h
 <path stroke="black" fill="white" pen="fat">
 12 -8 8 12 504 624 e
 </path>
-<text matrix="1 0 0 1 352 4" transformations="translations" pos="68 612" stroke="black" type="label" width="24.215" height="15.214" depth="0" valign="baseline" size="LARGE">$d^{(2)}$</text>
-<text matrix="1 0 0 1 388 4" transformations="translations" pos="68 612" stroke="black" type="label" width="23.268" height="15.214" depth="0" valign="baseline" size="LARGE">$e^{(2)}$</text>
-<text matrix="1 0 0 1 424 4" transformations="translations" pos="68 612" stroke="black" type="label" width="25.603" height="15.211" depth="3.35" valign="baseline" size="LARGE">$f^{(3)}$</text>
+<text matrix="1 0 0 1 358.189 4.68772" transformations="translations" pos="68 612" stroke="black" type="label" width="10.513" height="14.349" depth="0" valign="baseline" size="huge">$d$</text>
+<text matrix="1 0 0 1 394.189 4.68772" transformations="translations" pos="68 612" stroke="black" type="label" width="9.377" height="8.896" depth="0" valign="baseline" size="huge">$e$</text>
+<text matrix="1 0 0 1 430.189 4.68772" transformations="translations" pos="68 612" stroke="black" type="label" width="12.179" height="14.347" depth="4.02" valign="baseline" size="huge">$f$</text>
 <path stroke="black" pen="heavier">
 288 768 m
 112 704 l
@@ -397,8 +397,8 @@ h
 444 588 l
 h
 </path>
-<text matrix="1 0 0 1 0 4" transformations="translations" pos="104 572" stroke="black" type="label" width="14.5" height="7.415" depth="2.58" valign="baseline" size="LARGE">$v_1$</text>
-<text matrix="1 0 0 1 0 8" transformations="translations" pos="424 568" stroke="black" type="label" width="14.5" height="7.415" depth="2.58" valign="baseline" size="LARGE">$v_2$</text>
+<text matrix="1 0 0 1 0 4" transformations="translations" pos="104 572" stroke="black" type="label" width="17.303" height="8.896" depth="3.1" valign="baseline" size="huge">$v_1$</text>
+<text matrix="1 0 0 1 0 8" transformations="translations" pos="424 568" stroke="black" type="label" width="17.303" height="8.896" depth="3.1" valign="baseline" size="huge">$v_2$</text>
 <path matrix="1 0 0 1 0 4" stroke="black" pen="heavier">
 96 640 m
 96 560 l
