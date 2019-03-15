@@ -703,7 +703,7 @@ node which is collocated with one of these replicas, and only by such assignment
 \caption{\textit{Left:} A~$\TDM$ instance of cardinality $k=2$ with three triples:
 $t_1 = \langle a, b, c \rangle$,~$t_2 = \langle a, e, f \rangle$, $t_3 = \langle d, b, f \rangle$, and $t_4 = \langle d, e, f \rangle$. The solution is
 indicated by the grey triples $t_1$ and $t_4$. \textit{Right:} The corresponding instance and an optimal solution for the~$\FP + \MA
-+ \RS$ variant of the $\CTE$ problem. In specifying the chunk placement we ommit the replica subscripts. Each triple corresponds to a single triple gadget.}
++ \RS$ variant of the $\CTE$ problem. In specifying the chunk placement we omit the replica subscripts. Each triple corresponds to a single triple gadget.}
 \hfill
 \label{fig:fprsma}
 \end{figure}
@@ -855,7 +855,7 @@ The first set corresponds to elements of the universe $X\cup Y\cup Z$, and their
 \begin{figure}[t]
 \centering
 \includegraphics[width=1\columnwidth]{figs/static-mapping/cte-ma2.pdf}
-\caption{An instance of $\FP+\MA+\RS(2)$ variant of $\CTE$ corresponding to the $\TDM$ instance from Figure~\ref{fig:fprsma}. Leaves containing dummy chunks are grey. The optimal solution maps chunks to nodes $v_1, \ldots v_7$ by the dashed lines. In specifying the chunk placement we ommit the replica subscripts.}
+\caption{An instance of $\FP+\MA+\RS(2)$ variant of $\CTE$ corresponding to the $\TDM$ instance from Figure~\ref{fig:fprsma}. Leaves containing dummy chunks are grey. The optimal solution maps chunks to nodes $v_1, \ldots v_7$ by the dashed lines. In specifying the chunk placement we omit the replica subscripts.}
 \label{fig:example-rs2}
 \end{figure}
 
@@ -876,7 +876,7 @@ The multi-assignment factor is $m=4$, and the number of nodes to embed is~$\numN
  
  Given any $\TDPM$ instance $\ITDPM$, we produce the corresponding instance $\ICTE$ of the $\RS(2)+\MA+\FP$ variant, in the way described above.
  We illustrate an instance of $\CTE$ corresponding to a $\TDPM$ instance in Figure~\ref{fig:example-rs2}.
- The reduction (Theorem~\ref{th:ma-reduction}) consists of two parts: (1) given a solution for $\ITDPM$, we construct a solution to $\ICTE$, and (2) given a solution for $\ICTE$, we construct a solution for $\ITDPM$.
+ The reduction (Theorem~\ref{th:ma-reduction}) consists of two parts: (1)~given a solution for $\ITDPM$, we construct a solution to $\ICTE$, and (2) given a solution for $\ICTE$, we construct a solution for $\ITDPM$.
  The first part is easier, and we present it now.
 \begin{lemma}
   Fix an instance $\ITDPM$ of~$\TDPM$ and construct an instance $\ICTE$ of $\CTE$ in the way described in this section.
@@ -885,16 +885,22 @@ The multi-assignment factor is $m=4$, and the number of nodes to embed is~$\numN
 \end{lemma}
 \begin{proof}
   Fix a feasible solution~$\STDPM$ for $\ITDPM$, and construct a solution~$\SCTE$ for $\ICTE$ in the following way:
+  We place $n_V = k + \sum_e(\deg(e) - 1)$ nodes, and we assign $4$ chunks to each of these.
   \begin{enumerate}
     \item We place~$k$ nodes in~$k$ {\TripleGadgets} (one per gadget, at an arbitrary leaf) that correspond to triples chosen in~$\STDPM$ solution.
     We assign to each such node $3$ chunk replicas from the gadget it is placed and one arbitrary, unassigned unique chunk.
     \item For each element $e$, in $G(e)$ we place
-   ~$\deg(e) - 1$ nodes and assign them to arbitrary chunks in this
-    gadget, which are not yet assigned in any {\TripleGadget}.
+    ~$\deg(e) - 1$ nodes, and to each of them we assign $3$ arbitrary dummy chunks and $1$ arbitrary 
+    element chunk in this
+    gadget that is not assigned in any {\TripleGadget}.
   \end{enumerate}
-
-  \todo{todo: explain: every chunk was processed}
-  Every chunk was assigned, exactly $n_V = k + \sum_e(\deg(e) - 1)$ nodes are placed, and each of the nodes has exactly $4$ chunk replicas assigned.
+  Triples in $\STDPM$ match each element exactly once, and hence nodes in triple gadgets have exactly one chunk assigned for each element.
+  Remaining $\deg(e)-1$ chunks for element $e$ are assigned to $\deg(e)-1$ nodes in $G(e)$.
+  One chunk for each element $e$ in $G(e)$ is not assigned there, and it is assigned in some triple gadget instead.
+  Finally, each of $k$ unique chunks is assigned to a node in a triple gadget, and each dummy chunk is assigned to some node in its element gadget.
+  
+ % \todo{todo: explain: every chunk was processed}
+  %Every chunk was assigned, exactly $n_V = k + \sum_e(\deg(e) - 1)$ nodes are placed, and each of the nodes has exactly $4$ chunk replicas assigned.
   To see that the solution does not exceed the threshold $\Thr$, we sum up the total assignment cost.
   The $k$ nodes placed in \TripleGadgets{} have three short assignments to chunk replicas within the \TripleGadget{} of the total cost $0+2+2=4$, and one long assignment of cost $4$ (to some \UnqGadget{}).
   The remaining $\Vms-k$ nodes placed in the \CoverSubtree{} have four short assignments for the total cost $0+3\cdot 2 = 6$.
@@ -975,7 +981,7 @@ Therefore, exactly $k$ \TripleGadgets{} are active.
 \end{lemma}
 \begin{proof}
   By Lemma~\ref{lem:infeasible}, in $\SCTE$ there are at most $k$ long assignments.
-  By Lemma~\ref{lem:no-unq-ma}, these $k$ long assignments are depleted by $k$ unique chunks, and remaining chunks are assigned by a short assignment.
+  By Lemma~\ref{lem:no-unq-ma}, these $k$ long assignments are depleted by $k$ unique chunks, and remaining chunks are assigned by short assignments.
 
   Now we show that the unique chunks are assigned at distance $4$ (and not at distance $6$).
   Assume that a unique chunk is assigned at distance $6$ by a node $x$.
@@ -1120,7 +1126,7 @@ corresponds to every triple of~$\STDPM$ (one node per leaf). Chunks are assigned
 in the same server.
 
 The solution has the following cost:
-(1) the inter-connect cost inside a~single gadget is~$2 \cdot {3 \choose 2} = 6$,
+(1) the inter-connect cost inside each gadget is~${2 \cdot {3 \choose 2} = 6}$,
   as a~distance between every pair of nodes there is $2$;
   (2) the the inter-connect cost from a~single gadget to all other gadgets is~$4
   \cdot 3 \cdot 3 \cdot (k - 1) / 2 = 18\cdot (k-1)$, where the factor~$4$ corresponds to the distance $4$, the factor~$3$
