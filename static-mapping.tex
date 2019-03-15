@@ -10,7 +10,7 @@ In this chapter, we investigate mapping a virtual network onto the physical infr
 As described informally in the introduction (see Section~\ref{sec:virt_net_emb}), the model combines three components: (1)~the~substrate network (the servers
 and the connecting physical network),
 (2)~the virtual network (the virtual machines and the logical network connecting the machines to each other
-as well as to the data), and (3)~the data divided into data chunks that needs to be processed.
+as well as to the data), and (3)~the data divided into data chunks that needs to be assigned to nodes that process them.
 For the remainder of this chapter, we restrict our attention to the substrate networks that form a tree, and a particular virtual network topology, called the virtual cluster, which is basically a fully connected graph (a clique).
 We~refer to aforementioned problem as the \textsc{cluster-in-tree embedding} problem, abbreviated \CTE.
 Below we provide the details of components of \CTE. Figure~\ref{fig:overview} gives an overview of our model.
@@ -29,7 +29,7 @@ The data is stored in a distributed filesystem spread across the servers; this s
 The input data consists of~$\tau$ different \emph{chunks}~$\achunk_1, \ldots, \achunk_{\ChunkType}$,
 where each chunk~$\achunk_i$ can have~$r_i\geq 1$ instances (replicas)~$\achunk_{i}^{(1)},\ldots, \achunk_{i}^{(r_i)}$,
  stored at different servers. A single server may host multiple chunks.
-It is sufficient to process one replica of each chunk, and we refer to this
+It is sufficient to assign one replica of each chunk, and we refer to this
 replica as the \emph{active} (or selected) replica.
 
 \parag{The Virtual Network.} The virtual network $\VirtualNodes$ consists of $n_V=|\VirtualNodes|$ virtual machines, called \emph{nodes}.
@@ -40,12 +40,12 @@ The \emph{(node) inter-connect network} forms a~complete network (a clique) amon
 and the \emph{(chunk) access network} consists of links from each active replica to the node that is assigned to process it.
 In order to ensure a predictable application performance, both these networks require certain minimal bandwidth guarantees.
 Concretely, we assume that each chunk
-is connected to its processing node at a~bandwidth~$\CostTrans$, and each node is connected to any other node
+is connected to its assigned node at a~bandwidth~$\CostTrans$, and each node is connected to any other node
 at  bandwidth~$\CostCom$.
-The choice of replica and processing node is subject to optimization, and
+The choice of replica and the node assigned is subject to optimization, and
 $\mu$ denotes the assignment of chunks to nodes.
 Furthermore, we assume that the number of chunks $\tau$ is divisible by the number of nodes~$n_V$, and the assignment~$\mu$ is \emph{balanced}:
-each node processes exactly $\tau / n_V$ chunks.
+each node has exactly $\tau / n_V$ chunks assigned.
 Collectively, the nodes of virtual network with the inter-connect network and the access network form the \emph{virtual cluster}.
 Note that our definition extends the notion of the virtual cluster studied by others \cite{oktopus,talk-about,infocom16,ccr15emb,proteus} by incorporating the chunk access network.
 
@@ -83,16 +83,16 @@ and bandwidth constraints ($\BW$), as~described below.
 
 \parag{Multiple Assignment ($\MA$).}
 In most applications, the number of chunks~$\tau$ is larger than the number of nodes, and the objective is to assign multiple chunks to each node.
-In each variant (regardless of $\MA$), we investigate assignments that balances chunks among nodes, i.e., where the number of chunks is divisible by the number of nodes, and each node processes an~identical integer number of chunks.
-We require that the number of chunks processed by each node is equal to~$\MaFactor = \tau / n_V$, and we call $\MaFactor$ the multi-assignment factor.
+In each variant (regardless of $\MA$), we investigate assignments that balances chunks among nodes, i.e., where the number of chunks is divisible by the number of nodes, and each node has an~identical integer number of chunks assigned.
+We require that the number of chunks assigned to each node is equal to~$\MaFactor = \tau / n_V$, and we call $\MaFactor$ the multi-assignment factor.
 If the number of chunks exceeds the number of nodes, i.e., $\MaFactor > 1$, then we refer to such scenario as $\MA$.
 In~the~$\CTE$ variant without $\MA$, each node has exactly one chunk assigned, i.e., $\MaFactor = 1$.
 
 \parag{Replica Selection ($\RS$).}
 Distributed filesystems often utilize data redundancy for corruption detection and correction.
 A redundant data chunk has multiple \emph{replicas}, stored on different physical machines.
-For each data chunk, it is sufficient to process only one of its replicas.
-By~$\RS$ we denote the flexibility of choosing which replica of each data chunk to process.
+For each data chunk, it is sufficient to assign only one of its replicas.
+By~$\RS$ we denote the flexibility of choosing which replica of each data chunk to assign.
 In~the~problem variant without $\RS$, each chunk has a single replica ($r_i = 1$ for all $i$).
 
 \parag{Flexible Placement ($\FP$).}
@@ -105,7 +105,7 @@ In some computational tasks, it is sufficient to process data chunks independent
 However, more often the result of processing the individual chunks is combined afterwards.
 By $\NI$ we refer to the latter scenario, where the computation requires the nodes to cooperate.
 We investigate the scenario, where we reserve a bandwidth of volume $\CostCom$ between each pair of nodes, i.e., the node inter-connect is modelled as a complete graph, to account for the all-to-all communication patterns of batch processing applications such as MapReduce.
-In the problem variant without $\NI$, we optimize only the cost of matching chunks to nodes, and the inter-node communication is set to zero, i.e., $\CostCom = 0$.
+In the problem variant without $\NI$, we optimize only the cost of assigning chunks to nodes, and the inter-node communication is set to zero, i.e., $\CostCom = 0$.
 
 \parag{Bandwidth Capacities ($\BW$).}
 We distinguish between an uncapacitated and a capacitated scenario where each link $e$
@@ -231,7 +231,7 @@ which need to be rounded to integral solutions (of the same cost)~\cite{electric
 
 Third, given an integer min-cost~max-flow solution, we need to decompose
 the integer flow into the paths
-representing matched chunk-node pairs:
+representing chunk-node assignments:
 The assignment can be obtained by decomposing the flow allocated in the
 original substrate network. In order to identify a chunk-node assignment,
 we take an~arbitrary (loop-free) path~$p$ carrying a flow of value at least~$1$ from~$\Source$ to~$\Sink$:
@@ -277,12 +277,12 @@ graph between the set
 of nodes and
 the set of chunks.
 First, we clone each node~$\MaFactor$ times
-as each node needs to process
+as each node needs to assign
 $\MaFactor$ chunks, and we aggregate all replicas of a given chunk in a
 single %$\ChunkType$
 super-vertex.
 Second, we link (cloned) nodes to (aggregated) replicas.
-In instances without $\BW$, mapping of any replica to any node is feasible, and hence, for a given mapping $\mu$ of chunks to nodes, the minimum bandwidth is utilized if for each $c$, node $\mu(c)$ serves the closest replica of $c$.
+In instances without $\BW$, assigning any replica to any node is feasible, and hence, for a given assignment $\mu$ of chunks to nodes, the minimum bandwidth is utilized if for each $c$, node $\mu(c)$ serves the closest replica of $c$.
 Therefore, for each node $v$ and chunk $c$, we connect each copy of $v$ and the super-vertex $c$ with the link of cost $\min_i \dist(v,c^{(i)})$, i.e., the cost of reaching the closest replica.
 Finally, on the resulting bipartite graph, we compute a~\emph{minimum weight
 perfect
@@ -413,7 +413,7 @@ A non-leaf vertex~$u$ is processed in the following way: we take the union of
 the sets corresponding to~$u$'s children, i.e., the sets contain the unassigned chunks and nodes
 in this subtree.
 For both leaves and inner nodes, whenever
-both sets are non-empty, we greedily match an arbitrary chunk $c$ in~$S_c$ with an arbitrary node $v$ in~$S_v$.
+both sets are non-empty, we greedily assign an arbitrary chunk $c$ in~$S_c$ with an arbitrary node $v$ in~$S_v$.
 Then, we remove $c$ from $S_c$, and we decrement the counter of $v$. If the counter of $v$ reaches zero, we remove $v$ from $S_v$.
 
 \parag{Analysis.} For each
@@ -475,7 +475,7 @@ the chunk locations.
 
 \parag{Example.} Figure~\ref{fig:dynamic_motivation} shows an example: one
 extreme solution is to minimize the distance between chunks and nodes,
-see mapping~$\NodeMapping_1$ in the left picture in
+see assignment~$\NodeMapping_1$ in the left picture in
 Figure~\ref{fig:dynamic_motivation}: the four nodes are all
 collocated with chunks, resulting in a zero-cost chunk access network. As a
 result, the paths between the individual nodes are longer than in alternative
@@ -492,7 +492,7 @@ node inter-connect sum up to~$20 \cdot \CostCom$.
 %\end{figure}
 
 The right picture in Figure~\ref{fig:dynamic_motivation} shows a different node
-mapping~$\NodeMapping_2$, which seeks to minimize the inter-connect costs
+assignment~$\NodeMapping_2$, which seeks to minimize the inter-connect costs
 between the nodes, and places all nodes in one subtree. The distance between all
 nodes is two, which results in a total bandwidth allocation of~$12\cdot\CostCom$
 for the inter-connect. However, this reduced price comes at additional costs in
@@ -543,7 +543,7 @@ bw(T',x) =
   where $\tau(T')$ is the number of chunks in a~subtree~$T'$.
   If~$bw(T',x)$ exceeds the capacity~$\capacity$ of the uplink of $T'$, we set $\b(T', x) = \infty$.
   The first term represents
-the bandwidth necessary to match the chunks in $T'$ from their location to
+the bandwidth necessary to assign the chunks in $T'$ from their location to
 nodes outside of $T'$ (see Lemma~\ref{lemma:uplink} for similar argument).
 The second term of $bw$ represents the required bandwidth for the communication between the~$x$
 nodes inside~$T'$, and the~$\Vms - x$ nodes in the remaining parts of the substrate
@@ -604,7 +604,7 @@ For the sake of completeness, we also observe that there are
 several variants that admit a trivial solution. Concretely, variants with~$\FP$
 plus any combination of
 $\RS$ and~$\BW$ (but without~$\MA$ and~$\NI$) can easily be solved by
-mapping
+assigning
 nodes to chunk locations.
 %Figure~\ref{fig:venn_trivial}
 %shows a Venn diagram of the trivial property combinations.
@@ -703,7 +703,7 @@ node which is collocated with one of these replicas, and only by such assignment
 \caption{\textit{Left:} A~$\TDM$ instance of cardinality $k=2$ with three triples:
 $t_1 = \langle a, b, c \rangle$,~$t_2 = \langle a, e, f \rangle$, $t_3 = \langle d, b, f \rangle$, and $t_4 = \langle d, e, f \rangle$. The solution is
 indicated by the grey triples $t_1$ and $t_4$. \textit{Right:} The corresponding instance and an optimal solution for the~$\FP + \MA
-+ \RS$ variant of the $\CTE$ problem. We ommit the replica number in specifying the chunk location. Each triple corresponds to a single triple gadget.}
++ \RS$ variant of the $\CTE$ problem. In specifying the chunk placement we ommit the replica subscripts. Each triple corresponds to a single triple gadget.}
 \hfill
 \label{fig:fprsma}
 \end{figure}
@@ -723,29 +723,29 @@ $\ITDPM$ has a~perfect matching (of size~$k$).
 \medskip
 
 ($\Rightarrow$) Fix a solution $\STDPM$ for~$\ITDPM$, i.e., the set of triples that form a perfect matching. To construct the solution $\SCTE$ to $\ICTE$, we place a single node in every
-gadget that corresponds to triples in $\STDPM$ (at an arbitrary leaf of this gadget). In each gadget, we match all three chunks to the node located in this gadget. This
-solution costs exactly~$\Thr = 4\cdot k$: each of $k$ nodes is matched to one chunk collocated with it and to two chunks at the distance $2$.
-The solution $\STDPM$ matches every element of the universe $X \cup Y \cup Z$, hence every chunk is matched to exactly one node, and $\SCTE$ is feasible.
+gadget that corresponds to triples in $\STDPM$ (at an arbitrary leaf of this gadget). In each gadget, we assign all three chunks to the node located in this gadget. This
+solution costs exactly~$\Thr = 4\cdot k$: each of $k$ nodes is assigned to one chunk collocated with it and to two chunks at distance $2$.
+The solution $\STDPM$ matches every element of the universe $X \cup Y \cup Z$, hence every chunk has a replica assigned to exactly one node, and $\SCTE$ is feasible.
 
 \medskip
 
 ($\Leftarrow$) Fix a solution $\SCTE$ for ~$\ICTE$ with cost at most $\Thr$.
-We call the triple gadget \emph{active} if it hosts a single node in one of its leaves.
+We call the triple gadget \emph{active} if it hosts a single node at one of its leaves.
 We claim that $\SCTE$ places at most one node in each triple gadget.
 Assume that two nodes $x_1$, $x_2$ are placed in the same triple gadget.
-First, we lower-bound the cost incurred by $x_1$ and $x_2$ that collectively match to $2\cdot \MaFactor = 6$ chunks.
+First, we lower-bound the cost incurred by $x_1$ and $x_2$ that collectively have $2\cdot \MaFactor = 6$ replicas assigned.
 At most two of these chunks are co-located with $x_1$ or $x_2$ and cost $0$, and remaining four chunks incur a cost at least $2$ each.
 Moreover, at least three of these chunks are placed outside of this triple gadget and incur the cost at least $4$ each.
-In total, $x_1$ and $x_2$ incur the cost at least $2\cdot 0+2+3\cdot 4=14$.
+In total, $x_1$ and $x_2$ incur the cost at least $2\cdot 0+2\cdot 1+3\cdot 4=14$.
 Second, we lower-bound the cost incurred by remaining $k-2$ nodes.
-Each node can match at most $1$ of its $\MaFactor=3$ chunks for free (every leaf hosts exactly one chunk),
+Each node can have at most $1$ of its $\MaFactor=3$ replicas assigned for free (every leaf hosts exactly one chunk),
 and it incurs the cost at least $4$ for the remaining~$2$ chunks that are at distance at least~$2$.
-The total chunk mapping cost $4\cdot (k-2)+14 = 4\cdot k + 6$ exceeds the threshold $\Thr = 4\cdot k$, a contradiction.
-As $n_V = k$, we conclude that in $\SCTE$, there are exactly $k$ active gadgets.
+The total chunk assignment cost $4\cdot (k-2)+14 = 4\cdot k + 6$ exceeds the threshold $\Thr = 4\cdot k$, a contradiction.
+As $n_V = k$, we conclude that there are exactly $k$ active gadgets in $\SCTE$.
 
 To construct the solution $\STDPM$ to $\ITDPM$, we pick the set of triples whose gadgets are active.
 The solution $\STDPM$ consists of $k$ triples.
-Since all chunks are matched to exactly one node, every element of~$X$,~$Y$ and~$Z$ is matched, and $\STDPM$ forms a 3-dimensional perfect matching of $X \cup Y\cup Z$.
+Since all chunks are assigned to exactly one node, every element of~$X$,~$Y$ and~$Z$ is matched, and $\STDPM$ forms a 3-dimensional perfect matching of $X \cup Y\cup Z$.
 \end{proof}
 
 \subsection{Hardness of Multi-Assignments with at Most Two Replicas}
@@ -845,12 +845,20 @@ The first set corresponds to elements of the universe $X\cup Y\cup Z$, and their
   for each element $e \in X\cup Y\cup Z$, for each $t \in P_e$,
   we place replicas $e_t^{(2)}$ in different leaves of the gadget $G(e)$.
   In total, we place $\deg(e)$ replicas of element chunks in the leaves of the gadget $G(e)$.
-  \item \emph{Unique chunks}. We construct~$k$ unique chunks with one replica each, and we place these replicas at the leaves of {\UnqGadgets} (one chunk per leaf).
+  \item \emph{Unique chunks}. We construct~$k$ unique chunks $u_1, \ldots, u_k$ with one replica each, and we place these replicas at the leaves of {\UnqGadgets} (one chunk per leaf).
   \item \emph{Dummy chunks}. For each element~$e\in X\cup Y\cup Z$,
   we construct an additional set of $3\cdot(\deg(e) - 1)$ dummy chunks, with one replica each, and we place these replicas in $3\cdot (\deg(e)-1)$ leaves of $G(e)$ (one chunk per leaf),
   not occupied by (the second) replicas of element chunks.
   Recall that the remaining $\deg(e)$ leaves of $G(e)$ contain replicas $e_t^{(2)}$ for each $t \in P_e$. In total, we place $4\cdot (\deg(e) - 1) + 1$ replicas in $G(e)$, one replica at each leaf.
 \end{enumerate}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=1\columnwidth]{figs/static-mapping/cte-ma2.pdf}
+\caption{An instance of $\FP+\MA+\RS(2)$ variant of $\CTE$ corresponding to the $\TDM$ instance from Figure~\ref{fig:fprsma}. Leaves containing dummy chunks are grey. The optimal solution maps chunks to nodes $v_1, \ldots v_7$ by the dashed lines. In specifying the chunk placement we ommit the replica subscripts.}
+\label{fig:example-rs2}
+\end{figure}
+
 
 \paragraph{Other properties of the instance.}
 The multi-assignment factor is $m=4$, and the number of nodes to embed is~$\numNodes = k + \sum_{e}(\deg(e)-1) = k + \sum_{e}\deg(e)-3\cdot k = 3\cdot p - 2\cdot k$.
@@ -867,13 +875,7 @@ The multi-assignment factor is $m=4$, and the number of nodes to embed is~$\numN
  \bigskip
  
 Given any $\TDPM$ instance $\ITDPM$, we produce the corresponding instance $\ICTE$ of the $\RS(2)+\MA+\FP$ variant, in the way described above.
-We call a {\TripleGadget} \textit{active}, if it contains a~single node at one of its leafs, and we call the node \textit{active} if it is placed in a {\TripleGadget}.
-In the lemmas below, we show that in feasible solutions to $\ICTE$, exactly $k$ \TripleGadgets{} are active (similar to Theorem~\ref{th:ma-unlimited}).
-
-In the instance $\ICTE$, chunks can be matched to nodes at distance $0, 2, 4$ or $6$.
-We call the matches at distance $0$ or $2$ \emph{short matches}, and the ones at distance $4$ or $6$ \emph{long}.
-In Lemma~\ref{lem:short-ma}, we determine the matches present in $\SCTE$, to obtain the structure of the solution in Lemma~\ref{lem:one-unique-per-node}, which we apply in the reduction (Theorem~\ref{th:ma-reduction}).
-
+\maciek{todo: wstep. Reference to Figure~\ref{fig:example-rs2}}
 \begin{lemma}
   Fix an instance $\ITDPM$ of~$\TDPM$ and construct an instance $\ICTE$ of $\CTE$ in the way described in this section.
   If there exists a perfect 3D matching in $\ITDPM$, then $\ICTE$ has a~solution of cost at most $\Thr$.
@@ -882,38 +884,39 @@ In Lemma~\ref{lem:short-ma}, we determine the matches present in $\SCTE$, to obt
 \begin{proof}
   Fix a feasible solution~$\STDPM$ for $\ITDPM$, and construct a solution~$\SCTE$ for $\ICTE$ in the following way:
   \begin{enumerate}
-    \item We place~$k$ nodes in~$k$ {\TripleGadgets} (one per gadget) that correspond to triples chosen in~$\STDPM$ solution.
-    The choice of exact leaf of the gadget to place a node is arbitrary.
-    We match each such node to $3$ chunk replicas in the gadget it is placed, and to one arbitrary, unmatched unique chunk.
+    \item We place~$k$ nodes in~$k$ {\TripleGadgets} (one per gadget, at an arbitrary leaf) that correspond to triples chosen in~$\STDPM$ solution.
+    We assign to each such node $3$ chunk replicas from the gadget it is placed and one arbitrary, unassigned unique chunk.
     \item For each element $e$, in $G(e)$ we place
-   ~$\deg(e) - 1$ nodes and match them to arbitrary chunks in this
-    gadget, which are not yet matched in any {\TripleGadget}.
+   ~$\deg(e) - 1$ nodes and assign them to arbitrary chunks in this
+    gadget, which are not yet assigned in any {\TripleGadget}.
   \end{enumerate}
 
-  Every chunk was processed, exactly $n_V = k + \sum_e(\deg(e) - 1)$ nodes are placed, and each of the nodes process exactly $4$ chunk replicas.
-  To see that the solution does not exceed the threshold $\Thr$, we sum up the total matching cost.
-  The $k$ nodes placed in \TripleGadgets{} have three short matches to chunk replicas within the \TripleGadget{} for the total cost $0+2+2=4$, and one long match of cost $4$ (to some \UnqGadget{}).
-  The remaining $\Vms-k$ nodes placed in the \CoverSubtree{} have four short matches for the total cost $0+3\cdot 2 = 6$.
+  \todo{todo: explain: every chunk was processed}
+  Every chunk was assigned, exactly $n_V = k + \sum_e(\deg(e) - 1)$ nodes are placed, and each of the nodes has exactly $4$ chunk replicas assigned.
+  To see that the solution does not exceed the threshold $\Thr$, we sum up the total assignment cost.
+  The $k$ nodes placed in \TripleGadgets{} have three short assignments to chunk replicas within the \TripleGadget{} of the total cost $0+2+2=4$, and one long assignment of cost $4$ (to some \UnqGadget{}).
+  The remaining $\Vms-k$ nodes placed in the \CoverSubtree{} have four short assignments for the total cost $0+3\cdot 2 = 6$.
   Summing up, the cost incurred is $8\cdot k + 6\cdot (\Vms - k) = \Thr$, i.e., the solution is feasible.
 \end{proof}
 
+\todo{wstep ze teraz w druga strone}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=1\columnwidth]{figs/static-mapping/cte-ma2.pdf}
-\caption{An instance of $\FP+\MA+\RS(2)$ variant of $\CTE$ corresponding to the $\TDM$ instance from Figure~\ref{fig:fprsma}. Leaves containing dummy chunks are grey. The optimal solution maps chunks to nodes $v_1, \ldots v_7$ by the dashed lines.}\label{fig:overview}
-\end{figure}
+We call a {\TripleGadget} \textit{active}, if it contains a~single node at one of its leafs, and we call the node \textit{active} if it is placed in a {\TripleGadget}.
+In the lemmas below, we show that in feasible solutions to $\ICTE$, exactly $k$ \TripleGadgets{} are active (similar to Theorem~\ref{th:ma-unlimited}).
+In the instance $\ICTE$, chunks can be assigned to nodes at distance $0, 2, 4$ or $6$.
+We call the assignments at distance $0$ or $2$ \emph{short}, and the ones at distance $4$ or $6$ \emph{long}.
+In Lemma~\ref{lem:short-ma}, we determine the assignments present in $\SCTE$, to obtain the structure of the solution in Lemma~\ref{lem:one-unique-per-node}, which we apply in the reduction (Theorem~\ref{th:ma-reduction}).
 
 
   \begin{lemma}
-    Any solution to $\ICTE$ with more than $k$ long matches is infeasible.
+    Any solution to $\ICTE$ with more than $k$ long assignments is infeasible.
     \label{lem:infeasible}
   \end{lemma}
   \begin{proof}
-    Consider a solution that uses $k+i$ long matches for $i>0$.
-    The solution consists of $\MaFactor \cdot n_V = 4\cdot n_V$ matches, and $k+i$ of them incur cost at least $4\cdot (k+i)$.
-    As every leaf of the substrate network of $\ICTE$ contains one replica, at most $n_V$ matches are free.
-    As the minimum distance between leaves is $2$, the remaining $3\cdot n_V - k-i$ matches incur the cost $2$ each.
+    Consider a solution that uses $k+i$ long assignments for $i>0$.
+    The solution consists of $\MaFactor \cdot n_V = 4\cdot n_V$ assignments, and $k+i$ of them incur cost at least $4\cdot (k+i)$.
+    As every leaf of the substrate network of $\ICTE$ contains one replica, at most $n_V$ assignments are free.
+    As the minimum distance between leaves is $2$, the remaining $3\cdot n_V - k-i$ assignments incur the cost $2$ each.
     In total, the cost of the solution is then $4\cdot (k+i) + 2\cdot (3\cdot n_V - k-i) = 6\cdot n_V + 2\cdot k + 2\cdot i = \Thr + 2\cdot i$, i.e., the solution cost exceeds the threshold $\Thr$.
   \end{proof}
 
@@ -925,20 +928,20 @@ In Lemma~\ref{lem:short-ma}, we determine the matches present in $\SCTE$, to obt
 
 \begin{proof}
   First, we show that at most $k$ nodes are placed in the \MatchSubtree.
-  Each node placed in the \MatchSubtree{} has at most $3$ leaves in the distance $\leq 2$, hence at least one of its $\MaFactor=4$ matches is long.
-  Therefore, more than $k$ nodes in the matching subtree would lead to more than $k$ long matches, and by Lemma~\ref{lem:infeasible}, the solution would be infeasible.
+  Each node placed in the \MatchSubtree{} has at most $3$ leaves in the distance $\leq 2$, hence at least one of its $\MaFactor=4$ assignments is long.
+  Therefore, more than $k$ nodes in the matching subtree would lead to more than $k$ long assignments, and by Lemma~\ref{lem:infeasible}, the solution would be infeasible.
   
   As at most $k$ nodes are placed in the \MatchSubtree{}, at least $\Vms-k$ nodes are placed in the \CoverSubtree.
   Now we claim that the cover subtree contains exactly $n_V-k$ of them.
   Suppose the contrary, i.e., that $\Vms-k+i$ nodes were placed in the \CoverSubtree{} for $i > 0$.
   With each element gadget $G(e)$ we associate its \emph{volume} $\deg(e) - 1$.
-  The volume corresponds to the maximum number of nodes that can be placed inside the gadget without causing a long match.
-  More precisely, if $\deg(e) - 1 + j_e$ nodes are placed in $G(e)$ for $j_e > 0$, the number of chunks in the gadget, $4\cdot (\deg(e)-1)+1$ is smaller the number of chunks that these nodes should process, $4 \cdot (\deg(e)-1+j_e)$.
-  These nodes process remaining $4\cdot j_e - 1$ chunks using long matches.
+  The volume corresponds to the maximum number of nodes that can be placed inside the gadget without causing a long assignment.
+  More precisely, if $\deg(e) - 1 + j_e$ nodes are placed in $G(e)$ for $j_e > 0$, the number of chunks in the gadget, $4\cdot (\deg(e)-1)+1$ is smaller the number of chunks that these nodes should have assigned, $4 \cdot (\deg(e)-1+j_e)$.
+  These nodes has the remaining $4\cdot j_e - 1$ chunks assigned using long assignments.
   By the pigeon-hole principle, at least $i = \sum_e j_e$ nodes surpass the volume of its gadget.
-  As $\sum_e (4\cdot j_e - 1) \geq 3 \cdot i$, the nodes in the cover subtree have at least $3\cdot i$ long matches (of cost at least $4$).
-  Recall that each of $k-i$ nodes in the matching subtree result in one long match.
-  In total we have at least $k+2\cdot i$ long matches and by Lemma~\ref{lem:infeasible}, the solution is infeasible, a~contradiction.
+  As $\sum_e (4\cdot j_e - 1) \geq 3 \cdot i$, the nodes in the cover subtree have at least $3\cdot i$ long assignments (of cost at least $4$).
+  Recall that each of $k-i$ nodes in the matching subtree result in one long assignment.
+  In total we have at least $k+2\cdot i$ long assignments and by Lemma~\ref{lem:infeasible}, the solution is infeasible, a~contradiction.
 \end{proof}
 
 \begin{lemma}
@@ -949,9 +952,9 @@ In Lemma~\ref{lem:short-ma}, we determine the matches present in $\SCTE$, to obt
   By Lemma~\ref{lem:n-matchsubtree-ma}, exactly $k$ nodes were placed in the \MatchSubtree{}.
   Suppose that $j>0$ of these nodes were placed in the \UnqGadgets{}.
   Every leaf of every unique gadget is at distance at least $4$ from every other leaf of the substrate network.
-  Hence, each of $j$ nodes placed in a unique gadget has at least $3$ out of its $\MaFactor = 4$ chunks matched by a long match.
-  As triple gadgets consists of $3$ leaves, each of remaining $k-j$ nodes placed in the triple gadget uses at least $1$ long match.
-  In total, the number of long matches would be then at least $k-j + 3\cdot j > k$, which by Lemma~\ref{lem:infeasible} would lead to infeasibility of $\SCTE$.
+  Hence, each of $j$ nodes placed in a unique gadget has at least $3$ out of its $\MaFactor = 4$ chunks assigned by a long assignment.
+  As triple gadgets consists of $3$ leaves, each of remaining $k-j$ nodes placed in the triple gadget uses at least $1$ long assignment.
+  In total, the number of long assignments would be then at least $k-j + 3\cdot j > k$, which by Lemma~\ref{lem:infeasible} would lead to infeasibility of $\SCTE$.
 \end{proof}
 
 \begin{lemma}
@@ -961,38 +964,38 @@ In Lemma~\ref{lem:short-ma}, we determine the matches present in $\SCTE$, to obt
 \begin{proof}
   By Lemma~\ref{lem:n-matchsubtree-ma}, exactly $k$ nodes were placed in the \MatchSubtree{}.
   By Lemma~\ref{lem:no-unq-ma}, these $k$ nodes are placed in the triple gadgets and not in the unique gadgets.
-As there are exactly $3$ replicas in each \TripleGadget{}, placing more than one node in a single \TripleGadget{} causes at least additional $3$ long matches (the argument is the same as in the proof of Theorem~\ref{th:ma-unlimited}).
+As there are exactly $3$ replicas in each \TripleGadget{}, placing more than one node in a single \TripleGadget{} causes at least additional $3$ long assignments (the argument is the same as in the proof of Theorem~\ref{th:ma-unlimited}).
 Therefore, exactly $k$ \TripleGadgets{} are active.
 \end{proof}
 
 \begin{lemma}
-  In a feasible solution $\SCTE$ to $\ICTE$, the unique chunks are matched by long matches at distance 4, and remaining chunks are matched by short matches (at distance 0~or~2).
+  In a feasible solution $\SCTE$ to $\ICTE$, the unique chunks are assigned by long assignments at distance 4, and remaining chunks are assigned by short assignments (at distance 0~or~2).
   \label{lem:short-ma}
 \end{lemma}
 \begin{proof}
-  By Lemma~\ref{lem:infeasible}, in $\SCTE$ there are at most $k$ long matches.
-  By Lemma~\ref{lem:no-unq-ma}, these $k$ long matches are depleted by $k$ unique chunks, and remaining chunks are matched by a short match.
+  By Lemma~\ref{lem:infeasible}, in $\SCTE$ there are at most $k$ long assignments.
+  By Lemma~\ref{lem:no-unq-ma}, these $k$ long assignments are depleted by $k$ unique chunks, and remaining chunks are assigned by a short assignment.
 
-  Now we show that the unique chunks are matched at distance $4$ (and not at distance $6$).
-  Assume that a unique chunk is matched by a match at distance $6$ by a node $x$.
-  Then, $n_V - k$ nodes that do not process unique chunks incur the cost at least $6$ each,
-  and $k$ nodes that process the unique chunks incur the cost at least $k\cdot 8$.
+  Now we show that the unique chunks are assigned at distance $4$ (and not at distance $6$).
+  Assume that a unique chunk is assigned at distance $6$ by a node $x$.
+  Then, $n_V - k$ nodes that do not have unique chunks assigned incur the cost at least $6$ each,
+  and $k$ nodes that are assigned to the unique chunks incur the cost at least $k\cdot 8$.
   Moreover, the node $x$ incur the cost at least $10$.
   In total,the solution cost is at least $8\cdot (k-1) + 10 + (n_V-k)\cdot 6 > 8\cdot k + (n_V-k)\cdot 6 = \Thr$, i.e., the solution cost exceeds the threshold, a contradiction.
 \end{proof}
 
 \begin{lemma}
-  In a feasible solution $\SCTE$ to $\ICTE$, each node in the matching subtree processes one unique chunk and three chunks that are placed in the triple gadget the node is located at.
+  In a feasible solution $\SCTE$ to $\ICTE$, each node in the matching subtree is assigned to one unique chunk and three chunks that are placed in the triple gadget the node is located at.
   \label{lem:one-unique-per-node}
 \end{lemma}
 \begin{proof}
   By Lemmas~\ref{lem:n-matchsubtree-ma} and \ref{lem:no-unq-ma}, $k$ nodes in the matching subtree are placed in triple gadgets.
-  As triple gadgets have at most $3$ leaves, each of these nodes causes at least one long match.
-  If a node would process $i>1$ unique chunks, then the total number of long matches is at least $k-1+i>k$, and by Lemma~\ref{lem:infeasible} the solution would be infeasible.
-  If a node would process $0$ unique chunks, it still causes a~long match.
-  By Lemma~\ref{lem:short-ma}, each of $k$ unique chunks causes a~long match, and in total we would have at least $k+1$ long matches,  and by Lemma~\ref{lem:infeasible} the solution would be infeasible.
+  As triple gadgets have at most $3$ leaves, each of these nodes causes at least one long assignment.
+  If a node would have $i>1$ unique chunks assigned, then the total number of long assignments is at least $k-1+i>k$, and by Lemma~\ref{lem:infeasible} the solution would be infeasible.
+  If a node would have $0$ unique chunks assigned, it still causes a~long assignment.
+  By Lemma~\ref{lem:short-ma}, each of $k$ unique chunks causes a~long assignment, and in total we would have at least $k+1$ long assignments,  and by Lemma~\ref{lem:infeasible} the solution would be infeasible.
 
-  Remaining $3$ of $\MaFactor=4$ chunks matched to each node in the matching subtree are matched by the short match, and the only chunks in distance at most $2$ are the chunks located in the same gadget that the node is located at.
+  Remaining $3$ of $\MaFactor=4$ chunks assigned to each node in the matching subtree are assigned by the short assignment, and the only chunks in distance at most $2$ are the chunks located in the same gadget that the node is located at.
 \end{proof}
 
 \begin{theorem}
@@ -1010,13 +1013,13 @@ Therefore, exactly $k$ \TripleGadgets{} are active.
   By Lemma~\ref{lem:n-active-ma}, exactly $k$ \TripleGadgets{} are active.
   We construct the solution $\STDPM$ from the set of triples that correspond to active \TripleGadgets{}.
 
-  Now, we show that $\STDPM$ is feasible, i.e., it matches every element of $X\cup Y\cup Z$ exactly once.
-  By Lemma~\ref{lem:one-unique-per-node}, every active node is matched to the three chunks located at the gadget it is placed at.
-  Hence, the chunks $x_t$, $y_t$ and $z_t$ matched to an active node correspond to the triple $t = \langle x, y, z \rangle \in P$.
+  Now, we show that $\STDPM$ is feasible, i.e., it assigns every element of $X\cup Y\cup Z$ exactly once.
+  By Lemma~\ref{lem:one-unique-per-node}, every active node is assigned to the three chunks located at the gadget it is placed at.
+  Hence, the chunks $x_t$, $y_t$ and $z_t$ assigned to an active node correspond to the triple $t = \langle x, y, z \rangle \in P$.
   
   For every element $e\in X\cup Y \cup Z$, we constructed $\deg(e)$ element chunks, with two replicas each: one in the matching subtree and one in the cover subtree.
-  In each element gadget $G(e)$, we match exactly $\deg(e) - 1$ element chunks, and the remaining $1$ element chunk is matched in a triple gadget.
-  Hence, the set of active nodes processes $1$ of $\deg(e)$ element chunks for each $e\in X\cup Y\cup Z$, and $\STDPM$ matches each $e\in X\cup Y\cup Z$ exactly once.
+  In each element gadget $G(e)$, we assign exactly $\deg(e) - 1$ element chunks, and the remaining $1$ element chunk is assigned in a triple gadget.
+  Hence, the set of active nodes have $1$ of $\deg(e)$ element chunks assigned for each $e\in X\cup Y\cup Z$, and $\STDPM$ assigns each $e\in X\cup Y\cup Z$ exactly once.
  
 %  Each of $3\cdot p = \sum_e \deg(e)$ element chunks has two replicas: one in the matching subtree and one in the cover subtree.
 %  By Lemma~\ref{lem:one-unique-per-node}, $3\cdot k$ element chunks are matched in the matching subtree.
@@ -1064,7 +1067,7 @@ The proof is similar in spirit to the proof of the~$\FP+\RS+\MA$ variant, howeve
 we modify the construction to account for the absence of~$\MA$:
 we place a bandwidth constraints on the certain links in the substrate network.
 Additionally, we choose
-a high value for~$\CostTrans$ (the cost of chunk matching), so that nodes are directly collocated with
+a high value for~$\CostTrans$ (the cost of chunk assignment), so that nodes are directly collocated with
 their assigned chunks.
 %We leverage the fact that any solution which does not
 %assign zero or the maximum possible number of chunks to each gadget has higher communication costs.
@@ -1075,7 +1078,7 @@ We use the identical substrate network as in Section~\ref{ssec:fprsma} with
 identical chunk replicas placed in the same way.
 This time, however, the inter-connect cost is~$\CostCom = 1$, and the number of nodes (virtual machines) is~$\Vms = 3 \cdot k$, where~$k$ is the set cardinality.
 The threshold value is $\Thr := 6\cdot k + 18\cdot (k-1)\cdot k = 2\cdot (3\cdot k) + 4\cdot({ 3\cdot k \choose 2} - (3\cdot k))$, and we set the access cost~$\CostTrans$ to a chunk replica to $\Thr + 1$.
-High matching cost forces each node to be collocated with the replica it processes.
+High assignment cost forces each node to be collocated with the replica assigned to it.
 %Intuitively, in order to minimize embedding costs,
 %nodes should be placed in near-by leaves of the substrate network.
 We formalize this observation in Lemma~\ref{lemma:helper}.
@@ -1112,7 +1115,7 @@ $\ITDPM$ has a~solution.
 for~$\ICTE$ given a solution for~$\ITDPM$, we proceed as follows.
 Given a perfect matching $\STDPM$ consisting of triples~$ \{t_1, t_2,
 \ldots, t_k\}$, we place three nodes in each gadget that
-corresponds to every triple of~$\STDPM$ (one node per leaf). Chunks are matched to the nodes which are co-located
+corresponds to every triple of~$\STDPM$ (one node per leaf). Chunks are assigned to the nodes which are co-located
 in the same server.
 
 The solution has the following cost:
@@ -1128,7 +1131,7 @@ Summing up over all~$k$ gadgets, we the total cost is $6\cdot k + 18\cdot(k-1)\c
 ($\Leftarrow$) Given a solution for~$\ICTE$,
 we use Lemma~\ref{lemma:helper} to construct a solution for~$\ITDPM$: in any solution of cost at most~$\Thr$,
 $k$ gadgets contain exactly 3 nodes. These gadgets correspond to a~valid
-3D Perfect Matching, as exactly one replica of every chunk is processed and
+3D Perfect Matching, as exactly one replica of every chunk is assigned and
 hence every element is covered exactly once.
 \end{proof}
 
