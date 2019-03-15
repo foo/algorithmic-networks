@@ -874,8 +874,10 @@ The multi-assignment factor is $m=4$, and the number of nodes to embed is~$\numN
 
  \bigskip
  
-Given any $\TDPM$ instance $\ITDPM$, we produce the corresponding instance $\ICTE$ of the $\RS(2)+\MA+\FP$ variant, in the way described above.
-\maciek{todo: wstep. Reference to Figure~\ref{fig:example-rs2}}
+ Given any $\TDPM$ instance $\ITDPM$, we produce the corresponding instance $\ICTE$ of the $\RS(2)+\MA+\FP$ variant, in the way described above.
+ We illustrate an instance of $\CTE$ corresponding to a $\TDPM$ instance in Figure~\ref{fig:example-rs2}.
+ The reduction (Theorem~\ref{th:ma-reduction}) consists of two parts: (1) given a solution for $\ITDPM$, we construct a solution to $\ICTE$, and (2) given a solution for $\ICTE$, we construct a solution for $\ITDPM$.
+ The first part is easier, and we present it now.
 \begin{lemma}
   Fix an instance $\ITDPM$ of~$\TDPM$ and construct an instance $\ICTE$ of $\CTE$ in the way described in this section.
   If there exists a perfect 3D matching in $\ITDPM$, then $\ICTE$ has a~solution of cost at most $\Thr$.
@@ -899,8 +901,7 @@ Given any $\TDPM$ instance $\ITDPM$, we produce the corresponding instance $\ICT
   Summing up, the cost incurred is $8\cdot k + 6\cdot (\Vms - k) = \Thr$, i.e., the solution is feasible.
 \end{proof}
 
-\todo{wstep ze teraz w druga strone}
-
+To construct a solution for $\ITDPM$ from a solution to $\ICTE$, we show that every feasible solution for $\ICTE$ has certain structure.
 We call a {\TripleGadget} \textit{active}, if it contains a~single node at one of its leafs, and we call the node \textit{active} if it is placed in a {\TripleGadget}.
 In the lemmas below, we show that in feasible solutions to $\ICTE$, exactly $k$ \TripleGadgets{} are active (similar to Theorem~\ref{th:ma-unlimited}).
 In the instance $\ICTE$, chunks can be assigned to nodes at distance $0, 2, 4$ or $6$.
