@@ -2,20 +2,20 @@
 In the last decades, we witnessed a growing demand for performing large-scale
 computations, such as protein folding, fluid dynamics, weather and market prediction, or production process optimization.
 The scale of such computations exceeds abilities of a single computer, hence they need to be performed on large sets of machines that cooperate over an interconnecting network, collectively called the \emph{computer cluster}.
-Owning and maintaing such large-scale computing infrastructure is often impractical and expensive, and parties look for alternative ways to perform computations.
+Owning and maintaining such large-scale computing infrastructure is often impractical and expensive, and parties look for alternative ways to perform computations.
 In comparison, outsourcing computations provides a wide range~of~benefits.
 First of all, it mitigates the costs of infrastructure management and maintenance.
 This is crucial especially for computational tasks that arise occasionally, such as high-quality rendering, computer verification of products with long development time or analysis of human-harvested data.
 Second, such approach dismisses the need to foresee the appropriate demand for resources.
 If such demand increases unexpectedly, it can be immediately provided without physical extension of the infrastructure.
-This led to a shift of computations to large-scale remote facilites that contain computer clusters with their support infrastructure, the so-called \emph{data centers}.
+This led to a shift of computations to large-scale remote facilities that contain computer clusters with their support infrastructure, the so-called \emph{data centers}.
 Performing computations in these external data centers provides the impression of unlimited computational power on demand, and is called the \emph{cloud computing}.
 
 The demand for outsourcing computations to the cloud created a whole market for such services.
 Modern suppliers of processing power such as Microsoft Azure \cite{url-azure}, Amazon Web Services \cite{url-amazon-ec2} or Google Compute Engine \cite{url-gce} provide convenient on-demand computational power while hiding most of details concerning resource management.
 Processing capabilities are quickly and conveniently accessible to every interested party.
 
-Computational tasks require multiple types of resources to complete: CPU time, memory, I/O operations and network bandwith.
+Computational tasks require multiple types of resources to complete: CPU time, memory, I/O operations and network bandwidth.
 Often the demand for these resources varies in time and is unpredictable.
 For this reason, a data center that performs just one task at the time would waste resources.
 In contrast, the co-existence of multiple tasks in the data center allows to~compensate for the variable demand for resources by resource-aware scheduling.
@@ -58,7 +58,7 @@ A~particular piece of technology that provides the flexibility in placement of c
 Virtualization provides an abstraction layer, called the \emph{virtual machine}, for the underlying hardware of a computer system.
 Virtual machine mimics functionality of the physical hardware so closely that it can be used as an environment for a complete operating system.
 Such operating system, running on a virtual machine is called the \emph{guest
-operating system}. It operates in additon to the \emph{host operating
+operating system}. It operates in addition to the \emph{host operating
 system}, which runs directly on the physical hardware. 
 In a data center, the main purpose of virtualization is to provide the complete and non-restricted environment for the client that is isolated from the management software and other clients' tasks.
 The guest operating system is restricted to the virtualized environment: it has the perspective of housing a whole computer system.
@@ -90,7 +90,7 @@ algorithms that find a good trade-off between the inter-server communication
 cost and the migration cost.
 %
 %Such mechanisms play an~important role in load balancing in the data center and allow for sophisticated optimizations such as \emph{reducing network distance between communicating virtual machines}.
-%In this thesis, we focus on migration capabilities provided by modern virtualization techologies used for efficient usage of important resource in the data center --- the network bandwidth.
+%In this thesis, we focus on migration capabilities provided by modern virtualization technologies used for efficient usage of important resource in the data center --- the network bandwidth.
 The problem central to the first part of this thesis is stated as follows:
 
 \begin{center}
@@ -104,7 +104,7 @@ We elaborate more in the subsequent subsection.
 
 The computing power of a single virtual machine is usually insufficient for the client, as~the~resources of a~virtual machine are limited by resources available to its host.
 Therefore, data centers provide its resources as a sizeable set of virtual machines connected by a network.
-Collectively, the virtual machines with their interconnecting network are called a \emph{virtual network}, where the cooperating virtual machines are refered to as \emph{nodes} of a virtual network.
+Collectively, the virtual machines with their interconnecting network are called a \emph{virtual network}, where the cooperating virtual machines are referred to as \emph{nodes} of a virtual network.
 To~guarantee certain quality of service (\emph{QoS}) for multitude of co-existing virtual networks, up-front bandwidth reservations are required.
 However, the generality of performed calculations results in unpredictability of communication patterns and poses a challenge in optimization of bandwidth reservations.
 In this thesis, we provide algorithms for efficient management of~network reservations without any assumptions about communication patterns.
@@ -185,7 +185,7 @@ widely used today~\cite{fattree}).
 \label{sec:contributions-dynamic-mapping}
 
 In Chapter~\ref{ch:dynamic-mapping}, we study virtual network embeddings in the scenario where virtual machines can be migrated during runtime to another physical machine.
-Possibility of migration allows to~react to unpredictible communication patterns.
+Possibility of migration allows to~react to unpredictable communication patterns.
 For example, if some distant nodes communicate often, it is vital to reduce their distance to save network bandwidth.
 The objective is to~minimize the total network bandwidth used for communication and for migration.
 
@@ -261,13 +261,13 @@ In this thesis we research both approaches: in Chapter~\ref{ch:static-mapping} w
 
 In Chapter~\ref{ch:static-mapping}, we study virtual network embeddings, a problem of embedding a weighted \emph{guest} graph in a capacitated \emph{host} graph.
 The virtual network embedding problem is related to~classic VPN graph embedding problems~\cite{gupta2001provisioning,vpn1, vpn2, Goyal2008},
-a problem that is NP-hard, and is constant-factor approximable even for assymmetric traffic demands~\cite{vpn-apx}.
+a problem that is NP-hard, and is constant-factor approximable even for asymmetric traffic demands~\cite{vpn-apx}.
 The VPN problem requires finding a graph embedding with fixed endpoints, while in virtual network embedding problems, studied in this thesis, the embedding endpoints are also subject to optimization.
 In this respect, the virtual network embedding problem can also be seen as related to
 classic Minimum Linear Arrangement problem~\cite{EvNaRS99,ord-prob} which asks for the
 embedding of communication graphs on simple line topologies.
 
-We consider a variant of virtual network embedding with extensions motivatied by batch-processing applications.
+We consider a variant of virtual network embedding with extensions motivated by batch-processing applications.
 The most popular virtual network abstraction for batch-processing applications~\cite{mapreduce} is the \emph{virtual cluster}~\cite{oktopus,talk-about,infocom16,ccr15emb,proteus}, a virtual network that forms a clique.
 Existing virtual cluster embedding algorithms often ignore a~crucial dimension of the problem, namely data locality:
 an input to a batch-processing application is typically stored in a distributed
@@ -276,7 +276,7 @@ data is costly, an embedding algorithm should be aware of the data placement,
 and allocate computational resources close to the data.
 Redundant storage gives additional optimization possibilities.
 In this thesis, we study data locality and replica aware virtual cluster embeddings in tree topologies.
-%Note that our variant is not strictly a~generalization of a virtual network embedding, as we took simplifing assumptions about the traffic demands.
+%Note that our variant is not strictly a~generalization of a virtual network embedding, as we took simplifying assumptions about the traffic demands.
 
 \medskip
 
@@ -290,7 +290,7 @@ NP-complete, and cannot even be approximated within any finite factor unless P
 variant where $\ell = 2$ corresponds to the minimum bisection problem, which
 is already NP-hard~\cite{GaJoSt76}, and 
 the currently best approximation ratio is $O(\log n)$~\cite{SarVaz95,ArKaKa99,FeKrNi00,FeiKra02,KraFei06,Raec08}.
-The inaproximability of the static variant for general values of $\ell$
+The inapproximability of the static variant for general values of $\ell$
 motivated research on the bicriteria variant, which can be seen as the offline
 counterpart of our cluster-size augmentation approach. Here, the~goal
 is~to~compute a graph partitioning into $\ell$ components of~size at most~$k$ (where $k > n/\ell$) and the cost of the cut is compared to the optimal (non-augmented)
@@ -309,7 +309,7 @@ corresponding nodes to a single cluster). In this light, our model is more
 reminiscent of caching models \emph{with
 bypassing}~\cite{EpImLN11,EpImLN15,Irani02}. As a side result, we show that our problem is
 capable of emulating online paging.
-A major difference between  these problems is that in the caching problems, each request involves a sigle element of the universe, while in our model \emph{both} endpoints of a communication request are subject to~optimization.
+A major difference between  these problems is that in the caching problems, each request involves a single element of the universe, while in our model \emph{both} endpoints of a communication request are subject to~optimization.
 
 
 
@@ -319,23 +319,23 @@ A major difference between  these problems is that in the caching problems, each
 
 In the second part of this thesis, we consider the fundamental problem of \emph{packet forwarding}.
 We focus on a single router, that physically connects different networks and is responsible for passing packets between them.
-Upon receiving a data packet, the router forwards it to~a~specific output port leading to a neighbouring network.
+Upon receiving a data packet, the router forwards it to~a~specific output port leading to a neighboring network.
 To choose an appropriate port, the router stores a \emph{forwarding table}, which consists of rules describing how to map the packet destination addresses to appropriate ports.
 Typically, a router stores a single rule for each network it knows about.
 
 The router maintains the forwarding table in its memory.
 Only a small restricted set of~operations is performed on such memory: lookups and updates.
-Nowadays, routers perform milions of lookup operations and thousands updates per second (see, e.g., a report~\cite{bgp-updates}), and use specialized hardware for the efficiency.
+Nowadays, routers perform millions of lookup operations and thousands updates per second (see, e.g., a report~\cite{bgp-updates}), and use specialized hardware for the efficiency.
 Hence, instead of using the general-purpose memory such as RAM, the specialized memory units such as TCAM are utilized~\cite{tcam-memory}.
 The TCAM memory is an~associative memory storage that enables hardware supported pattern-matching lookup that closely matches the way the forwarding rules are used.
 
 \subsection{Growth of Forwarding Tables}
 
 Most routers located at the Internet core forward packets among large number of networks and have the knowledge about virtually all Internet networks.
-Their forwarding tables are usually refered to as \emph{global forwarding table} (Figure~\ref{fig:bgp-entries} depicts the growth of its size)~\cite{url-bgp-entries}.
+Their forwarding tables are usually referred to as \emph{global forwarding table} (Figure~\ref{fig:bgp-entries} depicts the growth of its size)~\cite{url-bgp-entries}.
 Therefore, those routers have to store an~enormous number of forwarding rules: the
 number of rules has doubled in the last six years~\cite{bgp-routeviews} and
-the superlinear growth is likely to be sustained~\cite{steve-myth}.
+the super-linear growth is likely to be sustained~\cite{steve-myth}.
 It is worth noting that some of these networks are virtual.
 The concept of virtual networks described in Part~\ref{pt:virtual-networks} contributed significantly to partitioning of the Internet into subnetworks, and to further growth of forwarding tables.
 
@@ -385,7 +385,7 @@ Although our theoretical model resembles the caching problem, the hierarchical s
 Forwarding rules form a~tree, and the child rule describes the exception to the parent rule.
 To model this issue, we introduce a variant of caching, where the universe of elements (forwarding rules) form a~tree.
 The child-parent relations express dependencies between cached elements: to preserve the semantics of the forwarding rules set, no parent rule can be in cache without its child rules.
-In other words, every valid cache configuration is a subforest.
+In other words, every valid cache configuration is a sub-forest.
 We give a formal problem definition in Chapter~\ref{ch:packet-forwarding}.
 
 
@@ -443,7 +443,7 @@ and in Theoretical Computer Science, vol.~697~\cite{my-tcs}.
 Some of the results from Chapter~\ref{ch:static-mapping} appeared in the PhD thesis of my co-author Carlo Fuerst.
 Parts of Chapter~\ref{ch:dynamic-mapping} appeared previously in the proceedings of~30th~International Symposium~on~Distributed Computing (DISC~2016)~\cite{my-disc}.
 Chapter~\ref{ch:dynamic-mapping} contains a~throughly rewritten and improved revision of the results published in these proceedings.
-Finally, parts of Chapter~\ref{ch:packet-forwarding} were published in the proceedings of~29th~ACM~Symposium on Parallelism in Algorithmics and Architectures (SPAA~2017)~\cite{my-spaa}.
+Finally, parts of Chapter~\ref{ch:packet-forwarding} were published in the proceedings of~29th~ACM~Symposium on Parallelism in Algorithms and Architectures (SPAA~2017)~\cite{my-spaa}.
 Some preliminary results from Chapter~\ref{ch:packet-forwarding} appeared in the master thesis of my co-author Aleksandra Spyra.
 
 This thesis was supported by Polish National Science Centre grant 2016/23/N/ST6/03412.
