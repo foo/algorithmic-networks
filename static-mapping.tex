@@ -1,6 +1,6 @@
 
 For executing a certain computation, one places an adequate number of workers, whose task is to select their data portion, process them, and aggregate the result by cooperation with other workers.
-Workers establish a network connection called a virtual network, formed to peform a~given computational task, and in such setting the worker is referred to as a node of a virtual network.
+Workers establish a network connection called a virtual network, formed to perform a~given computational task, and in such setting the worker is referred to as a node of a virtual network.
 While these nodes can be placed at~any feasible physical machine in the data center, the processing performance is heavily influenced by their placement.
 Placing nodes closely to each other reduces network latency and bandwidth reservations in the data center.
 In this chapter, we investigate mapping a virtual network onto the physical infrastructure: a~task of~assigning the nodes of a virtual network to~physical machines in a network-efficient way.
@@ -13,7 +13,7 @@ and the connecting physical network),
 as well as to the data), and (3)~the data divided into data chunks that needs to be assigned to nodes that process them.
 For the remainder of this chapter, we restrict our attention to the substrate networks that form a tree, and a particular virtual network topology, called the virtual cluster, which is basically a fully connected graph (a clique).
 We~refer to aforementioned problem as the \textsc{cluster-in-tree embedding} problem, abbreviated \CTE.
-Below we provide the details of \CTE components. Figure~\ref{fig:overview} gives an overview of our model.
+Below we provide the details of $\CTE$ components. Figure~\ref{fig:overview} gives an overview of our model.
 
 
 \parag{The Substrate Network.} The substrate network (also known as the \emph{host graph}) represents the physical resources:
@@ -61,14 +61,14 @@ Note that our definition extends the notion of the virtual cluster studied by ot
 
 
 \parag{Optimization Objective.} 
-Our goal is to design algoriths that minimize the resource \emph{footprint}, the most common objective function considered in the literature \cite{fischer-survey}.
+Our goal is to design algorithms that minimize the resource \emph{footprint}, the most common objective function considered in the literature \cite{fischer-survey}.
 Formally, let~$\dist(v,r)$ denote the~distance (in the underlying physical network~$\Tree$) between a~node~$v$ and
 a chunk replica~$r$, and let~$\dist(v_1,v_2)$ denote the distance between the two nodes~$v_1$ and~$v_2$.
 For each chunk $c$,
 $\mu(c)$ is the node to which chunk $c$ is assigned,
 $c^*$ is the replica of $c$ selected for processing,
 and $\textsf{cost}(c) = \dist(\mu(c), c^*)$.
-We define the footprint of a virtual cluster as follows
+The objective is to minimize the footprint of the virtual network, defined as follows
 $$
 \underbrace{\sum_{c \in C} \CostTrans \cdot \textsf{cost}(c)}_{\text{chunk access cost}} +  \underbrace{\frac{1}{2} \cdot \sum_{v\in V} \sum_{v' \in \VirtualNodes\setminus\{v\}} \CostCom \cdot \dist(v,v')}_{\text{node inter-connect cost}}\enspace.
 $$
@@ -263,9 +263,8 @@ The algorithm has a quadratic dependence on the size of substrate network $n_S$,
 %\caption{Variants solved by matching approaches.}
 %\label{fig:venn_match}
 %\end{figure}
-This section presents two algorithms to solve 
-two variants of the $\CTE$ problem, $\RS+\MA+\NI$ and~$\MA+\NI+\BW$, that can also be solved with the flow approach
-introduced above.
+This section presents an alternative algorithm to solve $\RS+\MA+\NI$ and~$\MA+\NI+\BW$
+variants of the $\CTE$ problem.
 First, we consider the~$\RS+\MA+\NI$ variant.
 Recall that in this variant,
 we are given a~set of redundant chunks ($\RS$) and a~set of nodes
@@ -286,7 +285,7 @@ single %$\ChunkType$
 super-vertex.
 Second, we link (cloned) nodes to (aggregated) replicas.
 In instances without $\BW$, assigning any replica to any node is feasible, and hence, for a given assignment $\mu$ of chunks to nodes, the minimum bandwidth is utilized if for each $c$, node $\mu(c)$ serves the closest replica of $c$.
-Therefore, for each node $v$ and chunk $c$, we connect each copy of $v$ and the super-vertex $c$ with the link of cost $\min_i \dist(v,c^{(i)})$, i.e., the cost of reaching the closest replica.
+Therefore, for each node $v$ and chunk~$c$, we connect each copy of $v$ and the super-vertex $c$ with the link of cost $\min_i \dist(v,c^{(i)})$, i.e., the cost of reaching the closest replica.
 Finally, on the resulting bipartite graph, we compute a~\emph{minimum weight
 perfect
 matching}:
@@ -375,11 +374,9 @@ The \emph{uplink} of a~proper subtree $T'$, denoted $\Uplink(T')$ is an edge fro
 
 
 \begin{lemma}\label{lem:uplink-alloc}
-Given the~$\MA$ variant of the $\CTE$ problem and a proper subtree~$\Tree'$
+In the~$\MA$ variant of $\CTE$, a proper subtree~$\Tree'$
 containing~$\tau(T')$
-chunks and $x$~nodes, the bandwidth allocation of any
-assignment
-$\VmChunkAssignment$ on the uplink of $\Tree'$ is at~least ${\CostTrans\cdot|\tau(T')-x\cdot\MaFactor|}$.
+chunks and $x$~nodes, the bandwidth allocation on the uplink of $\Tree'$ is at~least ${\CostTrans\cdot|\tau(T')-x\cdot\MaFactor|}$.
 \label{lemma:uplink}
 \end{lemma}
 \begin{proof}
