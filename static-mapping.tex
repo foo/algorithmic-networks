@@ -53,7 +53,7 @@ Note that our definition extends the notion of the virtual cluster studied by ot
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.79\columnwidth]{figs/static-mapping/data_locality_no_legend.pdf}
-\caption{Overview: a 9-server data center storing~$\tau=4$ different chunks~$\{c_1,\ldots,c_4\}$ (depicted as \emph{circles}), each having two replicas. The replicas need to be selected and assigned to the two
+\caption{Overview: a 9-server data center storing~$\tau=4$ different chunks~$\{c_1,\ldots,c_4\}$ (depicted as \emph{circles}), each having two replicas. The replicas need to be selected and assigned the two
  virtual machines~$v_1$ and~$v_2$; the virtual machines are depicted as \emph{squares}, and
  the network connecting them to chunks (using bandwidth~$\CostTrans$) is \emph{dashed}. In addition, the virtual machines are inter-connected among
  each other using bandwidth~$\CostCom$ (\emph{dotted}). The objective of the embedding algorithm is to minimize the overall bandwidth allocation.}\label{fig:overview}
@@ -479,7 +479,7 @@ the chunk locations.
 
 \parag{Example.} Figure~\ref{fig:dynamic_motivation} shows an example: one
 extreme solution is to minimize the distance between chunks and nodes,
-see assignment~$\NodeMapping_1$ in the left picture in
+see mapping~$\NodeMapping_1$ in the left picture in
 Figure~\ref{fig:dynamic_motivation}: the four nodes are all
 collocated with chunks, resulting in a zero-cost chunk access network. As a
 result, the paths between the individual nodes are longer than in alternative
@@ -496,7 +496,7 @@ node inter-connect sum up to~$20 \cdot \CostCom$.
 %\end{figure}
 
 The right picture in Figure~\ref{fig:dynamic_motivation} shows a different node
-assignment~$\NodeMapping_2$, which seeks to minimize the inter-connect costs
+mapping~$\NodeMapping_2$, which seeks to minimize the inter-connect costs
 between the nodes, and places all nodes in one subtree. The distance between all
 nodes is $2$, which results in a total bandwidth allocation of~$12\cdot\CostCom$
 for the inter-connect. However, this reduced price comes at additional costs in
@@ -641,7 +641,7 @@ Finally, in Section~\ref{ssec:fprscc}, we present the NP-hardness of the unrestr
 The hardness of both~$\FP+\RS+\MA$ and~$\FP+\RS+\NI$ variants of the $\CTE$ problem uses a reduction
 from the NP-complete problem of \emph{3D Perfect Matching}~\cite{3dmatch},
 which can be seen as a generalization of bipartite matchings to 3-uniform
-hypergraphs. We refer to this problem by~$\TDM$ and we
+hypergraphs. We refer to this problem as~$\TDM$ and we
 review it quickly for completeness.
 $\TDM$ is defined as follows: we are given three finite and disjoint
 sets~$X$,~$Y$, and~$Z$ of cardinality~$k$, as well as a~subset of triples~$P\subseteq
@@ -707,7 +707,7 @@ node which is collocated with one of these replicas, and only by such assignment
 \caption{\textit{Left:} A~$\TDM$ instance of cardinality $k=2$ with three triples:
 $t_1 = \langle a, b, c \rangle$,~$t_2 = \langle a, e, f \rangle$, $t_3 = \langle d, b, f \rangle$, and $t_4 = \langle d, e, f \rangle$. The solution is
 indicated by the grey triples $t_1$ and $t_4$. \textit{Right:} The corresponding instance and an optimal solution for the~$\FP + \MA
-+ \RS$ variant of the $\CTE$ problem. In specifying the chunk placement we omit the replica subscripts. Each triple corresponds to a single triple gadget.}
++ \RS$ variant of the $\CTE$ problem. In specifying the chunk placement, we omitted the replica subscripts. Each triple corresponds to a single triple gadget.}
 \hfill
 \label{fig:fprsma}
 \end{figure}
@@ -727,8 +727,8 @@ $\ITDPM$ has a~perfect matching (of size~$k$).
 \medskip
 
 ($\Rightarrow$) Fix a solution $\STDPM$ for~$\ITDPM$, i.e., the set of triples that form a perfect matching. To construct the solution $\SCTE$ to $\ICTE$, we place a single node in every
-gadget that corresponds to triples in $\STDPM$ (at an arbitrary leaf of this gadget). In each gadget, we assign all three chunks to the node located in this gadget. This
-solution costs exactly~$\Thr = 4\cdot k$: each of $k$ nodes is assigned to one chunk collocated with it and to two chunks at distance $2$.
+gadget that corresponds to a triple from $\STDPM$ (at an arbitrary leaf of this gadget). In each gadget, we assign all three chunks to the node located in this gadget. This
+solution costs exactly~$\Thr = 4\cdot k$: each of $k$ nodes is assigned one chunk collocated with it and two chunks at distance $2$.
 The solution $\STDPM$ matches every element of the universe $X \cup Y \cup Z$, hence every chunk has a replica assigned to exactly one node, and $\SCTE$ is feasible.
 
 \medskip
@@ -736,7 +736,7 @@ The solution $\STDPM$ matches every element of the universe $X \cup Y \cup Z$, h
 ($\Leftarrow$) Fix a solution $\SCTE$ for ~$\ICTE$ with cost at most $\Thr$.
 We call the triple gadget \emph{active} if it hosts a single node at one of its leaves.
 We claim that $\SCTE$ places at most one node in each triple gadget.
-Assume that two nodes $x_1$, $x_2$ are placed in the same triple gadget.
+For contradiction, suppose that two nodes $x_1$, $x_2$ are placed in the same triple gadget.
 First, we lower-bound the cost incurred by $x_1$ and $x_2$ that collectively have $2\cdot \MaFactor = 6$ replicas assigned.
 At most two of these chunks are co-located with $x_1$ or $x_2$ and cost $0$, and remaining four chunks incur a cost at least $2$ each.
 Moreover, at least three of these chunks are placed outside of this triple gadget and incur the cost at least $4$ each.
@@ -744,12 +744,12 @@ In total, $x_1$ and $x_2$ incur the cost at least $2\cdot 0+2\cdot 1+3\cdot 4=14
 Second, we lower-bound the cost incurred by remaining $k-2$ nodes.
 Each node can have at most $1$ of its $\MaFactor=3$ replicas assigned for free (every leaf hosts exactly one chunk),
 and it incurs the cost at least $4$ for the remaining~$2$ chunks that are at distance at least~$2$.
-The total chunk assignment cost $4\cdot (k-2)+14 = 4\cdot k + 6$ exceeds the threshold $\Thr = 4\cdot k$, a contradiction.
+The total chunk assignment cost $4\cdot (k-2)+14 = 4\cdot k + 6$ exceeds then the threshold $\Thr = 4\cdot k$, a contradiction.
 As $n_V = k$, we conclude that there are exactly $k$ active gadgets in $\SCTE$.
 
 To construct the solution $\STDPM$ to $\ITDPM$, we pick the set of triples whose gadgets are active.
 The solution $\STDPM$ consists of $k$ triples.
-Since all chunks are assigned to exactly one node, every element of~$X$,~$Y$ and~$Z$ is matched, and $\STDPM$ forms a 3-dimensional perfect matching of $X \cup Y\cup Z$.
+Since each chunk is assigned to exactly one node, every element of~$X$,~$Y$ and~$Z$ is matched and $\STDPM$ forms a 3-dimensional perfect matching of $X \cup Y\cup Z$.
 \end{proof}
 
 \subsection{Hardness of Multi-Assignments with at Most Two Replicas}
