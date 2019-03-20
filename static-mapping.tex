@@ -837,9 +837,9 @@ The first set corresponds to elements of the universe $X\cup Y\cup Z$, and their
 %We place $3\cdot(\deg(e) - 1)$ \emph{dummy} chunks in the element gadgets; each node in the element subtree needs to processes only $1$ element chunk and remaining $3$ of $\MaFactor=4$ chunks are the dummy chunks.
 %Unique and dummy chunks have one replica, and we simply identify the chunk with chunk replica.
 \begin{enumerate}
-  \item \emph{Element chunks}. For each triple $t = \langle x, y, z \rangle \in P$, we construct $3$ chunks:~$x_t, y_t,$ and $z_t$, i.e., $\sum_e\deg(e)$ $=3\cdot p$ chunks in total,
-  each having two replicas.
-  First replicas are placed in the matching subtree:
+  \item \emph{Element chunks}. For each triple $t = \langle x, y, z \rangle \in P$, we construct $3$ chunks:~$x_t, y_t,$ and $z_t$, i.e., $\sum_e\deg(e)$ $=3\cdot p$ chunks in total.
+  Each element $e$ have then $\deg(e)$ element chunks $e_t$ for each $t \in P_e$,  collectively called $C_e$.
+  Each chunk from $C_e$ have two replicas. First replicas are placed in the matching subtree:
   we place
   three replicas: $x_t^{(1)}, y_t^{(1)}$ and $z_t^{(1)}$ in the {\TripleGadget} for triple $t\in P$, one per each leaf.
   Second replicas are placed in the cover subtree:
@@ -856,7 +856,7 @@ The first set corresponds to elements of the universe $X\cup Y\cup Z$, and their
 \begin{figure}[t]
 \centering
 \includegraphics[width=1\columnwidth]{figs/static-mapping/cte-ma2.pdf}
-\caption{An instance of $\FP+\MA+\RS(2)$ variant of $\CTE$ corresponding to the $\TDM$ instance from Figure~\ref{fig:fprsma}. Leaves containing dummy chunks are grey. The optimal solution maps chunks to nodes $v_1, \ldots v_7$ by the dashed lines. In specifying the chunk placement we omit the replica subscripts.}
+\caption{An instance of $\FP+\MA+\RS(2)$ variant of $\CTE$ corresponding to the $\TDM$ instance from Figure~\ref{fig:fprsma}. Leaves containing dummy chunks are grey. The optimal solution assigns chunks to nodes $v_1, \ldots v_7$ by the dashed lines. In specifying the chunk placement we omit the replica superscripts.}
 \label{fig:example-rs2}
 \end{figure}
 
@@ -881,30 +881,33 @@ The multi-assignment factor is $m=4$, and the number of nodes to embed is~$\numN
  The first part is easier, and we present it now.
 \begin{lemma}
   Fix an instance $\ITDPM$ of~$\TDPM$ and construct an instance $\ICTE$ of $\CTE$ in the way described in this section.
-  If there exists a perfect 3D matching in $\ITDPM$, then $\ICTE$ has a~solution of cost at most $\Thr$.
+  If there exists a perfect 3D matching for $\ITDPM$, then $\ICTE$ has a~solution of cost at most $\Thr$.
     \label{lem:ma-reduction-left}
 \end{lemma}
 \begin{proof}
-  Fix a feasible solution~$\STDPM$ for $\ITDPM$, and construct a solution~$\SCTE$ for $\ICTE$ in the following way:
+  Fix a feasible solution~$\STDPM$ for $\ITDPM$. We construct a solution~$\SCTE$ for $\ICTE$ in the following way:
   We place $n_V = k + \sum_e(\deg(e) - 1)$ nodes, and we assign $4$ chunks to each of these.
   \begin{enumerate}
     \item We place~$k$ nodes in~$k$ {\TripleGadgets} (one per gadget, at an arbitrary leaf) that correspond to triples chosen in~$\STDPM$ solution.
-    We assign to each such node $3$ chunk replicas from the gadget it is placed and one arbitrary, unassigned unique chunk.
+    To each such node we assign $3$ chunk replicas from its gadget and one arbitrary, unassigned unique chunk.
     \item For each element $e$, in $G(e)$ we place
     ~$\deg(e) - 1$ nodes, and to each of them we assign $3$ arbitrary dummy chunks and $1$ arbitrary 
     element chunk in this
     gadget that is not assigned in any {\TripleGadget}.
+    We co-locate the node with one of its assigned replicas, hence one of the assignments is for free, and other three assignments incur the cost $2$ each.
   \end{enumerate}
-  Triples in $\STDPM$ match each element exactly once, and hence nodes in triple gadgets have exactly one chunk assigned for each element.
-  Remaining $\deg(e)-1$ chunks for element $e$ are assigned to $\deg(e)-1$ nodes in $G(e)$.
-  One chunk for each element $e$ in $G(e)$ is not assigned there, and it is assigned in some triple gadget instead.
+  Triples in $\STDPM$ match each element exactly once.
+  and hence nodes in triple gadgets have exactly one chunk assigned from $C_e$ for each element $e$.
+  For each element $e$, by $e_*$ we denote the chunk that is assigned in a triple gadget.
+  The remaining $\deg(e)-1$ chunks from $C_e \setminus \{ e_t \}$ are assigned to $\deg(e)-1$ nodes in $G(e)$.
+  The replica $e_*^{(2)}$  is not assigned in $G(e)$, and instead the replica $e_*^{(1)}$ is assigned in a triple gadget.
   Finally, each of $k$ unique chunks is assigned to a node in a triple gadget, and each dummy chunk is assigned to some node in its element gadget.
   
  % \todo{todo: explain: every chunk was processed}
   %Every chunk was assigned, exactly $n_V = k + \sum_e(\deg(e) - 1)$ nodes are placed, and each of the nodes has exactly $4$ chunk replicas assigned.
   To see that the solution does not exceed the threshold $\Thr$, we sum up the total assignment cost.
-  The $k$ nodes placed in \TripleGadgets{} have three short assignments to chunk replicas within the \TripleGadget{} of the total cost $0+2+2=4$, and one long assignment of cost $4$ (to some \UnqGadget{}).
-  The remaining $\Vms-k$ nodes placed in the \CoverSubtree{} have four short assignments for the total cost $0+3\cdot 2 = 6$.
+  The $k$ nodes placed in \TripleGadgets{} have three assignments to chunk replicas within the \TripleGadget{} of the total cost $0+2+2=4$, and one assignment of cost $4$ (to some \UnqGadget{}).
+  The remaining $\Vms-k$ nodes placed in the \CoverSubtree{} have four assignments within element gadgets for the total cost $0+3\cdot 2 = 6$.
   Summing up, the cost incurred is $8\cdot k + 6\cdot (\Vms - k) = \Thr$, i.e., the solution is feasible.
 \end{proof}
 
@@ -913,7 +916,6 @@ We call a {\TripleGadget} \textit{active}, if it contains a~single node at one o
 In the lemmas below, we show that in feasible solutions to $\ICTE$, exactly $k$ \TripleGadgets{} are active (similar to Theorem~\ref{th:ma-unlimited}).
 In the instance $\ICTE$, chunks can be assigned to nodes at distance $0, 2, 4$ or $6$.
 We call the assignments at distance $0$ or $2$ \emph{short}, and the ones at distance $4$ or $6$ \emph{long}.
-In Lemma~\ref{lem:short-ma}, we determine the assignments present in $\SCTE$, to obtain the structure of the solution in Lemma~\ref{lem:one-unique-per-node}, which we apply in the reduction (Theorem~\ref{th:ma-reduction}).
 
 
   \begin{lemma}
@@ -936,7 +938,7 @@ In Lemma~\ref{lem:short-ma}, we determine the assignments present in $\SCTE$, to
 
 \begin{proof}
   First, we show that at most $k$ nodes are placed in the \MatchSubtree.
-  Each node placed in the \MatchSubtree{} has at most $3$ leaves in the distance $\leq 2$, hence at least one of its $\MaFactor=4$ assignments is long.
+  Each node placed in the \MatchSubtree{} has at most $3$ leaves in the distance at most $2$, hence at least one of its $\MaFactor=4$ assignments is long.
   Therefore, more than $k$ nodes in the matching subtree would lead to more than $k$ long assignments, and by Lemma~\ref{lem:infeasible}, the solution would be infeasible.
   
   As at most $k$ nodes are placed in the \MatchSubtree{}, at least $\Vms-k$ nodes are placed in the \CoverSubtree.
@@ -944,8 +946,9 @@ In Lemma~\ref{lem:short-ma}, we determine the assignments present in $\SCTE$, to
   Suppose the contrary, i.e., that $\Vms-k+i$ nodes were placed in the \CoverSubtree{} for $i > 0$.
   With each element gadget $G(e)$ we associate its \emph{volume} $\deg(e) - 1$.
   The volume corresponds to the maximum number of nodes that can be placed inside the gadget without causing a long assignment.
-  More precisely, if $\deg(e) - 1 + j_e$ nodes are placed in $G(e)$ for $j_e > 0$, the number of chunks in the gadget, $4\cdot (\deg(e)-1)+1$ is smaller the number of chunks that these nodes should have assigned, $4 \cdot (\deg(e)-1+j_e)$.
-  These nodes has the remaining $4\cdot j_e - 1$ chunks assigned using long assignments.
+  If the number of nodes in $G(e)$ exceeds its volume, i.e., $\deg(e) - 1 + j_e$ nodes are placed in $G(e)$ for $j_e > 0$,
+  then the number of chunks these have assign is $4\cdot (\deg(e) - 1 + j_e)$, and at most $4\cdot (\deg(e) - 1) + 1$ can be assigned within the gadget $G(e)$.
+  These nodes have the remaining $(4\cdot (\deg(e) - 1 + j_e)) - (4\cdot (\deg(e) - 1) + 1) = 4\cdot j_e - 1 \geq 3\cdot j_e$ chunks assigned using long assignments.
   By the pigeon-hole principle, at least $i = \sum_e j_e$ nodes surpass the volume of its gadget.
   As $\sum_e (4\cdot j_e - 1) \geq 3 \cdot i$, the nodes in the cover subtree have at least $3\cdot i$ long assignments (of cost at least $4$).
   Recall that each of $k-i$ nodes in the matching subtree result in one long assignment.
@@ -984,12 +987,13 @@ Therefore, exactly $k$ \TripleGadgets{} are active.
   By Lemma~\ref{lem:infeasible}, in $\SCTE$ there are at most $k$ long assignments.
   By Lemma~\ref{lem:no-unq-ma}, these $k$ long assignments are depleted by $k$ unique chunks, and remaining chunks are assigned by short assignments.
 
+
   Now we show that the unique chunks are assigned at distance $4$ (and not at distance $6$).
-  Assume that a unique chunk is assigned at distance $6$ by a node $x$.
-  Then, $n_V - k$ nodes that do not have unique chunks assigned incur the cost at least $6$ each,
-  and $k$ nodes that are assigned to the unique chunks incur the cost at least $k\cdot 8$.
-  Moreover, the node $x$ incur the cost at least $10$.
-  In total,the solution cost is at least $8\cdot (k-1) + 10 + (n_V-k)\cdot 6 > 8\cdot k + (n_V-k)\cdot 6 = \Thr$, i.e., the solution cost exceeds the threshold, a contradiction.
+  In total, we have $4\cdot n_V = 12\cdot p - 8\cdot k$ assignments.
+  At most $n_V = 3\cdot p - 2\cdot k$ of these are for free, as a node can be co-located with at most one replica.
+  The $k$ unique chunks are assigned for the cost at least $4$ each, and the remaining $4\cdot n_V - k - n_V = 9\cdot p - 7\cdot k$ assignments incur cost at least $2$ each.
+  Suppose that a unique chunk is assigned at distance $6$, i.e., the cost of assignment of the unique chunks is $4\cdot k + 2$.
+  Then, the solution cost is $2\cdot(9\cdot p - 7\cdot k) + 4\cdot k + 2 = 18\cdot p - 10\cdot k + 2 = \Thr + 2 > \Thr$, i.e., the solution cost exceeds the threshold, a contradiction.
 \end{proof}
 
 \begin{lemma}
