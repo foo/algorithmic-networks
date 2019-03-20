@@ -1003,8 +1003,8 @@ Therefore, exactly $k$ \TripleGadgets{} are active.
 \begin{proof}
   By Lemmas~\ref{lem:n-matchsubtree-ma} and \ref{lem:no-unq-ma}, $k$ nodes in the matching subtree are placed in triple gadgets.
   As triple gadgets have at most $3$ leaves, each of these nodes causes at least one long assignment.
-  If a node would have $i>1$ unique chunks assigned, then the total number of long assignments is at least $k-1+i>k$, and by Lemma~\ref{lem:infeasible} the solution would be infeasible.
-  If a node would have $0$ unique chunks assigned, it still causes a~long assignment.
+  If a node had $i>1$ unique chunks assigned, then the total number of long assignments would be at least $k-1+i>k$, and by Lemma~\ref{lem:infeasible} the solution would be infeasible.
+  If a node had $0$ unique chunks assigned, it would still cause a~long assignment.
   By Lemma~\ref{lem:short-ma}, each of $k$ unique chunks causes a~long assignment, and in total we would have at least $k+1$ long assignments,  and by Lemma~\ref{lem:infeasible} the solution would be infeasible.
 
   Remaining $3$ of $\MaFactor=4$ chunks assigned to each node in the matching subtree are assigned by the short assignment, and the only chunks in distance at most $2$ are the chunks located in the same gadget that the node is located at.
@@ -1018,19 +1018,24 @@ Therefore, exactly $k$ \TripleGadgets{} are active.
 \begin{proof}
   
   Fix an instance $\ITDPM$ of~$\TDPM$.
-  We show that~$\ICTE$ has a solution of cost~$\leq \Thr$ if ($\Leftarrow$) and only if~($\Rightarrow$) $\ITDPM \in \TDPM$ (there exists a perfect 3D matching in $\ITDPM$).
+  We show that~$\ICTE$ constructed on the basis of $\ITDPM$ has a solution of cost~$\leq \Thr$ if ($\Leftarrow$) and only if~($\Rightarrow$) $\ITDPM \in \TDPM$ (there exists a perfect 3D matching in $\ITDPM$).
   By Lemma~\ref{lem:ma-reduction-left}, ($\Leftarrow$) holds.
 
   To show ($\Rightarrow$), fix a feasible solution~$\SCTE$ for~$\ICTE$ in the way described in the construction section.
   By Lemma~\ref{lem:n-active-ma}, exactly $k$ \TripleGadgets{} are active.
   We construct the solution $\STDPM$ from the set of triples that correspond to active \TripleGadgets{}.
 
-  Now, we show that $\STDPM$ is feasible, i.e., it assigns every element of $X\cup Y\cup Z$ exactly once.
-  By Lemma~\ref{lem:one-unique-per-node}, every active node is assigned to the three chunks located at the gadget it is placed at.
-  Hence, the chunks $x_t$, $y_t$ and $z_t$ assigned to an active node correspond to the triple $t = \langle x, y, z \rangle \in P$.
+  Now, we show that $\STDPM$ is feasible, i.e., it matches every element of $X\cup Y\cup Z$ exactly once.
+  By Lemma~\ref{lem:one-unique-per-node}, every active node is assigned to the three element chunks located at the gadget it is placed at.
+  Hence, the chunks $x_t$, $y_t$ and $z_t$ assigned to an active node that corresponds to the triple $t = \langle x, y, z \rangle \in P$.
   
-  For every element $e\in X\cup Y \cup Z$, we constructed $\deg(e)$ element chunks, with two replicas each: one in the matching subtree and one in the cover subtree.
-  In each element gadget $G(e)$, we assign exactly $\deg(e) - 1$ element chunks, and the remaining $1$ element chunk is assigned in a triple gadget.
+  For every element $e\in X\cup Y \cup Z$, we constructed chunks $C_e$, with two replicas each: one in the matching subtree and one in the cover subtree.
+  Now we claim that in each element gadget $G(e)$, we assign exactly $\deg(e) - 1$ element chunks.
+  Similar to the proof of Lemma~\ref{lem:n-matchsubtree-ma}, with each $G(e)$ we associate its volume.
+  By Lemma~\ref{lem:n-matchsubtree-ma}, we place $n_V-k$ nodes in the cover subtree, i.e., the number of nodes equal the total volume of all gadgets $G(e)$.
+  Hence, in each of $G(e)$ we have $n_e$ nodes, where $n_e$ is the volume of $G(e)$.
+  In a single gadget $G(e)$, the total number of chunks is $4\cdot(\deg(e) - 1) + 1$, and nodes in this gadget have $4\cdot(\deg(e)-1)$ chunks assigned.
+   The remaining $1$ element chunk is assigned in a triple gadget.
   Hence, the set of active nodes have $1$ of $\deg(e)$ element chunks assigned for each $e\in X\cup Y\cup Z$, and $\STDPM$ assigns each $e\in X\cup Y\cup Z$ exactly once.
  
 %  Each of $3\cdot p = \sum_e \deg(e)$ element chunks has two replicas: one in the matching subtree and one in the cover subtree.
@@ -1100,7 +1105,7 @@ $3$ nodes each, and~$p-k$ gadgets remain empty.
 \end{lemma}
 \begin{proof}
 The~$n_V = 3\cdot k$ nodes have to be placed
-directly at different $3\cdot k$ chunks, resulting in no cost for the access network.
+directly at different $3\cdot k$ leaves, and thus at $3\cdot k$ chunks, as otherwise the access cost would immediately exceed the threshold $\Thr$.
 The $3\cdot k$ nodes are distributed among at least $k$ gadgets, as each gadget can host at most $3$ nodes.
 
 Suppose that $3\cdot k$ nodes were distributed among more than $k$ gadgets.
@@ -1117,7 +1122,7 @@ Hence, the total cost is then $2\cdot (3\cdot k - i) + 4 \cdot ({3 \cdot k \choo
 The $\FP+\RS+\NI$ variant of $\CTE$ problem is NP-hard.
 \end{theorem}
 \begin{proof}
-Let~$\ITDPM$ be an instance of~$\TDM$ and let~$\ICTE$ be an instance of
+Let~$\ITDPM$ be the corresponding instance of~$\TDM$ and let~$\ICTE$ be an instance of
 the~$\FP+\RS+\NI$ variant constructed as described above.
 We prove that~$\ICTE$ has solution of cost~$\leq \Thr$ if ($\Rightarrow$) and only if
 ($\Leftarrow$)
@@ -1132,13 +1137,13 @@ in the same server.
 
 The solution has the following cost:
 (1) the inter-connect cost inside each gadget is~${2 \cdot {3 \choose 2} = 6}$,
-  as a~distance between every pair of nodes there is $2$;
+  as the~distance between every pair of nodes there is $2$;
   (2) the the inter-connect cost from a~single gadget to all other gadgets is~$4
   \cdot 3 \cdot 3 \cdot (k - 1) / 2 = 18\cdot (k-1)$, where the factor~$4$ corresponds to the distance $4$, the factor~$3$
   corresponds to the number of nodes per gadget, and
  ~$3 \cdot (k-1)$ is the number of nodes in remote gadgets;
   as we count each pair twice, we need to divide by two.
-Summing up over all~$k$ gadgets, we the total cost is $6\cdot k + 18\cdot(k-1)\cdot k = \Thr$.
+Summing up over all~$k$ gadgets, the total cost is $6\cdot k + 18\cdot(k-1)\cdot k = \Thr$.
 
 ($\Leftarrow$) Given a solution for~$\ICTE$,
 we use Lemma~\ref{lemma:helper} to construct a solution for~$\ITDPM$: in any solution of cost at most~$\Thr$,
