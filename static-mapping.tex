@@ -11,8 +11,8 @@ As described informally in the introduction (see Section~\ref{sec:virt_net_emb})
 and the connecting physical network),
 (2)~the virtual network (the virtual machines and the logical network connecting the machines to each other
 as well as to the data), and (3)~the data divided into data chunks that needs to be assigned to nodes that process them.
-For the remainder of this chapter, we restrict our attention to the substrate networks that form a tree, and a particular virtual network topology, called the virtual cluster, which is basically a fully connected graph (a clique).
-We~refer to aforementioned problem as the \textsc{cluster-in-tree embedding} problem, abbreviated \CTE.
+For the remainder of this chapter, we restrict our attention to the substrate networks that form a tree, and a particular virtual network topology that is basically a fully connected graph (a clique).
+We~refer to aforementioned problem as the \textsc{clique-in-tree embedding} problem, abbreviated \CTE.
 Below we provide the details of $\CTE$ components. Figure~\ref{fig:overview} gives an overview of our model.
 
 
@@ -46,8 +46,8 @@ The choice of replica and the node assigned is subject to optimization, and
 $\mu$ denotes the assignment of chunks to nodes.
 Furthermore, we assume that the number of chunks $\tau$ is divisible by the number of nodes~$n_V$, and the assignment~$\mu$ is \emph{balanced}:
 each node has exactly $\tau / n_V$ chunks assigned.
-Collectively, the nodes of virtual network with the inter-connect network and the access network form the \emph{virtual cluster}.
-Note that our definition extends the notion of the virtual cluster studied by others \cite{oktopus,talk-about,infocom16,ccr15emb,proteus} by incorporating the chunk access network.
+Collectively, the nodes with the inter-connect network and the access network form the virtual network.
+Note that our definition extends the notion of the virtual virtual network studied by others \cite{oktopus,talk-about,infocom16,ccr15emb,proteus} by incorporating the chunk access network.
 
 
 \begin{figure}[t]
@@ -326,7 +326,7 @@ and for each edge we compute its weight. The shortest distances
 in a tree of size $n_S$ can be computed in time~$\mathcal{O}(n_S + q)$~\cite{offline-lca}, where $q$ is the number of queried pairs, which translates to the overall construction time~$\mathcal{O}(n_s + n_v\cdot \sum_{i=1}^\tau r_i)$.
 The state-of-the-art algorithm to compute matchings in bipartite graph~\cite{matching-best} has a running time of $\tilde{\mathcal{O}}(|E|^{10/7}\cdot \log W)$, where $|E|$ is the number of edges, $W$ is the maximum weight of an edge, and $\tilde{\mathcal{O}}$ hides polylogarithmic (in terms of $|E|$) factors.
 The total running time is then $\tilde{\mathcal{O}}(\tau^{20/7}\cdot \log(n_s)) + \mathcal{O}(n_s + n_v\cdot \sum_{i=1}^\tau r_i)$.
-The matching-based algorithm has a linear dependence on the size of the substrate network $n_S$, whereas the flow-based algorithm has a quadratic dependence on it.
+Note that the matching-based algorithm has a linear dependence on the size of the substrate network~$n_S$, whereas the flow-based algorithm runtime contains the term $\mathcal{O}(n_S^2)$.
 
 
 \subsubsection{Local matching algorithm}
@@ -626,17 +626,16 @@ the hardness of more general ones.
 
 In addition to the hardness results for the aforementioned $\CTE$ variants, we study the influence of restricting number of replicas of a chunk on computational tractability on these variants.
 Namely, we introduce the restricted replica selection component $\RS(r_{max})$, parametrized by an~integer $r_{max}$, that restricts the number of replicas of any chunk: for every chunk $c_i$ we have $r_i \leq r_{max}$.
-We consider $\RS(2)$ component in relation with multi-assignment~($\MA$).
-Concretely, in Section~\ref{ssec:fprsma}, we first present the NP-hardness of the unrestricted scenario $\FP+\RS+\MA$ (Theorem~\ref{th:ma-unlimited}) as a warm-up,
-and then we present more refined hardness result for ${\FP+\RS(2)+\MA}$ (Theorem~\ref{th:ma-reduction}).
-Finally, in Section~\ref{ssec:fprscc}, we present the NP-hardness of the unrestricted scenario $\FP+\RS+\NI$ (Theorem~\ref{theorem:fp_rs_cc}).
+We consider $\RS(2)$ component in relation with multi-assignment~($\MA$): we first present the NP-hardness of the unrestricted scenario $\FP+\RS+\MA$ as a warm-up,
+and then we present more refined hardness result for ${\FP+\RS(2)+\MA}$.
+%Finally, in Section~\ref{ssec:fprscc}, we present the NP-hardness of the unrestricted scenario $\FP+\RS+\NI$ (Theorem~\ref{theorem:fp_rs_cc}).
 %However, restricted replica selection $\RS(2)$ in combination with Node-Interconnect requires additional ways to control the placement of nodes, and the NP-hardness result uses bandwidth constraints $\BW$~\cite{my-tcs}.
 
 \subsection{Introduction to 3D Perfect Matching}
 \label{sec:3dm_intro}
 
 The hardness of both~$\FP+\RS+\MA$ and~$\FP+\RS+\NI$ variants of the $\CTE$ problem uses a reduction
-from the NP-complete problem of \emph{3D Perfect Matching}~\cite{3dmatch},
+from the NP-complete \emph{3D Perfect Matching} problem~\cite{3dmatch},
 which can be seen as a generalization of bipartite matchings to 3-uniform
 hypergraphs. We refer to this problem as~$\TDM$ and we
 review it quickly for completeness.
@@ -666,13 +665,11 @@ and consists of an inner node and three leaves.
 ($3 \cdot k$ chunks in total). Every gadget contains three chunk replicas (one per leaf),
 corresponding to the elements of the triple.
 Note that the number of replicas for a chunk for element $e$ corresponds to the number of triples that contain $e$.
-\item \emph{Other properties of the instance:} We set the number of to-be-embedded nodes $n_V = k$,
+\item \emph{Other properties of the instance:}
+To transform the optimization problem into a decision problem, we determine that the solution is feasible if it has a cost at most~$\Thr = 4\cdot k$ (the $\Thr$ is the acceptance threshold).
+We set the number of to-be-embedded nodes $n_V = k$,
 $\CostTrans = 1$, and the the multi-assignment factor
 $\MaFactor=3$.
-\item \emph{Threshold.} In order to turn the optimization problem into a decision problem, we use
-a~cost threshold~$\Thr = 4\cdot k$. As we will show, the cost threshold is met by all
-assignments that assign all three chunk replicas of each triple gadget to a
-node which is collocated with one of these replicas, and only by such assignments.
 \end{enumerate}
 
 %\parag{Example.} Figure~\ref{fig:fprsma} shows an example of our construction: In an~instance~$\ITDPM$
@@ -947,12 +944,10 @@ We call the assignments at distance $0$ or $2$ \emph{short}, and the ones at dis
   With each element gadget $G(e)$ we associate its \emph{volume} $\deg(e) - 1$.
   The volume corresponds to the maximum number of nodes that can be placed inside the gadget without causing a long assignment.
   If the number of nodes in $G(e)$ exceeds its volume, i.e., $\deg(e) - 1 + j_e$ nodes are placed in $G(e)$ for $j_e > 0$,
-  then the number of chunks these have assign is $4\cdot (\deg(e) - 1 + j_e)$, and at most $4\cdot (\deg(e) - 1) + 1$ can be assigned within the gadget $G(e)$.
-  These nodes have the remaining $(4\cdot (\deg(e) - 1 + j_e)) - (4\cdot (\deg(e) - 1) + 1) = 4\cdot j_e - 1 \geq 3\cdot j_e$ chunks assigned using long assignments.
-  By the pigeon-hole principle, at least $i = \sum_e j_e$ nodes surpass the volume of its gadget.
-  As $\sum_e (4\cdot j_e - 1) \geq 3 \cdot i$, the nodes in the cover subtree have at least $3\cdot i$ long assignments (of cost at least $4$).
-  Recall that each of $k-i$ nodes in the matching subtree result in one long assignment.
-  In total we have at least $k+2\cdot i$ long assignments and by Lemma~\ref{lem:infeasible}, the solution is infeasible, a~contradiction.
+  then the number of chunks assigned to these nodes is $4\cdot (\deg(e) - 1 + j_e)$, and at most $4\cdot (\deg(e) - 1) + 1$ can be assigned within the gadget $G(e)$.
+  For the remaining $4\cdot j_e - 1 \geq 3\cdot j_e$ chunks, long assignments are used.
+  By the pigeon-hole principle, at least $i = \sum_e j_e$ nodes surpass the volume of their gadgets, causing at least $3\cdot i$ long assignments.
+  As each of $k-i$ nodes in the matching subtree result in one long assignment, in total we have at least $k+2\cdot i$ long assignments and by Lemma~\ref{lem:infeasible}, the solution is infeasible, a~contradiction.
 \end{proof}
 
 \begin{lemma}
@@ -1094,7 +1089,7 @@ Let~$\ITDPM$ be an instance of~$\TDM$ with $p$ triples and set cardinality $k = 
 We use the identical substrate network as in Section~\ref{ssec:fprsma} with
 identical chunk replicas placed in the same way.
 This time, however, the inter-connect cost is~$\CostCom = 1$, and the number of nodes (virtual machines) is~$\Vms = 3 \cdot k$, where~$k$ is the set cardinality.
-The threshold value is $\Thr := 6\cdot k + 18\cdot (k-1)\cdot k = 2\cdot (3\cdot k) + 4\cdot({ 3\cdot k \choose 2} - (3\cdot k))$, and we set the access cost~$\CostTrans$ to a chunk replica to $\Thr + 1$.
+The threshold value is $\Thr := 6\cdot k + 18\cdot (k-1)\cdot k = 2\cdot (3\cdot k) + 4\cdot({ 3\cdot k \choose 2} - (3\cdot k))$, and we set the access cost~$\CostTrans$ to $\Thr + 1$.
 High assignment cost forces each node to be collocated with the replica assigned to it.
 %Intuitively, in order to minimize embedding costs,
 %nodes should be placed in near-by leaves of the substrate network.

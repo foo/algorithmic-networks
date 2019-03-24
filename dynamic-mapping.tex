@@ -1,10 +1,13 @@
 This chapter further explores algorithmic challenges of network-efficient mapping of virtual networks in data centers.
-In Chapter~\ref{ch:static-mapping}, we considered the static mapping, where nodes of virtual network reside at designated computational clusters until the computation task is done.
+In Chapter~\ref{ch:static-mapping}, we considered the static mapping, where nodes of virtual network (virtual machines) are placed at vertices of the physical substrate network until the computation task is done.
 However, communication patterns in virtual networks are difficult to predict, and static mappings may result in suboptimal network utilization.
-In this chapter, we study the dynamic mapping, where it is possible to \emph{migrate} a virtual machine from one cluster to another, incurring a fixed cost.
+In this chapter, we study the dynamic mapping, where it is possible to \emph{migrate} a virtual machine from one physical machine to another, incurring a fixed cost.
+We focus on a particular substrate network topology, namely a $1$-level tree.
+
 In contrast to Chapter~\ref{ch:static-mapping}, where we focused on fixed virtual topology suitable for batch processing applications, now we study general virtual networks.
 The communication pattern is not known in advance, and upon receiving a communication request it is possible to reconfigure a mapping by migrating virtual machines.
 By migrating repeatedly communicating virtual machines closer together in the network, it is possible to reduce the overall network utilization.
+To emphasize different focus of this chapter, we refer to vertices of the substrate network as clusters.
 
 \section{Problem Definition}
 
@@ -20,10 +23,10 @@ the nodes $u_t,v_t$ exchange a fixed amount of data. For succinctness of later d
 we assume that a request $(u_t,v_t)$ occurs at time $t \geq 1$. At any time~$t
 \geq 1$, an online algorithm needs to serve the~communication
 request~$(u_t,v_t)$. Right before serving the request, the online algorithm
-can \emph{re}partition the nodes into new clusters. We assume that
+can repartition the nodes into new clusters. We assume that
 a~communication request between two collocated nodes costs 0. The cost of a~communication request between two nodes located in different clusters is
 normalized to~1, and the cost of migrating a node from one cluster to another
-is~$\alpha \geq 1$, where $\alpha$ is a parameter (an integer). For any
+is~$\alpha \geq 1$, where $\alpha$ is a parameter (an~integer). For any
 algorithm \ALG, we denote its total cost (consisting of communication plus
 migration costs) on sequence $\sigma$ by $\ALG(\sigma)$.
 
@@ -32,11 +35,11 @@ and \ref{sec:crep}) is more natural if they first serve a request and then
 optionally migrate. Clearly, this modification can be implemented at no extra cost by
 postponing the migration to the next step.
 
-We are in the realm of competitive worst-case analysis and compare the
-performance of an online algorithm to the performance of an optimal offline
+As already mentioned in the introduction, we will estimate
+the performance of an online algorithm by comparing to the performance of an optimal offline
 algorithm. Formally, let~$\ONL(\sigma)$, resp.~$\OPT(\sigma)$, be the cost
 incurred by an online algorithm \ONL, resp.~by an optimal offline
-algorithm \OPT, for a given~$\sigma$. In contrast to \ONL, which learns the~requests one-by-one as
+algorithm \OPT, for a given sequence of requests~$\sigma$. In contrast to \ONL, which learns the~requests one-by-one as
 it serves them, \OPT has a complete knowledge of the entire request
 sequence~$\sigma$ \emph{ahead of~time}. The goal is to design online repartitioning
 algorithms that provide worst-case guarantees. In particular, $\ONL$ is said
@@ -50,7 +53,7 @@ parameters of the problem, such as the number of nodes or the number of clusters
 The minimum $\rho$ for which $\ONL$ is $\rho$-competitive is called the 
 \emph{competitive ratio} of $\ONL$. 
 
-We consider two different settings:
+As highlighted in the introduction, we consider two different settings:
 
 \begin{description}
 
@@ -66,7 +69,7 @@ in each cluster. We say that an algorithm is~$\delta$-augmented if the size of
 each cluster is~$k' = \delta \cdot k$, whereas the total number of nodes
 remains~$n = k\cdot \ell < k'\cdot \ell$. As usual in competitive analysis,
 the augmented online algorithm is compared to the optimal offline algorithm
-with cluster capacity~$k$.
+with (non-augmented) cluster capacity~$k$.
 \end{description}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1318,6 +1321,6 @@ resolved this issue for the $O(1)$-augmented variant, for which we gave an
 $O(k \log k)$-competitive algorithm.
 The disparity between the performance of the algorithm and the lower bound encourages future research on improving either one of those.
 
-In our model, we assumed a simplified view of a data center, in particular we neglect the substrate network topology, by assuming that the distance among all physical machines is equal.
+In our model, we assumed a simplified view of the substrate network topology, by assuming that the distance among all physical machines is equal.
 Capturing real-world data center topologies can lead to more network-efficient virtual machine placement.
-It would be vital to either focus on a specific topology (such as e.g. a Fat Tree), or to develop a general solution for arbitrary metric.
+It would be vital to either focus on a specific topology (such as e.g. a Fat Tree), or to develop a general solution for an arbitrary metric.

@@ -1,14 +1,14 @@
 \indent
 In the last decades, we witnessed a growing demand for performing large-scale
 computations, such as protein folding, fluid dynamics, weather and market prediction, or production process optimization.
-The scale of such computations exceeds abilities of a single computer, hence they need to be performed on large sets of machines that cooperate over an interconnecting network, collectively called the \emph{computer cluster}.
+The scale of such computations exceeds abilities of a single computer, hence they need to be performed on large sets of machines that cooperate over an interconnecting network.
 Owning and maintaining such large-scale computing infrastructure is often impractical and expensive, and parties look for alternative ways to perform computations.
 In comparison, outsourcing computations provides a wide range~of~benefits.
 First of all, it mitigates the costs of infrastructure management and maintenance.
 This is crucial especially for computational tasks that arise occasionally, such as high-quality rendering, computer verification of products with long development time or analysis of human-harvested data.
 Second, such approach dismisses the need to foresee the appropriate demand for resources.
 If such demand increases unexpectedly, it can be immediately provided without physical extension of the infrastructure.
-This led to a shift of computations to large-scale remote facilities that contain computer clusters with their support infrastructure, the so-called \emph{data centers}.
+This led to a shift of computations to large-scale remote facilities that contain computing machines with their support infrastructure, the so-called \emph{data centers}.
 Performing computations in these external data centers provides the impression of unlimited computational power on demand, and is called the \emph{cloud computing}.
 
 The demand for outsourcing computations to the cloud created a whole market for such services.
@@ -22,7 +22,7 @@ In contrast, the co-existence of multiple tasks in the data center allows to~com
 Such techniques are especially useful in (but not limited to) computationally-intensive applications, where the response time is not the primary concern.
 
 \medskip
-The first part of this thesis assumes the perspective of a data center owner, who wants to~use owned resources in efficient manner.
+The first part of this thesis assumes the perspective of a data center owner, who wants to~use owned resources in an efficient manner.
 For example, processing speed can be scaled down to save energy, memory can be shared or distributed, and cooperating processes can be migrated closer to each other in the network to save bandwidth.
 In the first part of this thesis, we focus on the~last aspect and we show how it leads to
 \emph{efficient usage of an interconnecting network} in a data center.
@@ -76,10 +76,10 @@ This is possible without shutting down the guest operating system, and hence it 
 Distributed cloud applications, including batch processing
 applications such as MapReduce, streaming applications such as Apache Flink or
 Apache Spark, and scale-out databases and key-value stores such as Cassandra,
-generate a~significant amount of network traffic and a considerable fraction
+generate a~significant amount of network traffic and a~considerable fraction
 of their runtime is due to network activity~\cite{MogPop12}. For example,
-traces of jobs from a Facebook cluster reveal that network transfers on
-average account for 33\% of the execution time~\cite{ChZMJS11}. In such
+traces of jobs from a Facebook data center reveal that network transfers on
+average account for 33\% of the execution time~\cite{orchestra}. In such
 applications, it is desirable that frequently communicating virtual machines
 are \emph{collocated}, i.e., mapped to the same physical server: 
 communication across the network (i.e., inter-server communication) induces
@@ -198,15 +198,15 @@ That is, every physical machine (leaf) is connected directly to the root (that h
 A single physical machine hosts a fixed number of virtual machines.
 The model restricted to such networks becomes a variant of online graph clustering.
 That is, we are given a~set of~$n$ nodes (virtual machines) with time-varying pairwise
-communication patterns, which have to be partitioned into~$\ell$~clusters (physical machines) each of
+communication patterns, which have to be partitioned into~$\ell$~physical machines, each of
 capacity $k=n/\ell$.
 
-Intuitively, we would like to minimize inter-cluster
-interactions by mapping frequently communicating nodes to the same cluster.
+Intuitively, we would like to minimize inter-machine
+interactions by mapping frequently communicating nodes to the same physical machine
 Since communication patterns change over time, the~nodes should be \emph{repartitioned}, in
-an online manner, by \emph{migrating} them between clusters.
-The~objective is to minimize the weighted sum of inter-cluster communication and repartitioning costs.
-The former is defined as the number of communication requests between nodes placed in distinct clusters, and the latter as the number of migrations between clusters.
+an online manner, by \emph{migrating} them between physical machines.
+The~objective is to minimize the weighted sum of inter-machine communication and repartitioning costs.
+The former is defined as the number of communication requests between nodes placed at distinct physical machines, and the latter as the number of migrations.
 
 
 The possibility to perform a migration uncovers algorithmic challenges:
@@ -218,13 +218,13 @@ be too large in comparison to~communication costs.
 
 \item \emph{Where to migrate, and what?}
 If an algorithm decides to collocate nodes $x$ and~$y$, the~question becomes
-how. Should $x$ be migrated to the cluster holding $y$, $y$ to the one holding
-$x$, or should both nodes be migrated to a new cluster?
+how. Should $x$ be migrated to the physical machine holding $y$, $y$ to the one holding
+$x$, or should both nodes be migrated to a new machine?
 
 \item \emph{Which nodes to evict?}
-The space of the desired destination cluster may not be sufficient. In
+The space of the desired destination physical machine may not be sufficient. In
 this case, the~algorithm needs to decide which nodes to ``evict'' (migrate to
-other clusters), to free up space.
+other machines), to free up space.
 
 \end{itemize}
 
@@ -259,23 +259,23 @@ In this thesis we research both approaches: in Chapter~\ref{ch:static-mapping} w
 
 \medskip
 
-In Chapter~\ref{ch:static-mapping}, we study virtual network embeddings, a problem of embedding a weighted \emph{guest} graph in a capacitated \emph{host} graph.
+In Chapter~\ref{ch:static-mapping}, we study virtual network embeddings, a problem of embedding a weighted \emph{guest} graph into a capacitated \emph{host} graph.
 The virtual network embedding problem is related to~classic VPN graph embedding problems~\cite{gupta2001provisioning,vpn1, vpn2, Goyal2008},
-a problem that is NP-hard, and is constant-factor approximable even for asymmetric traffic demands~\cite{vpn-apx}.
+a~problem that is NP-hard, and is constant-factor approximable even for asymmetric traffic demands~\cite{vpn-apx}.
 The VPN problem requires finding a graph embedding with fixed endpoints, while in virtual network embedding problems, studied in this thesis, the embedding endpoints are also subject to optimization.
 In this respect, the virtual network embedding problem can also be seen as related to
 classic Minimum Linear Arrangement problem~\cite{EvNaRS99,ord-prob} which asks for the
 embedding of communication graphs on simple line topologies.
 
 We consider a variant of virtual network embedding with extensions motivated by batch-processing applications.
-The most popular virtual network abstraction for batch-processing applications~\cite{mapreduce} is the \emph{virtual cluster}~\cite{oktopus,talk-about,infocom16,ccr15emb,proteus}, a virtual network that forms a clique.
-Existing virtual cluster embedding algorithms often ignore a~crucial dimension of the problem, namely data locality:
+The most popular virtual network abstraction for batch-processing applications~\cite{mapreduce} is a virtual network that forms a clique~\cite{oktopus,talk-about,infocom16,ccr15emb,proteus}.
+Existing embedding algorithms often ignore a~crucial dimension of the problem, namely data locality:
 an input to a batch-processing application is typically stored in a distributed
 and sometimes redundant file system. Since moving
 data is costly, an embedding algorithm should be aware of the data placement,
 and allocate computational resources close to the data.
 Redundant storage gives additional optimization possibilities.
-In this thesis, we study data locality and replica aware virtual cluster embeddings in tree topologies.
+In this thesis, we study data locality and replica-aware virtual network embeddings in tree topologies.
 %Note that our variant is not strictly a~generalization of a virtual network embedding, as we took simplifying assumptions about the traffic demands.
 
 \medskip
@@ -283,7 +283,7 @@ In this thesis, we study data locality and replica aware virtual cluster embeddi
 In Chapter~\ref{ch:dynamic-mapping}, we study an online balanced partitioning problem.
 The static offline version of~the~problem, i.e., a problem variant where
 migration is not allowed, where all requests are known in advance, and where
-the goal is to find assignment of $n$ nodes to $\ell$~clusters, each of~size $n/\ell$, is known as the
+the goal is to find assignment of $n$ nodes to $\ell$~physical machines, each of~capacity $n/\ell$, is known as the
 \emph{$\ell$-balanced graph partitioning problem}. The problem is 
 NP-complete, and cannot even be approximated within any finite factor unless P
 = NP~\cite{AndRae06}.  The static
@@ -292,7 +292,7 @@ is already NP-hard~\cite{GaJoSt76}, and
 the currently best approximation ratio is $O(\log n)$~\cite{SarVaz95,ArKaKa99,FeKrNi00,FeiKra02,KraFei06,Raec08}.
 The inapproximability of the static variant for general values of $\ell$
 motivated research on the bicriteria variant, which can be seen as the offline
-counterpart of our cluster-size augmentation approach. Here, the~goal
+counterpart of our capacity augmentation approach. Here, the~goal
 is~to~compute a graph partitioning into $\ell$ components of~size at most~$k$ (where $k > n/\ell$) and the cost of the cut is compared to the optimal (non-augmented)
 solution where all components are of size at most $n/k$. The variant where
 $n \geq 2 \cdot k \cdot \ell$ was considered in
@@ -305,7 +305,7 @@ need to be served from a cache of finite capacity, and where the number of
 cache misses must be minimized. Classic problem variants usually boil down to
 finding a smart eviction strategy, such as Least Recently Used (LRU)~\cite{SleTar85}. In our
 setting, requests can be served remotely (i.e.,~without fetching the
-corresponding nodes to a single cluster). In this light, our model is more
+corresponding nodes to a single physical machine). In this light, our model is more
 reminiscent of caching models \emph{with
 bypassing}~\cite{EpImLN11,EpImLN15,Irani02}. As a side result, we show that our problem is
 capable of emulating online paging.
@@ -392,7 +392,7 @@ We give a formal problem definition in Chapter~\ref{ch:packet-forwarding}.
 We present a deterministic online algorithm for cache management with hierarchical dependencies, proving that it is
 $O(h(T)\cdot k)$-competitive, where $h(T)$ is the height of the forwarding rules tree (the maximum nesting in the forwarding table), and $k$ is the size of available cache.
 Our result is optimal up to the factor~$O(h(T))$: we show that the lower
-bound for the paging problem~\cite{competitive-analysis} implies an
+bound for the paging problem~\cite{SleTar85} implies an
 $\Omega(k)$ lower bound for our problem.
 While in theory $h(T)$ can be as large as the length of IP address, for the actual forwarding tables, it is a small constant (around 4-7).
 In addition, we consider the online tree caching problem within the resource
@@ -446,5 +446,5 @@ Chapter~\ref{ch:dynamic-mapping} contains a~throughly rewritten and improved rev
 Finally, parts of Chapter~\ref{ch:packet-forwarding} were published in the proceedings of~29th~ACM~Symposium on Parallelism in Algorithms and Architectures (SPAA~2017)~\cite{my-spaa}.
 Some preliminary results from Chapter~\ref{ch:packet-forwarding} appeared in the master thesis of my co-author Aleksandra Spyra.
 
-This thesis was supported by Polish National Science Centre grant 2016/23/N/ST6/03412.
+This thesis was supported by Polish National Science Centre grant Preludium 2016/23/N/ST6/03412.
 
