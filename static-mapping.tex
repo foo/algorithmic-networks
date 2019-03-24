@@ -891,17 +891,17 @@ The multi-assignment factor is $m=4$, and the number of nodes to embed is~$\numN
     \item We place~$k$ nodes in~$k$ {\TripleGadgets} (one per gadget, at an arbitrary leaf) that correspond to triples chosen in~$\STDPM$ solution.
     To each such node we assign $3$ chunk replicas from its gadget and one arbitrary, unassigned unique chunk.
     \item For each element $e$, in $G(e)$ we place
-    ~$\deg(e) - 1$ nodes, and to each of them we assign $3$ arbitrary dummy chunks and $1$ arbitrary 
+    ~$\deg(e) - 1$ nodes, and to each of them we assign $3$~arbitrary dummy chunks and $1$ arbitrary 
     element chunk in this
     gadget that is not assigned in any {\TripleGadget}.
-    We co-locate the node with one of its assigned replicas, hence one of the assignments is for free, and other three assignments incur the cost $2$ each.
+    We co-locate the node with one of its assigned replicas, hence one of the assignments is for free, and other three assignments incur the cost $2$~each.
   \end{enumerate}
   Triples in $\STDPM$ match each element exactly once.
   and hence nodes in triple gadgets have exactly one chunk assigned from $C_e$ for each element $e$.
   For each element $e$, by $e_*$ we denote the chunk that is assigned in a triple gadget.
   The remaining $\deg(e)-1$ chunks from $C_e \setminus \{ e_t \}$ are assigned to $\deg(e)-1$ nodes in $G(e)$.
   The replica $e_*^{(2)}$  is not assigned in $G(e)$, and instead the replica $e_*^{(1)}$ is assigned in a triple gadget.
-  Finally, each of $k$ unique chunks is assigned to a node in a triple gadget, and each dummy chunk is assigned to some node in its element gadget.
+  Finally, each of $k$ unique chunks is assigned to a~node in a triple gadget, and each dummy chunk is assigned to some node in its element gadget.
   
  % \todo{todo: explain: every chunk was processed}
   %Every chunk was assigned, exactly $n_V = k + \sum_e(\deg(e) - 1)$ nodes are placed, and each of the nodes has exactly $4$ chunk replicas assigned.
@@ -974,7 +974,7 @@ We call the assignments at distance $0$ or $2$ \emph{short}, and the ones at dis
 \end{lemma}
 \begin{proof}
   By Lemma~\ref{lem:n-matchsubtree-ma}, exactly $k$ nodes were placed in the \MatchSubtree{}.
-  By Lemma~\ref{lem:no-unq-ma}, these $k$ nodes are placed in the triple gadgets and not in the unique gadgets.
+  By Lemma~\ref{lem:no-unq-ma}, these $k$~nodes are placed in the triple gadgets and not in the unique gadgets.
 As there are exactly $3$ replicas in each \TripleGadget{}, placing more than one node in a single \TripleGadget{} causes at least additional $3$ long assignments (the argument is the same as in the proof of Theorem~\ref{th:ma-unlimited}).
 Therefore, exactly $k$ \TripleGadgets{} are active.
 \end{proof}
@@ -985,12 +985,12 @@ Therefore, exactly $k$ \TripleGadgets{} are active.
 \end{lemma}
 \begin{proof}
   By Lemma~\ref{lem:infeasible}, in $\SCTE$ there are at most $k$ long assignments.
-  By Lemma~\ref{lem:no-unq-ma}, these $k$ long assignments are depleted by $k$ unique chunks, and remaining chunks are assigned by short assignments.
+  By Lemma~\ref{lem:no-unq-ma}, these $k$~long assignments are depleted by $k$ unique chunks, and remaining chunks are assigned by short assignments.
 
 
   Now we show that the unique chunks are assigned at distance $4$ (and not at distance $6$).
   In total, we have $4\cdot n_V = 12\cdot p - 8\cdot k$ assignments.
-  At most $n_V = 3\cdot p - 2\cdot k$ of these are for free, as a node can be co-located with at most one replica.
+  At most $n_V = 3\cdot p - 2\cdot k$ of these are for free, as a~node can be co-located with at most one replica.
   The $k$ unique chunks are assigned for the cost at least $4$ each, and the remaining $4\cdot n_V - k - n_V = 9\cdot p - 7\cdot k$ assignments incur cost at least $2$ each.
   Suppose that a unique chunk is assigned at distance $6$, i.e., the cost of assignment of the unique chunks is $4\cdot k + 2$.
   Then, the solution cost is $2\cdot(9\cdot p - 7\cdot k) + 4\cdot k + 2 = 18\cdot p - 10\cdot k + 2 = \Thr + 2 > \Thr$, i.e., the solution cost exceeds the threshold, a contradiction.
@@ -1004,7 +1004,7 @@ Therefore, exactly $k$ \TripleGadgets{} are active.
   By Lemmas~\ref{lem:n-matchsubtree-ma} and \ref{lem:no-unq-ma}, $k$ nodes in the matching subtree are placed in triple gadgets.
   As triple gadgets have at most $3$ leaves, each of these nodes causes at least one long assignment.
   If a node had $i>1$ unique chunks assigned, then the total number of long assignments would be at least $k-1+i>k$, and by Lemma~\ref{lem:infeasible} the solution would be infeasible.
-  If a node had $0$ unique chunks assigned, it would still cause a~long assignment.
+  If a node had $0$~unique chunks assigned, it would still cause a~long assignment.
   By Lemma~\ref{lem:short-ma}, each of $k$ unique chunks causes a~long assignment, and in total we would have at least $k+1$ long assignments,  and by Lemma~\ref{lem:infeasible} the solution would be infeasible.
 
   Remaining $3$ of $\MaFactor=4$ chunks assigned to each node in the matching subtree are assigned by the short assignment, and the only chunks in distance at most $2$ are the chunks located in the same gadget that the node is located at.
@@ -1036,7 +1036,7 @@ Therefore, exactly $k$ \TripleGadgets{} are active.
   Hence, in each of $G(e)$ we have $n_e$ nodes, where $n_e$ is the volume of $G(e)$.
   In a single gadget $G(e)$, the total number of chunks is $4\cdot(\deg(e) - 1) + 1$, and nodes in this gadget have $4\cdot(\deg(e)-1)$ chunks assigned.
    The remaining $1$ element chunk is assigned in a triple gadget.
-  Hence, the set of active nodes have $1$ of $\deg(e)$ element chunks assigned for each $e\in X\cup Y\cup Z$, and $\STDPM$ assigns each $e\in X\cup Y\cup Z$ exactly once.
+  Hence, the set of active nodes have $1$~of $\deg(e)$ element chunks assigned for each $e\in X\cup Y\cup Z$, and $\STDPM$ assigns each $e\in X\cup Y\cup Z$ exactly once.
  
 %  Each of $3\cdot p = \sum_e \deg(e)$ element chunks has two replicas: one in the matching subtree and one in the cover subtree.
 %  By Lemma~\ref{lem:one-unique-per-node}, $3\cdot k$ element chunks are matched in the matching subtree.
@@ -1107,13 +1107,13 @@ $3$ nodes each, and~$p-k$ gadgets remain empty.
 The~$n_V = 3\cdot k$ nodes have to be placed
 directly at different $3\cdot k$ leaves, and thus at $3\cdot k$ chunks, as otherwise the access cost would immediately exceed the threshold $\Thr$.
 The $3\cdot k$ nodes are distributed among at least $k$ gadgets, as each gadget can host at most $3$ nodes.
+In total there are ${3\cdot k \choose 2}$ pairs of nodes,
+and the inter-connect cost is $2$ for each intra-gadget pair and $4$ for each inter-gadget pair.
+%Note that at most $3\cdot k$ intra-gadget pairs exist, as at most $3$ pairs of nodes exist in each gadget.
+If a gadget contains $3$ nodes, then it has $3$ intra-gadget pairs, if it contains $2$ nodes, then it has $1$ intra-gadget pair, and it has $0$ of these otherwise.
 
-Suppose that $3\cdot k$ nodes were distributed among more than $k$ gadgets.
-Then, less nodes are placed closely to other nodes, and for some $i>0$, $3\cdot k - i$ pairs of nodes belong to the same gadget.
-The inter-connect cost
-for each of ${3\cdot k \choose 2}$ pairs of nodes is either
-$2$ hops, if they belong to the same gadget, or $4$ hops, if they belong
-to different gadgets.
+Suppose that nodes were distributed among more than $k$ gadgets.
+Then, some gadgets contain less than $3$ nodes, and the number of intra-gadget pairs is $3\cdot k - i$ for some $i>0$.
 Hence, the total cost is then $2\cdot (3\cdot k - i) + 4 \cdot ({3 \cdot k \choose 2} - (3\cdot k - i)) = 6\cdot k + 4 \cdot ({3 \cdot k \choose 2} - 3\cdot k) + 2\cdot i = \Thr + 2\cdot i$, and the solution exceeds the threshold $\Thr$.
 \end{proof}
 
