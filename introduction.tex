@@ -407,6 +407,22 @@ Finally, we show that our algorithm can be implemented efficiently, and without 
 
 \subsection{Related Work}
 
+We consider a variant of caching with dependencies among cached elements motivated by the structure of forwarding table.
+In the framework of the competitive analysis, the paging problem was
+first analyzed  by Sleator and Tarjan~\cite{SleTar85}, who presented $k$-competitive algorithms (where $k$ is the cache size) and a matching lower-bound.
+The simple paging problem was later generalized to allow different fetching
+costs (weighted paging)~\cite{double-coverage,young-paging-greedy-dual} and
+additionally different item sizes (file caching)~\cite{young-paging-landlord},
+with the same competitive ratio.
+%Asymptotically same results can be achieved
+%when bypassing is allowed (see \cite{caching-rejection-penalties,paging-irani}
+%and references therein).
+%To the best of our knowledge, the variant of caching, where fetching items to
+%the cache is not allowed unless some other items are cached (e.g., because of 
+%tree dependencies) was 
+%not considered previously in the framework of competitive analysis.
+
+
 An important aspect of our problem are forwarding rule dependencies caused by their hierarchical structure.
 So far, the papers on caching of forwarding tables avoided this issue, either assuming
 that rules do not overlap (a~tree has a single level)~\cite{route-caching-flat} 
