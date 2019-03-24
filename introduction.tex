@@ -293,7 +293,7 @@ the currently best approximation ratio is $O(\log n)$~\cite{SarVaz95,ArKaKa99,Fe
 The inapproximability of the static variant for general values of $\ell$
 motivated research on the bicriteria variant, which can be seen as the offline
 counterpart of our capacity augmentation approach. Here, the~goal
-is~to~compute a graph partitioning into $\ell$ components of~size at most~$k$ (where $k > n/\ell$) and the cost of the cut is compared to the optimal (non-augmented)
+is~to~compute a~graph partitioning into $\ell$ components of~size at most~$k$ (where $k > n/\ell$) and the cost of the cut is compared to the optimal (non-augmented)
 solution where all components are of size at most $n/k$. The variant where
 $n \geq 2 \cdot k \cdot \ell$ was considered in
 \cite{LeMaTr90,SimTen97,EvNaRS00,EvNaRS99,KrNaSc09}. So far, the~best result~is~an~$O(\!\sqrt{\log n \cdot \log \ell})$-approximation algorithm~\cite{KrNaSc09}.
@@ -307,7 +307,7 @@ finding a smart eviction strategy, such as Least Recently Used (LRU)~\cite{SleTa
 setting, requests can be served remotely (i.e.,~without fetching the
 corresponding nodes to a single physical machine). In this light, our model is more
 reminiscent of caching models \emph{with
-bypassing}~\cite{EpImLN11,EpImLN15,Irani02}. As a side result, we show that our problem is
+bypassing}~\cite{EpImLN11,EpImLN15,Irani02}. As a~side result, we show that our problem is
 capable of emulating online paging.
 A major difference between  these problems is that in the caching problems, each request involves a single element of the universe, while in our model \emph{both} endpoints of a communication request are subject to~optimization.
 
@@ -320,7 +320,7 @@ A major difference between  these problems is that in the caching problems, each
 In the second part of this thesis, we consider the fundamental problem of \emph{packet forwarding}.
 We focus on a single router, that physically connects different networks and is responsible for passing packets between them.
 Upon receiving a data packet, the router forwards it to~a~specific output port leading to a neighboring network.
-To choose an appropriate port, the router stores a \emph{forwarding table}, which consists of rules describing how to map the packet destination addresses to appropriate ports.
+To choose an appropriate port, the router stores a~\emph{forwarding table}, which consists of rules describing how to map the packet destination addresses to appropriate ports.
 Typically, a router stores a single rule for each network it knows about.
 
 The router maintains the forwarding table in its memory.
@@ -446,5 +446,5 @@ Chapter~\ref{ch:dynamic-mapping} contains a~throughly rewritten and improved rev
 Finally, parts of Chapter~\ref{ch:packet-forwarding} were published in the proceedings of~29th~ACM~Symposium on Parallelism in Algorithms and Architectures (SPAA~2017)~\cite{my-spaa}.
 Some preliminary results from Chapter~\ref{ch:packet-forwarding} appeared in the master thesis of my co-author Aleksandra Spyra.
 
-This thesis was supported by Polish National Science Centre grant Preludium 2016/23/N/ST6/03412.
+This thesis was supported by Polish National Science Centre grant Preludium 2016/23/ N/ST6/03412.
 

@@ -5,7 +5,7 @@ Modern routers consist of two logical components. Those two components use disjo
   \item The control plane, which is responsible for reflecting the network topology in the forwarding table.
 \end{enumerate}
 
-The forwarding component has finite memory, and in multiple scenarios the size of forwarding table exceeds the size of available memory.
+As highlighted in the introduction, the forwarding component has finite memory, and in an increasingly common scenario the size of forwarding table exceeds the size of available memory.
 One of the solutions is to store only a part of a~forwarding table on the forwarding device, that acts as a cache for the complete forwarding table that is stored in the control plane, see Figure~\ref{fig:router}.
 However, this might result in the situation, where the forwarding device do not possess sufficient information to proceed (\emph{a cache miss}).
 
