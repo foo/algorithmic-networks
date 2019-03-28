@@ -1,3 +1,52 @@
+
+In this chapter, we introduce a natural extension of an online paging problem, where
+items have inter-de\-pen\-den\-cies.
+In the classic online paging problem, items of some universe are requested by
+a~processing entity (e.g., blocks of RAM are requested by the processor). To
+speed up the access, computers use a faster memory, called
+\emph{cache}, capable of accommodating $k$ such items. Upon a~request to a
+non-cached item, the algorithm has to fetch it into the cache, paying a fixed
+cost, while a request to a cached item is free. If the cache is full, the
+algorithm has to free some space by evicting an arbitrary subset of items from
+the cache.
+%The model variant, where fetching is optional (the requested item can be served without being in the cache, incurring some fixed cost) is called a \emph{bypassing model}.
+In the traditional caching problem, the cache elements are independent: it is always feasible to pull in or out the elements of the cache regardless of cache configuration.
+
+
+
+Dependencies among to-be-cached items arise in numerous settings and are a
+natural refinement of many caching problems.
+As highlighted in the introduction, an important application for caching with tree-based dependency model arises in the context
+of forwarding rules in routers. We begin by a technical overview, %in Section~\ref{sec:tc-technical},
+where we explain the the setup for \emph{caching of forwarding rules} in a router.
+In Section~\ref{sec:bisimulation} we establish a connection between caching with hierarchical dependencies and caching of forwarding rules.
+Finally, in Section~\ref{sec:implementing_counters}, we show that \ALGTC can be efficiently implemented.
+
+
+%Nowadays, routers have to store an~enormous number of forwarding rules: the
+%number of rules has doubled in the last six years~\cite{bgp-routeviews} and
+%the superlinear growth is likely to be sustained~\cite{steve-myth}. This
+%entails large costs for Internet Service Providers: fast router memory
+%(usually Ternary Content Addressable Memory (TCAM)) is expensive and
+%power-hungry~\cite{tcam-expensive}.  Many routers currently either operate at
+%(or beyond) the edge of their memory capacities. A~solution, which could delay
+%the need for expensive or impossible memory upgrades in routers, is to store
+%only a subset of rules in the actual router and store all rules on a~secondary
+%device (for example a commodity server with a large but slow
+%memory)~\cite{cacheflow,route-caching-flat,prefix-caching,fib-caching-non-overlapping,fibium-zipf}.
+
+%In Section~\ref{sec:tc-technical} we present the technical setup for our proposed solution,
+%then in Section~\ref{sec:preliminaries} we present the formal model, and in Section~\ref{}.
+%In Section~\ref{sec:preliminaries} we present the formal model for studying the caching problem with dependencies that we call Online Tree Caching, and 
+%in Section~\ref{sec:algo} we propose the algorithm \ALGTC for this model.
+%In Section~\ref{sec:analysis}, we show that \ALGTC is competitive 
+%In Section~\ref{sec:implementing_counters}, we show how \ALGTC can be efficiently implemented.
+%We start by presenting the technical setup (FIB caching) for our proposed solution in Section~\ref{sec:tc-technical}, and in Section~\ref{sec:bisimulation}, we show the reduction that allows to use solution for Online Tree Caching to solve the FIB caching.
+
+\section{Technical Setup}
+\label{sec:tc-technical}
+
+
 In the second part of this thesis, we consider the problem of memory management in a single router.
 Modern routers consist of two logical components. Those two components use disjoint memory (often of distinct type) and disjoint processing units:
 \begin{enumerate}
@@ -21,8 +70,7 @@ actually stored in a real tree; this tree is implicit in the LMP scheme.},
 then the tree is traversed from the root downwards, and the last found rule is
 used.
 
-\section{Technical Setup}
-
+\todo{nieciaglosc}
 This explains why we require the cached nodes to form a subforest:
 leaving a less specific rule on the router while evicting a more specific one
 (i.e., keeping a~tree node in cache while evicting its descendant) will result
@@ -76,31 +124,7 @@ Upon the forwarding table cache miss, the control plane may decide to update the
 Standard caching-related problems arise, such as: which entry to evict to provide space to store the new one.
 Immediate update might seem a rational strategy, but in scenarios with highly dynamic networks that rearrange often, it might be beneficial to delay the update.
 Premature update might result in the situation, where more time is spent alternating the cache configuration than processing packets (this is similar to \emph{thrashing} in virtual memory systems).
-
-In the traditional caching problem, the cache elements are independent: it is always feasible to pull in or out the elements of the cache regardless of cache configuration.
-
 \todo{todo}
-
-
-Dependencies among to-be-cached items arise in numerous settings and are a
-natural refinement of many caching problems. To give a concrete example, one
-important application for our tree-based dependency model arises in the context
-of IP routers. In particular, the online tree caching problem we introduce in
-this paper is motivated by router memory constraints in IP-based networks. The
-material presented in this section serves for motivation, and is not necessary
-for understanding the remainder of the paper.
-
-Nowadays, routers have to store an~enormous number of forwarding rules: the
-number of rules has doubled in the last six years~\cite{bgp-routeviews} and
-the superlinear growth is likely to be sustained~\cite{steve-myth}. This
-entails large costs for Internet Service Providers: fast router memory
-(usually Ternary Content Addressable Memory (TCAM)) is expensive and
-power-hungry~\cite{tcam-expensive}.  Many routers currently either operate at
-(or beyond) the edge of their memory capacities. A~solution, which could delay
-the need for expensive or impossible memory upgrades in routers, is to store
-only a subset of rules in the actual router and store all rules on a~secondary
-device (for example a commodity server with a large but slow
-memory)~\cite{cacheflow,route-caching-flat,prefix-caching,fib-caching-non-overlapping,fibium-zipf}.
 
 This solution is particularly attractive with the advent of Soft\-ware-Defined
 Network (SDN) technology, which allows to manage the expensive memory using a
@@ -149,18 +173,6 @@ straightforward to show that the costs in these two models can differ by a
 factor of at most $2$. For a~formal argument, see
 \lref[Appendix]{sec:bisimulation}.
 
-\paragraph{Implementability.}
-
-Note that the whole input (fed to a tree caching algorithm) is created at the
-controller: positive requests are caused by cache misses (which redirect
-packet to the controller) and batches of $\alpha$ negative requests are caused
-by updates sent to the dynamic routing algorithm run at the controller.
-Therefore, the whole tree caching algorithm can be implemented in software
-in the controller only. Furthermore, our algorithm is a simple counter-based
-scheme, which can be implemented efficiently and also fine-tuned for speed,
-see \lref[Section]{sec:implementing_counters}.
-
-
 
 \section{Problem Definition}\label{sec:preliminaries}
 
@@ -184,19 +196,6 @@ see \lref[Section]{sec:implementing_counters}.
 %item fetching is optional: the requested item can be served without being in
 %the cache, for another fixed cost (usually being at most the cost of item
 %fetching).
-
-In this chapter, we introduce a natural extension of an online paging problem, where
-items have inter-de\-pen\-den\-cies.
-In the classic online paging problem, items of some universe are requested by
-a~processing entity (e.g., blocks of RAM are requested by the processor). To
-speed up the access, computers use a faster memory, called
-\emph{cache}, capable of accommodating $k$ such items. Upon a~request to a
-non-cached item, the algorithm has to fetch it into the cache, paying a fixed
-cost, while a request to a cached item is free. If the cache is full, the
-algorithm has to free some space by evicting an arbitrary subset of items from
-the cache.
-The model variant, where fetching is optional (the requested item can be served without being in the cache, incurring some fixed cost) is called a \emph{bypassing model}.
-
 
 In our model, we assume that the universe is
 an arbitrary (not necessarily binary) rooted tree $T$ and the requested items
@@ -989,13 +988,112 @@ Therefore, if $X$ is a positive changeset applied at $t$, then $X$ is a~single
 tree cap of a tree from subforest $C_{t+1}$, and likewise if $X$ is negative,
 then $X$ is a~single tree cap of a~tree from subforest $C_t$.
 \end{proof}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\section{Lower Bound on the Competitive Ratio}
+\label{sec:lower-bound-on-the-problem}
+
+\begin{theorem}
+For any $\alpha \geq 1$, the competitive ratio of any deterministic online
+algorithm for the online tree caching problem is at least
+$\Omega(\kALG/(\kALG-\kOPT+1))$
+\end{theorem}
+
+\begin{proof}
+We will assume that in the tree caching problem, evictions are free (this
+changes the cost by at most by a factor of two). We consider a tree whose
+leaves correspond to the set of all pages in the paging problem. The rest of
+the tree will be irrelevant.
+
+For any input sequence $I$ for the paging problem, we may create a sequence
+$I_\textnormal{T}$ for tree caching, where a request to a page is replaced by
+$\alpha$ requests to the corresponding leaf. Now, we claim that any solution
+$A$ for~$I$ of cost $c$ can be transformed, in online manner, into a~solution
+$A_\textnormal{T}$ for $I_\textnormal{T}$ of cost $\Theta(\alpha \cdot c)$ and
+vice versa.
+
+If upon a request $r$, an algorithm $A$ fetches $r$ to the cache and evicts
+some pages, then $A_\textnormal{T}$ bypasses $\alpha$ corresponding requests
+to leaf $r$, fetches $r$ afterwards and evicts the corresponding leaves,
+paying $O(\alpha)$ times the cost of $A$. By doing it iteratively,
+$A_\textnormal{T}$ ensures that its cache is equivalent to that of $A$. In
+particular, a request free for $A$ is also free for $A_\textnormal{T}$.
+
+Now take any algorithm $A_\textnormal{T}$ for $I_\textnormal{T}$. It can be
+transformed to the algorithm $A_\textnormal{T}'$ that (i)~keeps only leaves of
+the tree in the cache and (ii) performs actions only at times that are
+multiplicities of $\alpha$ (losing at most a constant factor in comparison to
+$A_\textnormal{T}$). Then, fix any chunk of $\alpha$ requests to some leaf
+$r'$ immediately followed by some fetches and evictions of $A_\textnormal{T}'$
+leaves. Upon seeing the corresponding request $r'$ in $I$, the algorithm $A$
+performs fetches and evictions on the corresponding pages. In effect, the cost
+of $A$ is $O(1/\alpha)$ times the cost of $A_\textnormal{T}$.
+
+The bidirectional reduction described above preserves competitive ratios up to
+a constant factor. Hence, applying the adversarial strategy for the paging
+problem that enforces the competitive ratio  $R = \kALG/(\kALG-\kOPT+1)$
+\cite{competitive-analysis} immediately implies the lower bound of $\Omega(R)$
+on the competitive ratio for the tree caching problem.
+\end{proof}
+
+
+
+
+\section{Cache Updates with Fixed Cost}
+\label{sec:bisimulation}
+
+
+In this section, we present a formal argument showing why we can use any
+$q$-competitive online algorithm $A_T$ for the tree caching problem to obtain
+a $2 q$-competitive online algorithm~$A$ for the tree caching problem with updates with fixed cost $\alpha$.
+
+Namely, we take any input $I$ for the latter problem and create, in online
+fashion, an input $I_T$ for the tree caching problem.
+For any solution for $I_T$, we may replay its actions (fetches and evictions)
+on~$I$ and vice versa. However, there is one place, where these solutions 
+may have different costs. Recall that an update of a~rule stored at node~$v$
+in~$I$ is mapped to a \emph{chunk} of $\alpha$ negative requests to~$v$ 
+in~$I_T$. It is then possible that an algorithm for $I_T$ modifies the cache
+\emph{during} a chunk. An~algorithm that never performs such an action
+is called \emph{canonical}.
+
+To alleviate this issue, we first note that any algorithm $B$ for $I_T$ can be
+transformed into a~canonical solution $B'$ by postponing all cache modifications
+that occur during some chunk to the time right after it. Such a transformation
+may increase the cost of a~solution on a~chunk at most by $\alpha$ and such an
+increase occurs only when $B$ modifies a cache within this chunk. Hence, the
+additional cost of transformation can be mapped to the already existing cost of
+$B$, and thus the cost of $B'$ is at most by a factor of $2$ larger than that
+of $B$.
+
+Furthermore, note that there is a natural cost-pre\-serv\-ing bijection
+between solutions to~$I$ and canonical solutions to~$I_T$ (solutions perform
+same cache modifications). Hence, the algorithm $A$ for $I$ runs $A_T$
+on~$I_T$, transforms it in an online manner into the canonical solution $A'_T(I_T)$, 
+and replays its cache modification on $I$. Then, 
+$A(I) = \; A'_T(I_T) \leq 2 \cdot A_T(I_T) 
+\leq 2 q \cdot \OPT(I_T) \leq 2 q \cdot \OPT(I)$.
+
+The second inequality follows immediately by the $q$-com\-pe\-ti\-ti\-ve\-ness
+of $A_T$. The third inequality follows by replaying cache modifications as
+well, but this time we take solution $\OPT(I)$ and replay its actions on $I_T$,
+creating a canonical (not necessarily optimal) solution of the same cost.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Implementation}\label{sec:implementing_counters}
+
+The whole input fed to a tree caching algorithm is created at the
+controller: positive requests are caused by cache misses (which redirect
+packet to the controller) and batches of $\alpha$ negative requests are caused
+by updates sent to the dynamic routing algorithm run at the controller.
+Therefore, the whole tree caching algorithm can be implemented in software
+in the controller only. The algorithm \ALGTC is a simple counter-based
+scheme, and in this section we show that it can be implemented efficiently.
+
 
 Recall that at each time $t$, \ALGTC verifies the existence of a valid changeset
 that satisfies saturation and maximality properties (see the definition of
@@ -1162,96 +1260,6 @@ for finding set $|X_t|$ is $O(h(T) + \deg(T) \cdot |X_t|)$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-\section{Cache Updates with Fixed Cost}
-\label{sec:bisimulation}
-
-
-In this section, we present a formal argument showing why we can use any
-$q$-competitive online algorithm $A_T$ for the tree caching problem to obtain
-a $2 q$-competitive online algorithm~$A$ for the tree caching problem with updates with fixed cost $\alpha$.
-
-Namely, we take any input $I$ for the latter problem and create, in online
-fashion, an input $I_T$ for the tree caching problem.
-For any solution for $I_T$, we may replay its actions (fetches and evictions)
-on~$I$ and vice versa. However, there is one place, where these solutions 
-may have different costs. Recall that an update of a~rule stored at node~$v$
-in~$I$ is mapped to a \emph{chunk} of $\alpha$ negative requests to~$v$ 
-in~$I_T$. It is then possible that an algorithm for $I_T$ modifies the cache
-\emph{during} a chunk. An~algorithm that never performs such an action
-is called \emph{canonical}.
-
-To alleviate this issue, we first note that any algorithm $B$ for $I_T$ can be
-transformed into a~canonical solution $B'$ by postponing all cache modifications
-that occur during some chunk to the time right after it. Such a transformation
-may increase the cost of a~solution on a~chunk at most by $\alpha$ and such an
-increase occurs only when $B$ modifies a cache within this chunk. Hence, the
-additional cost of transformation can be mapped to the already existing cost of
-$B$, and thus the cost of $B'$ is at most by a factor of $2$ larger than that
-of $B$.
-
-Furthermore, note that there is a natural cost-pre\-serv\-ing bijection
-between solutions to~$I$ and canonical solutions to~$I_T$ (solutions perform
-same cache modifications). Hence, the algorithm $A$ for $I$ runs $A_T$
-on~$I_T$, transforms it in an online manner into the canonical solution $A'_T(I_T)$, 
-and replays its cache modification on $I$. Then, 
-$A(I) = \; A'_T(I_T) \leq 2 \cdot A_T(I_T) 
-\leq 2 q \cdot \OPT(I_T) \leq 2 q \cdot \OPT(I)$.
-
-The second inequality follows immediately by the $q$-com\-pe\-ti\-ti\-ve\-ness
-of $A_T$. The third inequality follows by replaying cache modifications as
-well, but this time we take solution $\OPT(I)$ and replay its actions on $I_T$,
-creating a canonical (not necessarily optimal) solution of the same cost.
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\section{Lower Bound on the Competitive Ratio}
-\label{sec:lower-bound-on-the-problem}
-
-\begin{theorem}
-For any $\alpha \geq 1$, the competitive ratio of any deterministic online
-algorithm for the online tree caching problem is at least
-$\Omega(\kALG/(\kALG-\kOPT+1))$
-\end{theorem}
-
-\begin{proof}
-We will assume that in the tree caching problem, evictions are free (this
-changes the cost by at most by a factor of two). We consider a tree whose
-leaves correspond to the set of all pages in the paging problem. The rest of
-the tree will be irrelevant.
-
-For any input sequence $I$ for the paging problem, we may create a sequence
-$I_\textnormal{T}$ for tree caching, where a request to a page is replaced by
-$\alpha$ requests to the corresponding leaf. Now, we claim that any solution
-$A$ for~$I$ of cost $c$ can be transformed, in online manner, into a~solution
-$A_\textnormal{T}$ for $I_\textnormal{T}$ of cost $\Theta(\alpha \cdot c)$ and
-vice versa.
-
-If upon a request $r$, an algorithm $A$ fetches $r$ to the cache and evicts
-some pages, then $A_\textnormal{T}$ bypasses $\alpha$ corresponding requests
-to leaf $r$, fetches $r$ afterwards and evicts the corresponding leaves,
-paying $O(\alpha)$ times the cost of $A$. By doing it iteratively,
-$A_\textnormal{T}$ ensures that its cache is equivalent to that of $A$. In
-particular, a request free for $A$ is also free for $A_\textnormal{T}$.
-
-Now take any algorithm $A_\textnormal{T}$ for $I_\textnormal{T}$. It can be
-transformed to the algorithm $A_\textnormal{T}'$ that (i)~keeps only leaves of
-the tree in the cache and (ii) performs actions only at times that are
-multiplicities of $\alpha$ (losing at most a constant factor in comparison to
-$A_\textnormal{T}$). Then, fix any chunk of $\alpha$ requests to some leaf
-$r'$ immediately followed by some fetches and evictions of $A_\textnormal{T}'$
-leaves. Upon seeing the corresponding request $r'$ in $I$, the algorithm $A$
-performs fetches and evictions on the corresponding pages. In effect, the cost
-of $A$ is $O(1/\alpha)$ times the cost of $A_\textnormal{T}$.
-
-The bidirectional reduction described above preserves competitive ratios up to
-a constant factor. Hence, applying the adversarial strategy for the paging
-problem that enforces the competitive ratio  $R = \kALG/(\kALG-\kOPT+1)$
-\cite{competitive-analysis} immediately implies the lower bound of $\Omega(R)$
-on the competitive ratio for the tree caching problem.
-\end{proof}
 
 \section{Conclusions}\label{sec:conclusion-caching}
 
