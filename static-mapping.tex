@@ -1,9 +1,9 @@
 
-For executing a certain computation, one places an adequate number of workers, whose task is to select their data portion, process them, and aggregate the result by cooperation with other workers.
+For executing a certain computation in a data center, one places an adequate number of workers, whose task is to select their data portion, process them, and aggregate the result by cooperation with other workers.
 Workers establish a network connection called a virtual network, formed to perform a~given computational task, and in such setting the worker is referred to as a node of a virtual network.
 While these nodes can be placed at~any feasible physical machine in the data center, the processing performance is heavily influenced by their placement.
 Placing nodes closely to each other reduces network latency and bandwidth reservations in the data center.
-In this chapter, we investigate mapping a virtual network onto the physical infrastructure: a~task of~assigning the nodes of a virtual network to~physical machines in a network-efficient way.
+In this chapter, we investigate mapping a virtual network onto the physical infrastructure: a~task of~assigning the nodes of a virtual network to~physical machines in a~network-efficient way.
 
 \section{Problem Definition}\label{sec:model}
 
@@ -35,25 +35,26 @@ replica as the \emph{active} (or selected) replica.
 \parag{The Virtual Network.} The virtual network $\VirtualNodes$ consists of $n_V=|\VirtualNodes|$ virtual machines, called \emph{nodes}.
 Each node can be placed (or, synonymously, embedded) on an arbitrary server and this placement is subject
 to optimization.
-Furthermore, to enable nodes to process the data, define network connections in a virtual network.
+Furthermore, to enable nodes to process the data, network connections need to be established.
 The \emph{(node) inter-connect network} forms a~complete network (a clique) among nodes,
 and the \emph{(chunk) access network} consists of paths from each active replica to the node that is assigned to process it.
 In order to ensure a predictable application performance, both these networks require certain minimal bandwidth guarantees.
 Concretely, we assume that each chunk
 is connected to its assigned node at a~bandwidth~$\CostTrans$, and each node is connected to any other node
 at  bandwidth~$\CostCom$.
+
 The choice of replica and the node assigned is subject to optimization, and
 $\mu$ denotes the assignment of chunks to nodes.
 Furthermore, we assume that the number of chunks $\tau$ is divisible by the number of nodes~$n_V$, and the assignment~$\mu$ is \emph{balanced}:
 each node has exactly $\tau / n_V$ chunks assigned.
-Collectively, the nodes with the inter-connect network and the access network form the virtual network.
+Collectively, the nodes with the inter-connect network and the access network form the \emph{virtual network}.
 Note that our definition extends the notion of the virtual virtual network studied by others \cite{oktopus,talk-about,infocom16,ccr15emb,proteus} by incorporating the chunk access network.
 
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.79\columnwidth]{figs/static-mapping/data_locality_no_legend.pdf}
-\caption{Overview: a 9-server data center storing~$\tau=4$ different chunks~$\{c_1,\ldots,c_4\}$ (depicted as \emph{circles}), each having two replicas. The replicas need to be selected and assigned the two
+\caption{Overview: a 9-server data center storing~$\tau=4$ different chunks~$\{c_1,\ldots,c_4\}$ (depicted as \emph{circles}), each having two replicas. The replicas need to be selected and assigned to the two
  virtual machines~$v_1$ and~$v_2$; the virtual machines are depicted as \emph{squares}, and
  the network connecting them to chunks (using bandwidth~$\CostTrans$) is \emph{dashed}. In addition, the virtual machines are inter-connected among
  each other using bandwidth~$\CostCom$ (\emph{dotted}). The objective of the embedding algorithm is to minimize the overall bandwidth allocation.}\label{fig:overview}
@@ -62,15 +63,16 @@ Note that our definition extends the notion of the virtual virtual network studi
 
 \parag{Optimization Objective.} 
 Our goal is to design algorithms that minimize the resource \emph{footprint}, the most common objective function considered in the literature \cite{fischer-survey}.
-Formally, let~$\dist(v,r)$ denote the~distance (in the underlying physical network~$\Tree$) between a~node~$v$ and
-a chunk replica~$r$, and let~$\dist(v_1,v_2)$ denote the distance between the two nodes~$v_1$ and~$v_2$.
+%Formally, let~$\dist(v,r)$ denote the~distance (in the underlying physical network~$\Tree$) between a~node~$v$ and
+%a chunk replica~$r$, and let~$\dist(v_1,v_2)$ denote the distance between the two nodes~$v_1$ and~$v_2$.
+Formally, let~$\dist(v_1,v_2)$ denote the distance in the underlying physical network~$\Tree$ between the two nodes~$v_1$ and~$v_2$.
 For each chunk $c$,
 $\mu(c)$ is the node to which chunk $c$ is assigned,
 $c^*$ is the replica of $c$ selected for processing,
-and $\textsf{cost}(c) = \dist(\mu(c), c^*)$.
+and $\dist(c) = \dist(\mu(c), c^*)$, i.e., denotes the distance between active replica of chunk $c$ and the node to which $c$ is assigned.
 The objective is to minimize the footprint of the virtual network, defined as follows
 $$
-\underbrace{\sum_{c \in C} \CostTrans \cdot \textsf{cost}(c)}_{\text{chunk access cost}} +  \underbrace{\frac{1}{2} \cdot \sum_{v\in V} \sum_{v' \in \VirtualNodes\setminus\{v\}} \CostCom \cdot \dist(v,v')}_{\text{node inter-connect cost}}\enspace.
+\underbrace{\sum_{c \in C} \CostTrans \cdot \dist(c)}_{\text{chunk access cost}} +  \underbrace{\frac{1}{2} \cdot \sum_{v\in V} \sum_{v' \in \VirtualNodes\setminus\{v\}} \CostCom \cdot \dist(v,v')}_{\text{node inter-connect cost}}\enspace.
 $$
 The solution must obey the capacity of the substrate network: (1)~the total number of nodes hosted at each server $s$ must not exceed $\capacity(s)$, and (2)~the total bandwidth allocated at each link $e$ must not exceed its capacity $\capacity(e)$.
 %Finally, the solution must assign every chunk to some node, i.e., $\bigcup_v \mu(v) = \{ c_1, \ldots, c_{\tau} \}$.
@@ -667,7 +669,7 @@ corresponding to the elements of the triple.
 Note that the number of replicas for a chunk for element $e$ corresponds to the number of triples that contain $e$.
 \item \emph{Other properties of the instance:}
 To transform the optimization problem into a decision problem, we determine that the solution is feasible if it has a cost at most~$\Thr = 4\cdot k$ (the $\Thr$ is the acceptance threshold).
-We set the number of to-be-embedded nodes $n_V = k$,
+We fix the number of to-be-embedded nodes $n_V = k$,
 $\CostTrans = 1$, and the the multi-assignment factor
 $\MaFactor=3$.
 \end{enumerate}
@@ -698,10 +700,10 @@ $\MaFactor=3$.
 \centering
 \includegraphics[width = 0.55\columnwidth]{figs/static-mapping/cte-ma}
 \hfill
-\caption{\textit{Left:} A~$\TDM$ instance of cardinality $k=2$ with three triples:
+\caption{\textit{Left:} A~$\TDM$ instance of cardinality $k=2$ with four triples:
 $t_1 = \langle a, b, c \rangle$,~$t_2 = \langle a, e, f \rangle$, $t_3 = \langle d, b, f \rangle$, and $t_4 = \langle d, e, f \rangle$. The solution is
 indicated by the grey triples $t_1$ and $t_4$. \textit{Right:} The corresponding instance and an optimal solution for the~$\FP + \MA
-+ \RS$ variant of the $\CTE$ problem. In specifying the chunk placement, we omitted the replica subscripts. Each triple corresponds to a single triple gadget.}
++ \RS$ variant of the $\CTE$ problem. In specifying the chunk placement, we omitted the replica superscripts. Each triple corresponds to a single triple gadget.}
 \hfill
 \label{fig:fprsma}
 \end{figure}
@@ -727,14 +729,14 @@ The solution $\STDPM$ matches every element of the universe $X \cup Y \cup Z$, h
 
 \medskip
 
-($\Leftarrow$) Fix a solution $\SCTE$ for ~$\ICTE$ with cost at most $\Thr$.
+($\Leftarrow$) Fix a solution $\SCTE$ for~$\ICTE$ with cost at most $\Thr$.
 We call the triple gadget \emph{active} if it hosts a single node at one of its leaves.
 We claim that $\SCTE$ places at most one node in each triple gadget.
 For contradiction, suppose that two nodes $x_1$, $x_2$ are placed in the same triple gadget.
 First, we lower-bound the cost incurred by $x_1$ and $x_2$ that collectively have $2\cdot \MaFactor = 6$ replicas assigned.
 At most two of these chunks are co-located with $x_1$ or $x_2$ and cost $0$, and remaining four chunks incur a cost at least $2$ each.
 Moreover, at least three of these chunks are placed outside of this triple gadget and incur the cost at least $4$ each.
-In total, $x_1$ and $x_2$ incur the cost at least $2\cdot 0+2\cdot 1+3\cdot 4=14$.
+In total, chunks assigned for $x_1$ and $x_2$ incur the cost at least $2\cdot 0+2\cdot 1+3\cdot 4=14$.
 Second, we lower-bound the cost incurred by remaining $k-2$ nodes.
 Each node can have at most $1$ of its $\MaFactor=3$ replicas assigned for free (every leaf hosts exactly one chunk),
 and it incurs the cost at least $4$ for the remaining~$2$ chunks that are at distance at least~$2$.
@@ -747,6 +749,13 @@ Since each chunk is assigned to exactly one node, every element of~$X$,~$Y$ and~
 \end{proof}
 
 \subsection{Hardness of Multi-Assignments with at Most Two Replicas}
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.9\columnwidth]{figs/static-mapping/overview}
+  \caption{Overview of the substrate network in the proof of the NP-hardness of $\FP+\RS(2)+\MA$ variant of $\CTE$.}
+  \label{fig:red-ma2}
+\end{figure}
+
 
 %We have seen that replica selection flexibility can render embeddings computationally hard.
 Now we provide a more detailed look at this hardness result
@@ -799,7 +808,7 @@ Concretely, we show that already two replicas for each chunk are sufficient for 
 %We extend the construction of a gadget for chunk with redundancy, by incorporating the fact that the multi-assignment factor is $4$.
 %For the construction to remain correct given such a multi-assignment factor, we introduce further chunks with one chunk replica to place in the chunk gadget and use the excessive $3$ data processing capacities.
 
-For an arbitrary instance~$\ITDPM$ of the~$\TDM$ problem we construct a~$\RS(2)+\MA+\FP$ variant instance~$\ICTE$ the following way.
+For an arbitrary instance~$\ITDPM$ of the~$\TDM$ problem, we construct a~$\RS(2)+\MA+\FP$ variant instance~$\ICTE$ the following way.
 Let $k = |X|=|Y|=|Z|$ and $p = |P|$.
 For each element $e\in X\cup Y\cup Z$, by $P_e$ we denote the set of all triples that contain $e$.
 Let $\deg(e) = |P_e|$, and note that $\sum_e \deg(e) = 3\cdot p$.
@@ -810,13 +819,6 @@ We construct a substrate network that consists of two subtrees connected to the
   {\MatchSubtree} consists of $p$ \emph{\TripleGadgets} (one per each triple from $P$) and $k$
   \emph{\UnqGadgets}. The {\CoverSubtree} consists of~$3\cdot k$ \emph{\ElGadgets} $G(e)$, one for each element $e\in X\cup Y\cup Z$.
   The construction is depicted in Figure~\ref{fig:red-ma2}. Gadgets are constructed in the following way.
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=0.9\columnwidth]{figs/static-mapping/overview}
-  \caption{Overview of the substrate network in the proof of the NP-hardness of $\FP+\RS(2)+\MA$ variant of $\CTE$.}
-  \label{fig:red-ma2}
-\end{figure}
-
 \begin{enumerate}
   \item Each {\TripleGadget} consists of four vertices: three leaves and the root of the gadget, as defined in the reduction for the $\FP+\RS+\MA$ variant in Section~\ref{ssec:fprsma}.
   \item Each {\UnqGadget} consists of two vertices: the leaf and the root of the gadget.
@@ -828,14 +830,15 @@ We construct a substrate network that consists of two subtrees connected to the
 
 \paragraph{Chunks.}
 We construct three sets of chunks.
-The first set corresponds to elements of the universe $X\cup Y\cup Z$, and their construction is similar to construction of chunks in Section~\ref{ssec:fprsma}, but it takes the restricted replication factor into consideration.
+The first set corresponds to elements of the universe $X\cup Y\cup Z$.
+This time we cannot repeat the construction of chunks from Section~\ref{ssec:fprsma}, because we need to obey the restricted replication factor.
 %Namely, for each element of universe $e \in X \cup Y \cup Z$, we construct $\deg(e)$ chunks, each having two replicas.
 %The set of $k$ \emph{unique} chunks is placed in the unique subtree and their role is to enforce the placement of exactly $k$ nodes in the matching subtree.
 %We place $3\cdot(\deg(e) - 1)$ \emph{dummy} chunks in the element gadgets; each node in the element subtree needs to processes only $1$ element chunk and remaining $3$ of $\MaFactor=4$ chunks are the dummy chunks.
 %Unique and dummy chunks have one replica, and we simply identify the chunk with chunk replica.
 \begin{enumerate}
   \item \emph{Element chunks}. For each triple $t = \langle x, y, z \rangle \in P$, we construct $3$ chunks:~$x_t, y_t,$ and $z_t$, i.e., $\sum_e\deg(e)$ $=3\cdot p$ chunks in total.
-  Each element $e$ have then $\deg(e)$ element chunks $e_t$ for each $t \in P_e$,  collectively called $C_e$.
+  Each element $e$ have then $\deg(e)$ element chunks~$e_t$ for each $t \in P_e$,  collectively called $C_e$.
   Each chunk from $C_e$ have two replicas. First replicas are placed in the matching subtree:
   we place
   three replicas: $x_t^{(1)}, y_t^{(1)}$ and $z_t^{(1)}$ in the {\TripleGadget} for triple $t\in P$, one per each leaf.
@@ -843,11 +846,12 @@ The first set corresponds to elements of the universe $X\cup Y\cup Z$, and their
   for each element $e \in X\cup Y\cup Z$, for each $t \in P_e$,
   we place replicas $e_t^{(2)}$ in different leaves of the gadget $G(e)$.
   In total, we place $\deg(e)$ replicas of element chunks in the leaves of the gadget $G(e)$.
+  An example for $\TDPM$ instance from Figure~\ref{fig:fprsma} is given in Figure~\ref{fig:example-rs2}.
   \item \emph{Unique chunks}. We construct~$k$ unique chunks $u_1, \ldots, u_k$ with one replica each, and we place these replicas at the leaves of {\UnqGadgets} (one chunk per leaf).
   \item \emph{Dummy chunks}. For each element~$e\in X\cup Y\cup Z$,
   we construct an additional set of $3\cdot(\deg(e) - 1)$ dummy chunks, with one replica each, and we place these replicas in $3\cdot (\deg(e)-1)$ leaves of $G(e)$ (one chunk per leaf),
   not occupied by (the second) replicas of element chunks.
-  Recall that the remaining $\deg(e)$ leaves of $G(e)$ contain replicas $e_t^{(2)}$ for each $t \in P_e$. In total, we place $4\cdot (\deg(e) - 1) + 1$ replicas in $G(e)$, one replica at each leaf.
+  Recall that the remaining $\deg(e)$ leaves of $G(e)$ contain replicas $e_t^{(2)}$ for each $t \in P_e$, i.e., one replica at each leaf.
 \end{enumerate}
 
 \begin{figure}[t]
@@ -860,7 +864,7 @@ The first set corresponds to elements of the universe $X\cup Y\cup Z$, and their
 
 \paragraph{Other properties of the instance.}
 The multi-assignment factor is $m=4$, and the number of nodes to embed is~$\numNodes = k + \sum_{e}(\deg(e)-1) = k + \sum_{e}\deg(e)-3\cdot k = 3\cdot p - 2\cdot k$.
- We set the cost threshold to~$\Thr = 8\cdot k + (n_V-k)\cdot 6 = 18\cdot p - 10\cdot k$.
+ We set the cost threshold to~$\Thr = 8\cdot k + 6\cdot(n_V-k) = 18\cdot p - 10\cdot k$.
 
 %\parag{The reduction.}
 %Given any $\TDPM$ instance $\ITDPM$, we produce the corresponding instance $\ICTE$ of the $\RS(2)+\MA+\FP$ variant, in the way described above.
@@ -873,8 +877,8 @@ The multi-assignment factor is $m=4$, and the number of nodes to embed is~$\numN
  \bigskip
  
  Given any $\TDPM$ instance $\ITDPM$, we produce the corresponding instance $\ICTE$ of the $\RS(2)+\MA+\FP$ variant, in the way described above.
- We illustrate an instance of $\CTE$ corresponding to a $\TDPM$ instance in Figure~\ref{fig:example-rs2}.
- The reduction (Theorem~\ref{th:ma-reduction}) consists of two parts: (1)~given a solution for $\ITDPM$, we construct a solution to $\ICTE$, and (2) given a solution for $\ICTE$, we construct a solution for $\ITDPM$.
+ We illustrate an instance of $\CTE$ corresponding to a $\TDPM$ instance from Figure~\ref{fig:fprsma} in Figure~\ref{fig:example-rs2}.
+ The reduction (Theorem~\ref{th:ma-reduction}) consists of two parts: (1)~given a solution for $\ITDPM$, we construct a solution to $\ICTE$ of cost at most $\Thr$, and (2) given a solution for $\ICTE$ of cost at most $\Thr$, we construct a solution for $\ITDPM$.
  The first part is easier, and we present it now.
 \begin{lemma}
   Fix an instance $\ITDPM$ of~$\TDPM$ and construct an instance $\ICTE$ of $\CTE$ in the way described in this section.
@@ -887,17 +891,15 @@ The multi-assignment factor is $m=4$, and the number of nodes to embed is~$\numN
   \begin{enumerate}
     \item We place~$k$ nodes in~$k$ {\TripleGadgets} (one per gadget, at an arbitrary leaf) that correspond to triples chosen in~$\STDPM$ solution.
     To each such node we assign $3$ chunk replicas from its gadget and one arbitrary, unassigned unique chunk.
-    \item For each element $e$, in $G(e)$ we place
-    ~$\deg(e) - 1$ nodes, and to each of them we assign $3$~arbitrary dummy chunks and $1$ arbitrary 
-    element chunk in this
-    gadget that is not assigned in any {\TripleGadget}.
+    \item For each element $e$, in $G(e)$ we place~$\deg(e) - 1$ nodes, and to each of them we assign $3$~arbitrary dummy chunks and $1$ replica of an arbitrary 
+    element chunk (in this
+    gadget) whose another replica is not assigned in any {\TripleGadget}.
     We co-locate the node with one of its assigned replicas, hence one of the assignments is for free, and other three assignments incur the cost $2$~each.
   \end{enumerate}
-  Triples in $\STDPM$ match each element exactly once.
+  Triples in $\STDPM$ match each element exactly once,
   and hence nodes in triple gadgets have exactly one chunk assigned from $C_e$ for each element $e$.
-  For each element $e$, by $e_*$ we denote the chunk that is assigned in a triple gadget.
-  The remaining $\deg(e)-1$ chunks from $C_e \setminus \{ e_t \}$ are assigned to $\deg(e)-1$ nodes in $G(e)$.
-  The replica $e_*^{(2)}$  is not assigned in $G(e)$, and instead the replica $e_*^{(1)}$ is assigned in a triple gadget.
+  For each element $e$, by $e_*$ we denote the element chunk $e_t$ that is assigned in a triple gadget, i.e, the replica $e_*^{(1)}$ is assigned in a triple gadget.
+  The remaining $\deg(e)-1$ chunks from $C_e \setminus \{ e_* \}$ (their second replicas) are assigned to $\deg(e)-1$ nodes in $G(e)$.
   Finally, each of $k$ unique chunks is assigned to a~node in a triple gadget, and each dummy chunk is assigned to some node in its element gadget.
   
  % \todo{todo: explain: every chunk was processed}
@@ -905,7 +907,7 @@ The multi-assignment factor is $m=4$, and the number of nodes to embed is~$\numN
   To see that the solution does not exceed the threshold $\Thr$, we sum up the total assignment cost.
   The $k$ nodes placed in \TripleGadgets{} have three assignments to chunk replicas within the \TripleGadget{} of the total cost $0+2+2=4$, and one assignment of cost $4$ (to some \UnqGadget{}).
   The remaining $\Vms-k$ nodes placed in the \CoverSubtree{} have four assignments within element gadgets for the total cost $0+3\cdot 2 = 6$.
-  Summing up, the cost incurred is $8\cdot k + 6\cdot (\Vms - k) = \Thr$, i.e., the solution is feasible.
+  Summing up, the incurred cost is $8\cdot k + 6\cdot (\Vms - k) = \Thr$, i.e., the solution is feasible.
 \end{proof}
 
 To construct a solution for $\ITDPM$ from a solution to $\ICTE$, we show that every feasible solution for $\ICTE$ has certain structure.
@@ -1135,8 +1137,7 @@ The solution has the following cost:
   as the~distance between every pair of nodes there is $2$;
   (2) the the inter-connect cost from a~single gadget to all other gadgets is~$4
   \cdot 3 \cdot 3 \cdot (k - 1) / 2 = 18\cdot (k-1)$, where the factor~$4$ corresponds to the distance $4$, the factor~$3$
-  corresponds to the number of nodes per gadget, and
- ~$3 \cdot (k-1)$ is the number of nodes in remote gadgets;
+  corresponds to the number of nodes per gadget, and~$3 \cdot (k-1)$ is the number of nodes in remote gadgets;
   as we count each pair twice, we need to divide by two.
 Summing up over all~$k$ gadgets, the total cost is $6\cdot k + 18\cdot(k-1)\cdot k = \Thr$.
 

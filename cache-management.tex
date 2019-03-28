@@ -236,7 +236,7 @@ factor). We assume that the algorithm starts with the empty cache.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Algorithm}\label{sec:algo}
+\section{Algorithm TC}\label{sec:algo}
 
 The algorithm \textsc{Tree Caching} (\ALGTC) presented in the following is
 a simple scheme that follows a \emph{rent-or-buy paradigm}: it fetches (or evicts)
@@ -288,7 +288,7 @@ changeset, no valid changeset satisfies saturation property.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\section{Analysis of TC}
+\section{Analysis}
 \label{sec:analysis}
 
 We denote the height of $T$ by $h(T)$.  A
@@ -901,7 +901,7 @@ all phases of $I$ yields $\ALGTC(I) \leq O(R) \cdot \OPT(I) + O(h(T) \cdot \kALG
 \cdot \alpha)$.
 \end{proof}
 
-\section{No over-requested changesets}
+\subsection{No over-requested changesets}
 \label{sec:proof_of_lemma_1}
 
 Before proving \lref[Lemma]{lem:no_over-requested_changesets}, 
@@ -995,7 +995,7 @@ then $X$ is a~single tree cap of a~tree from subforest $C_t$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Implementation of TC}\label{sec:implementing_counters}
+\section{Implementation}\label{sec:implementing_counters}
 
 Recall that at each time $t$, \ALGTC verifies the existence of a valid changeset
 that satisfies saturation and maximality properties (see the definition of

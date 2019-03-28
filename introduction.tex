@@ -113,7 +113,7 @@ To measure the quality of resource management strategy, in Chapter~\ref{ch:stati
 Physical components of a data center are modelled as a~graph called a \emph{substrate network}, in which vertices correspond to physical machines, and edges correspond to an interconnecting network.
 A communication cost between a pair of physical machines is proportional to edge-distance in substrate network (the~number of~\emph{hops} in the substrate network).
 A communication pattern among virtual machines is~also modelled as a graph, called a \emph{communication graph}.
-In such settings, the communication among virtual machines running on certain physical machines can be viewed as a \emph{graph embedding} of~communication graph into a substrate network~\cite{gupta2001provisioning}.
+In such settings, the communication among virtual machines running on certain physical machines can be viewed as a~\emph{graph embedding} of the communication graph into a substrate network~\cite{gupta2001provisioning}.
 The main objective is to find an~embedding that locates closely the virtual machines that communicate often.
 
 In this thesis, we study substrate networks in form of a tree, which closely models the~popular Fat-Tree topology~\cite{fat-trees}.
@@ -189,7 +189,7 @@ Possibility of migration allows to~react to unpredictable communication patterns
 For example, if some distant nodes communicate often, it is vital to reduce their distance to save network bandwidth.
 The objective is to~minimize the total network bandwidth used for communication and for migration.
 
-We assume that the communication patterns are not known in advance.
+We assume that the communication patterns are not known in advance to our algorithm.
 We measure the~quality of~presented algorithmic solutions by competitive analysis~\cite{borodin-book}, which is well-suited for problems that are online by their nature.
 In the competitive analysis, the goal is to~optimize \emph{the competitive ratio} of a given online algorithm: the ratio of its cost to the cost of~an~optimal offline algorithm that knows the whole input sequence in advance.
 
@@ -298,7 +298,7 @@ solution where all components are of size at most $n/k$. The variant where
 $n \geq 2 \cdot k \cdot \ell$ was considered in
 \cite{LeMaTr90,SimTen97,EvNaRS00,EvNaRS99,KrNaSc09}. So far, the~best result~is~an~$O(\!\sqrt{\log n \cdot \log \ell})$-approximation algorithm~\cite{KrNaSc09}.
 
-Our model is related to online
+Our dynamic model is related to online
 paging~\cite{SleTar85,FKLMSY91,McGSle91,AcChNo00}, sometimes also referred to
 as online caching, where requests for data items (nodes) arrive over time and
 need to be served from a cache of finite capacity, and where the number of
@@ -339,7 +339,7 @@ the super-linear growth is likely to be sustained~\cite{steve-myth}.
 It is worth noting that some of these networks are virtual.
 The concept of virtual networks described in Part~\ref{pt:virtual-networks} contributed significantly to partitioning of the Internet into subnetworks, and to further growth of forwarding tables.
 
-In the last years, the size of forwarding table started to exceed the amount of available TCAM memory in a typical router (the phenomenon called the TCAM exhaustion~\cite{tcam-exhaust}).
+In the recent years, the size of forwarding table started to exceed the amount of available TCAM memory in a typical router (the phenomenon called the TCAM exhaustion~\cite{tcam-exhaust}).
 Sophisticated electronics circuits such as TCAM are very expensive and power-hungry in comparison to RAM~\cite{tcam-expensive}.
 Moreover, typical operations performed on TCAM memory examine the whole contents stored in memory, which requires closely connected physical structure among memory cells --- as the result, available memory is expensive to expand.
 
@@ -372,7 +372,7 @@ memory)~\cite{cacheflow,route-caching-flat,prefix-caching,fib-caching-non-overla
 %that is, our model formalizes the underlying operational
 %problems of such architectures.
 We propose a theoretical model for studying algorithmic solutions for such setting.
-This setting is similar to caching problem: some rules are stored in a fast memory of~a~router.
+This setting is similar to the caching problem: some rules are stored in a fast memory of~a~router.
 We provide a natural online algorithm that dynamically manages the set of forwarding rules.
 Our 
 algorithm, when applied in the context of such architectures, can 
@@ -453,12 +453,12 @@ caching is so far an unexplored area.
 
 \section{Bibliographic notes and acknowledgements}
 
-The results of this thesis were published by the author of this thesis in various conferences and journals.
+The results of this thesis were published by its author in various conferences and journals.
 Parts of Chapter~\ref{ch:static-mapping} appeared previously in the proceedings of~23rd~IEEE~International Conference~on~Network Protocols (ICNP~2015)~\cite{my-icnp}
 and in Theoretical Computer Science, vol.~697~\cite{my-tcs}.
 Some of the results from Chapter~\ref{ch:static-mapping} appeared in the PhD thesis of my co-author Carlo Fuerst.
 Parts of Chapter~\ref{ch:dynamic-mapping} appeared previously in the proceedings of~30th~International Symposium~on~Distributed Computing (DISC~2016)~\cite{my-disc}.
-Chapter~\ref{ch:dynamic-mapping} contains a~throughly rewritten and improved revision of the results published in these proceedings.
+Chapter~\ref{ch:dynamic-mapping} contains a~thoroughly rewritten and improved revision of the results published in these proceedings.
 Finally, parts of Chapter~\ref{ch:packet-forwarding} were published in the proceedings of~29th~ACM~Symposium on Parallelism in Algorithms and Architectures (SPAA~2017)~\cite{my-spaa}.
 Some preliminary results from Chapter~\ref{ch:packet-forwarding} appeared in the master thesis of my co-author Aleksandra Spyra.
 
