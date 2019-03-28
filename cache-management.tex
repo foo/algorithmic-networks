@@ -83,11 +83,10 @@ a~rule has to be modified. In either case, we have to update the rules at the
 controller: we assume that this cost is zero. (This cost is unavoidable for
 any algorithm, so such an assumption makes our problem only more difficult.)
 Furthermore, if the rule is also stored at the router, then we have to pay a~fixed
-cost of $\alpha$ for updating the router (see the remark for the cost of
-fetches and evictions). In Section~\ref{sec:bisimulation}, we will show that such penalties can be easily simulated in our model.
+cost of $\alpha$ for updating the router (we will show that such penalties can be easily simulated in our model, see Section~\ref{sec:bisimulation}).
 
 
-The forwarding table consists of rules that might be nested, and hence their structure is hierarchical.
+The forwarding table consists of rules that might be nested, and hence its structure is hierarchical.
 The forwarding rules are prefixes of
 IP addresses (they are bit strings). Whenever a packet arrives, the router
 follows a longest matching prefix (LMP) scheme: it searches for the rule that
@@ -103,52 +102,23 @@ leaving a less specific rule on the router while evicting a more specific one
 in a~situation where packets will be forwarded according to the less specific
 rule, and hence potentially exit through the wrong port.
 
-\todo{other problems }
-However, this might result in the situation, where the router does not have sufficient information to proceed (we will show how to deal with this).
-%
-In contemporary networks, the control plane component can be physically separated from the forwarding plane, and to perform remote management over the network it uses protocols such as OpenFlow~\cite{openflow}.
-In such scenario, excessive cache updates cause not only delay in packet processing, but also cause congestion in the network between the forwarding component and the control component.
-
-
-%Additionally, a rule may need to be updated. For example, due to a~change
-%communicated by a dynamic routing protocol (e.g., BGP) the action defined by
-%a~rule has to be modified. In either case, we have to update the rules at the
-%controller: we assume that this cost is zero. (This cost is unavoidable for
-%any algorithm, so such an assumption makes our problem only more difficult.)
-%Furthermore, if the rule is also stored at the router, then we have to pay a~fixed
-%cost of $\alpha$ for updating the router (see the remark for the cost of
-%fetches and evictions). Such penalties can be easily simulated in our model:
-%we issue a~sequence of $\alpha$ negative requests to the updated node.  It is
-%straightforward to show that the costs in these two models can differ by a
-%factor of at most $2$. For a~formal argument, see
-%\lref[Appendix]{sec:bisimulation}.
-
-
-
-
-Even upon the cache miss, the packet still needs to reach its destination.
-The common way to handle the situation is to redirect the packet to the control plane component, which keeps the copy of the complete forwarding table.
-However, the packet cannot be forwarded by the control plane, hence it is supplemented with forwarding informations and sent back to the forwarding plane.
-The forwarding device overrides the usual procedure of forwarding table lookup, and instead it uses the supplemented information to forward the packet.
-
-
-
-
-
-Upon the forwarding table cache miss, the control plane may decide to update the cached portion of the forwarding table kept in the forwarding component.
-Standard caching-related problems arise, such as: which entry to evict to provide space to store the new one.
-Immediate update might seem a rational strategy, but in scenarios with highly dynamic networks that rearrange often, it might be beneficial to delay the update.
-Premature update might result in the situation, where more time is spent alternating the cache configuration than processing packets (this is similar to \emph{thrashing} in virtual memory systems).
-
-The described approach is implementable: one could simply add
+In the proposed scenario, a situation may occur, where that the router does not have sufficient information to proceed.
+The common way to handle the situation is to redirect the packet to the controller, which keeps the copy of the complete forwarding table.
+However, the packet cannot be forwarded by the controller, hence it is supplemented with forwarding informations and sent back to the router.
+Then, the router overrides the usual procedure of forwarding table lookup, and instead it uses the supplemented information to forward the packet.
+Note that the described approach is implementable: one could simply add
 an~artificial rule at the tree root in the router (matching an empty prefix).
 This ensures that when no actual matching rule is found in the router (in the
 cache), the packet will be forwarded according to this artificial rule to the
 control plane that stores all the rules and can handle all packets appropriately.
 
-\todo{todo}
 
-This solution is particularly attractive with the advent of Soft\-ware-Defined
+Following this situation, the control plane may decide to update the cached portion of the forwarding table kept in the forwarding component.
+Standard caching-related problems arise, such as: which entry to evict to provide space to store the new one.
+Immediate update might seem a rational strategy, but in scenarios with highly dynamic networks that rearrange often, it might be beneficial to delay the update.
+Premature update might result in the situation, where more time is spent alternating the cache configuration than processing packets (this is similar to \emph{thrashing} in virtual memory systems).
+
+The proposed solution is particularly attractive with the advent of Soft\-ware-Defined
 Network (SDN) technology, which allows to manage the expensive memory using a
 software controller~\cite{cacheflow,fibium-zipf}. In particular, our
 theoretical model can describe real-world architectures
