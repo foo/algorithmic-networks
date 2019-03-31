@@ -299,7 +299,7 @@ $n \geq 2 \cdot k \cdot \ell$ was considered in
 \cite{LeMaTr90,SimTen97,EvNaRS00,EvNaRS99,KrNaSc09}. So far, the~best result~is~an~$O(\!\sqrt{\log n \cdot \log \ell})$-approximation algorithm~\cite{KrNaSc09}.
 
 Our dynamic model is related to online
-paging~\cite{SleTar85,FKLMSY91,McGSle91,AcChNo00}, sometimes also referred to
+caching~\cite{SleTar85,FKLMSY91,McGSle91,AcChNo00}, sometimes also referred to
 as online caching, where requests for data items (nodes) arrive over time and
 need to be served from a cache of finite capacity, and where the number of
 cache misses must be minimized. Classic problem variants usually boil down to
@@ -308,7 +308,7 @@ setting, requests can be served remotely (i.e.,~without fetching the
 corresponding nodes to a single physical machine). In this light, our model is more
 reminiscent of caching models \emph{with
 bypassing}~\cite{EpImLN11,EpImLN15,Irani02}. As a~side result, we show that our problem is
-capable of emulating online paging.
+capable of emulating online caching.
 A major difference between  these problems is that in the caching problems, each request involves a single element of the universe, while in our model \emph{both} endpoints of a communication request are subject to~optimization.
 
 
@@ -392,9 +392,9 @@ We give a formal problem definition in Chapter~\ref{ch:packet-forwarding}.
 We present a deterministic online algorithm for cache management with hierarchical dependencies, proving that it is
 $O(h(T)\cdot k)$-competitive, where $h(T)$ is the height of the forwarding rules tree (the maximum nesting in the forwarding table), and $k$ is the size of available cache.
 Our result is optimal up to the factor~$O(h(T))$: we show that the lower
-bound for the paging problem~\cite{SleTar85} implies an
+bound for the caching problem~\cite{SleTar85} implies an
 $\Omega(k)$ lower bound for our problem.
-While in theory $h(T)$ can be as large as the length of IP address, for the actual forwarding tables, it is a small constant (around 4-7).
+While in theory $h(T)$ can be as large as the length of IP address, for the actual forwarding tables, it is a small constant (around 4--7).
 In addition, we consider the online tree caching problem within the resource
 augmentation paradigm: we assume that cache sizes of the online algorithm
 ($\kALG$)  and the optimal offline algorithm ($\kOPT$) may differ.
@@ -402,16 +402,16 @@ For this setting we show that our algorithm is
 $O(h(T) \cdot \kALG/(\kALG-\kOPT+1))$-competitive.
 
 
-The performance of the algorithm is not degraded if the model is enhanced to handle rule updates (an important aspect of router operation).
+The performance of our algorithm is not degraded if the model is enhanced to handle rule updates (an important aspect of router operation).
 Finally, we show that our algorithm can be implemented efficiently, and without changes to the router software and hardware.
 
 \subsection{Related Work}
 
-We consider a variant of paging with dependencies motivated by the structure of forwarding table.
-In the framework of the competitive analysis, the paging problem was
+We introduced a variant of caching with dependencies motivated by the structure of forwarding table.
+In the framework of the competitive analysis, the caching problem was
 first analyzed  by Sleator and Tarjan~\cite{SleTar85}, who presented $k$-competitive algorithms (where $k$ is the cache size) and a matching lower-bound.
-The simple paging problem was later generalized to allow different fetching
-costs (weighted paging)~\cite{double-coverage,young-paging-greedy-dual} and
+The problem was later generalized to allow different fetching
+costs (weighted caching)~\cite{double-coverage,young-paging-greedy-dual} and
 additionally different item sizes (file caching)~\cite{young-paging-landlord},
 with the same competitive ratio.
 %Asymptotically same results can be achieved

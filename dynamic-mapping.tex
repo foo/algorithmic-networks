@@ -1102,7 +1102,7 @@ This concludes the proof.
 In order to shed light on the optimality of the presented online algorithm, we
 next investigate lower bounds on the competitive ratio achievable by any
 (deterministic) online algorithm. We start by showing a reduction of the BRP
-problem to online paging, which will imply that already for two clusters the
+problem to online caching, which will imply that already for two clusters the
 competitive ratio of the problem is at least $k-1$. We strengthen this bound,
 providing a lower bound of $k$ that holds for any amount of augmentation, as
 long as the augmentation does not allow to put all nodes in a single 
@@ -1111,13 +1111,13 @@ special case of online rematching ($k = 2$ without augmentation), for which we
 present a~lower bound of $3$.
 
 
-\subsection{Lower Bound by Reduction to Online Paging}
+\subsection{Lower Bound by Reduction to Online Caching}
 \label{sec:paging}
 
 \begin{theorem}
 Fix any $k$. If there exists a $\gamma$-competitive deterministic algorithm $B$
 for BRP for two clusters, each of~size~$k$, then there exists a
-$\gamma$-competitive deterministic algorithm $P$ for the paging problem with 
+$\gamma$-competitive deterministic algorithm $P$ for the caching problem with 
 cache size $k-1$ and where the number of different pages is $k$.
 \end{theorem}
 
@@ -1125,8 +1125,8 @@ cache size $k-1$ and where the number of different pages is $k$.
 The pages are denoted by $p_1,p_2,\ldots,p_k$. Without loss of generality, we
 assume that the initial cache is equal to $p_1,p_2,\ldots,p_{k-1}$. We fix any
 input sequence $\sigma^P = (\sigma^P_1, \sigma^P_2, \sigma^P_3, \ldots)$ for the
-paging problem, where $\sigma^P_t$ denotes the $t$-th accessed page. We show
-how to construct, an online algorithm $P$ for the paging
+caching problem, where $\sigma^P_t$ denotes the $t$-th accessed page. We show
+how to construct, an online algorithm $P$ for the caching 
 problem that proceeds in the following online manner. 
 The algorithm internally runs the algorithm~$B$, 
 starting on the initial assignment of nodes to clusters that will be
@@ -1134,14 +1134,14 @@ defined below. For a requested page $\sigma^P_t$, it creates a subsequence
 of~communication requests for the BRP problem, runs $B$ on them, and serves
 $\sigma^P_t$ on the basis of $B$'s responses.
 
-We use the following $2k$ nodes for the BRP problem: paging nodes $p_1,p_2,
+We use the following $2k$ nodes for the BRP problem: caching nodes $p_1,p_2,
 \ldots, p_k$, auxiliary nodes $a_1,a_2,\ldots,$ $a_{k-1}$, and a special node
 $s$. We say that the node clustering is \emph{well aligned} if one cluster
-contains the node $s$ and $k-1$ paging nodes, and the other cluster contains
-one paging node and all auxiliary nodes. There is a natural bijection between
+contains the node $s$ and $k-1$ caching nodes, and the other cluster contains
+one caching node and all auxiliary nodes. There is a natural bijection between
 possible cache contents and well aligned configurations: the cache consists of
-the $k-1$ paging nodes that are in the same cluster as node $s$. (Without loss
-of generality, we may assume that the cache of any paging algorithm is always
+the $k-1$ caching nodes that are in the same cluster as node $s$. (Without loss
+of generality, we may assume that the cache of any caching algorithm is always
 full, i.e., consists of $k-1$ pages.) If the configuration $c$ of a BRP
 algorithm is well aligned, $\textsc{cache}(c)$ denotes the corresponding cache
 contents.
@@ -1150,10 +1150,10 @@ The initial configuration for the BRP problem is the well aligned
 configuration corresponding to the initial cache (pages
 $p_1,p_2,\ldots,p_{k-1}$ in the cache).
 
-For any paging node $p$, let $\comm(p)$ be a subsequence of communication
+For any caching node $p$, let $\comm(p)$ be a subsequence of communication
 requests for the BRP problem, consisting of the request $(p, s)$, followed by
 $\binom{k-1}{2}$ requests to all pairs of auxiliary nodes. Given an input
-sequence $\sigma^P$ for online paging, we construct the input sequence
+sequence $\sigma^P$ for online caching, we construct the input sequence
 $\sigma^B$ for the BRP problem in the following way: For a request
 $\sigma^P_t$, we repeat a~subsequence $\comm(\sigma^P_t)$ till the node
 clustering maintained by $B$ becomes well aligned and $\sigma^P_t$ becomes
@@ -1164,7 +1164,7 @@ cost---the competitive ratio of~$B$ would then be unbounded. We denote the
 resulting sequence of $\comm(\sigma^P_t)$ subsequences by
 $\comm_t(\sigma^P_t)$.
 
-To construct the response to the paging request $\sigma^P_t$, the algorithm
+To construct the response to the caching request $\sigma^P_t$, the algorithm
 $P$ runs $B$ on $\comm_t(\sigma^P_t)$. Right after processing
 $\comm_t(\sigma^P_t)$, the node configuration $c$ of $B$ is well aligned and
 $\sigma^P_t$ is collocated with~$s$. Hence, $P$ may change its cache
@@ -1180,13 +1180,13 @@ summed over all requests from sequence $\sigma^P$, yields $2 \cdot
 
 Now we show that there exists an (offline) solution \OFF to $\sigma^B$, whose
 cost is exactly $2 \cdot \alpha \cdot \OPT(\sigma^P)$. Recall that, for a
-paging request $\sigma^P_t$, $\sigma^B$ contains the~corresponding sequence
+caching request $\sigma^P_t$, $\sigma^B$ contains the~corresponding sequence
 $\comm_t(\sigma^P_t)$. Before serving the first request
 of~$\comm_t(\sigma^P_t)$, \OFF changes its state to a well aligned
-configuration corresponding to the cache of $\OPT$ right after serving paging
+configuration corresponding to the cache of $\OPT$ right after serving caching 
 request $\sigma^P_t$. This ensures that the subsequence $\comm_t(\sigma^P_t)$
 is free for \OFF. Furthermore, the cost of node migration of \OFF is $2 \cdot
-\alpha$ (two paging nodes are swapped) if $\OPT$ performs a fetch, and 0 if
+\alpha$ (two caching nodes are swapped) if $\OPT$ performs a fetch, and 0 if
 $\OPT$ does not change its cache contents. Therefore,
 $\OFF(\comm_t(\sigma^P_t)) = 2 \cdot \alpha \cdot \OPT(\sigma^P_t)$, which
 summed over the entire sequence $\sigma^P$ yields $\OFF(\sigma^B) = 2 \cdot
@@ -1205,7 +1205,7 @@ and between \OFF and \OPT yields
 and therefore $P$ is $\gamma$-competitive.
 \end{proof}
 
-As any deterministic algorithm for the paging problem with cache size $k-1$
+As any deterministic algorithm for the caching problem with cache size $k-1$
 has a competitive ratio of~at~least $k-1$~\cite{SleTar85}, we obtain the
 following result.
 

@@ -1,7 +1,7 @@
 
-In this chapter, we introduce a natural extension of an online paging problem, where
+In this chapter, we introduce a natural extension of an online caching problem, where
 items have inter-de\-pen\-den\-cies.
-In the classic online paging problem, items of some universe are requested by
+In classic online caching problem, items of some universe are requested by
 a~processing entity (e.g., blocks of RAM are requested by the processor). To
 speed up the access, computers use a faster memory, called
 \emph{cache}, capable of accommodating $k$ such items. Upon a~request to a
@@ -959,18 +959,18 @@ $\Omega(\kALG/(\kALG-\kOPT+1))$
 \begin{proof}
 We will assume that in the tree caching problem, evictions are free (this
 changes the cost by at most by a factor of two). We consider a tree whose
-leaves correspond to the set of all pages in the paging problem. The rest of
+leaves correspond to the set of all elements in the caching problem. The rest of
 the tree will be irrelevant.
 
-For any input sequence $I$ for the paging problem, we may create a sequence
-$I_\textnormal{T}$ for tree caching, where a request to a page is replaced by
+For any input sequence $I$ for the caching problem, we may create a sequence
+$I_\textnormal{T}$ for tree caching, where a request to an element is replaced by
 $\alpha$ requests to the corresponding leaf. Now, we claim that any solution
 $A$ for~$I$ of cost $c$ can be transformed, in online manner, into a~solution
 $A_\textnormal{T}$ for $I_\textnormal{T}$ of cost $\Theta(\alpha \cdot c)$ and
 vice versa.
 
 If upon a request $r$, an algorithm $A$ fetches $r$ to the cache and evicts
-some pages, then $A_\textnormal{T}$ bypasses $\alpha$ corresponding requests
+some elements, then $A_\textnormal{T}$ bypasses $\alpha$ corresponding requests
 to leaf $r$, fetches $r$ afterwards and evicts the corresponding leaves,
 paying $O(\alpha)$ times the cost of $A$. By doing it iteratively,
 $A_\textnormal{T}$ ensures that its cache is equivalent to that of $A$. In
@@ -983,13 +983,13 @@ multiplicities of $\alpha$ (losing at most a constant factor in comparison to
 $A_\textnormal{T}$). Then, fix any chunk of $\alpha$ requests to some leaf
 $r'$ immediately followed by some fetches and evictions of $A_\textnormal{T}'$
 leaves. Upon seeing the corresponding request $r'$ in $I$, the algorithm $A$
-performs fetches and evictions on the corresponding pages. In effect, the cost
+performs fetches and evictions on the corresponding elements. In effect, the cost
 of $A$ is $O(1/\alpha)$ times the cost of $A_\textnormal{T}$.
 
 The bidirectional reduction described above preserves competitive ratios up to
-a constant factor. Hence, applying the adversarial strategy for the paging
+a constant factor. Hence, applying the adversarial strategy for the caching
 problem that enforces the competitive ratio  $R = \kALG/(\kALG-\kOPT+1)$
-\cite{competitive-analysis} immediately implies the lower bound of $\Omega(R)$
+\cite{SleTar85} immediately implies the lower bound of $\Omega(R)$
 on the competitive ratio for the tree caching problem.
 \end{proof}
 
@@ -1219,7 +1219,7 @@ for finding set $|X_t|$ is $O(h(T) + \deg(T) \cdot |X_t|)$.
 
 \section{Conclusions}\label{sec:conclusion-caching}
 
-In this chapter we define a novel variant of online paging which finds
+In this chapter we define a novel variant of online caching which finds
 applications in the context of IP routing networks where forwarding rules can
 be cached. We presented a deterministic online algorithm that achieves a
 provably competitive trade-off between the benefit of caching and update costs.
