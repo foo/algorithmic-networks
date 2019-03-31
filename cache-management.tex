@@ -5,7 +5,7 @@ In classic online caching problem, items of some universe are requested by
 a~processing entity (e.g., blocks of RAM are requested by the processor). To
 speed up the access, computers use a faster memory, called
 \emph{cache}, capable of accommodating $k$ such items. Upon a~request to a
-non-cached item, the algorithm has to fetch it into the cache, paying a fixed
+non-cached item, the algorithm has to fetch it into the cache, paying a~fixed
 cost, while a request to a cached item is free. If the cache is full, the
 algorithm has to free some space by evicting an arbitrary subset of items from
 the cache.
@@ -19,8 +19,8 @@ natural refinement of many caching problems.
 As highlighted in the introduction, an important application for caching with tree-based dependency model arises in the context
 of forwarding rules in routers. We begin by a technical overview, %in Section~\ref{sec:tc-technical},
 where we explain the the setup for \emph{caching of forwarding rules} in a router.
-Then, we introduce the formal model for caching with hierarchical dependencies, for which we propose a competitive algorithm.
-In Section~\ref{sec:bisimulation} we establish a connection between caching with hierarchical dependencies and caching of forwarding rules.
+Then, we introduce the formal model for \emph{caching with tree dependencies}, for which we propose a competitive algorithm.
+In Section~\ref{sec:bisimulation} we establish a connection between caching with tree dependencies and caching of forwarding rules.
 Finally, we show that the proposed algorithm can be efficiently implemented.
 
 
@@ -49,7 +49,7 @@ Finally, we show that the proposed algorithm can be efficiently implemented.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.7\columnwidth]{figs/cache-management/router.pdf}
+\includegraphics[width=0.7\columnwidth]{figs/cache-management/routerbgp.pdf}
 \caption{The router (\emph{right}) caches only a subset of all rules, and
   rules that are not cached are answered by the controller (\emph{left}) that
   keeps the whole tree of rules. Updates to the rules are passed by the
@@ -58,75 +58,83 @@ Finally, we show that the proposed algorithm can be efficiently implemented.
 
 As highlighted in the introduction, routers has finite memory, and in an increasingly common scenario the size of forwarding table exceeds the size of available memory.
 One of the solutions is to store only a part of a~forwarding table on the router, that acts as a cache for the complete forwarding table.
-The setup  depicted in
-\lref[Figure]{fig:router} consists of two entities: a single router 
-(e.g., an OpenFlow switch) which caches only a~subset of all forwarding rules,
-and the (SDN) controller, which keeps all rules in its less expensive and
-slower memory (see~\cite{fibium-zipf} for a more technical discussion). During runtime, packets arrive at the router, and if an
-appropriate forwarding rule is found within the rules cached by the router,
-then the packet is forwarded accordingly, and the associated cost is zero.
-Otherwise, the packet has to be forwarded to the controller (where 
-an~appropriate forwarding rule exists); this indirection costs~$1$. Hence, the
-rules correspond to cacheable items and accesses to rules are modeled by
-positive requests to the corresponding items. At some chosen points in time,
-the caching algorithm run at the controller may decide to remove or add rules
-to the cache. Any such change entails a~fixed cost $\alpha$.\footnote{This
-cost corresponds to the transmission of a message from the controller to the
-router as well as the update of internal data structures of the router. Such
-an update of proprietary and vendor-dependent structures can be quite
-costly~\cite{tcam-expensive-updates}, but the empirical studies show it to be
-independent of the rule being updated~\cite{fib-updates}.}
-
-Additionally, a rule may need to be updated. For example, due to a~change
-communicated by a dynamic routing protocol (e.g., BGP) the action defined by
-a~rule has to be modified. In either case, we have to update the rules at the
-controller: we assume that this cost is zero. (This cost is unavoidable for
-any algorithm, so such an assumption makes our problem only more difficult.)
-Furthermore, if the rule is also stored at the router, then we have to pay a~fixed
-cost of $\alpha$ for updating the router (we will show that such penalties can be easily simulated in our model, see Section~\ref{sec:bisimulation}).
-
-
-The forwarding table consists of rules that might be nested, and hence its structure is hierarchical.
-The forwarding rules are prefixes of
-IP addresses (they are bit strings). Whenever a packet arrives, the router
-follows a longest matching prefix (LMP) scheme: it searches for the rule that
-is a~prefix of the destination IP of the packet and among matching rules it
-chooses the longest one. In other words, if the prefixes corresponding to
-rules are stored in the tree\footnote{We do not have to assume that they are
-actually stored in a real tree; this tree is implicit in the LMP scheme.},
-then the tree is traversed from the root downwards, and the last found rule is
-used.
-Similarly to forwarding rules, in our model the cached nodes to form a subforest:
-leaving a less specific rule on the router while evicting a more specific one
-(i.e., keeping a~tree node in cache while evicting its descendant) will result
-in a~situation where packets will be forwarded according to the less specific
-rule, and hence potentially exit through the wrong port.
-
-In the proposed scenario, a situation may occur, where that the router does not have sufficient information to proceed.
-The common way to handle the situation is to redirect the packet to the controller, which keeps the copy of the complete forwarding table.
-However, the packet cannot be forwarded by the controller, hence it is supplemented with forwarding informations and sent back to the router.
-Then, the router overrides the usual procedure of forwarding table lookup, and instead it uses the supplemented information to forward the packet.
-Note that the described approach is implementable: one could simply add
-an~artificial rule at the tree root in the router (matching an empty prefix).
-This ensures that when no actual matching rule is found in the router (in the
-cache), the packet will be forwarded according to this artificial rule to the
-control plane that stores all the rules and can handle all packets appropriately.
-
-
-Following this situation, the control plane may decide to update the cached portion of the forwarding table kept in the forwarding component.
-Standard caching-related problems arise, such as: which entry to evict to provide space to store the new one.
-Immediate update might seem a rational strategy, but in scenarios with highly dynamic networks that rearrange often, it might be beneficial to delay the update.
-Premature update might result in the situation, where more time is spent alternating the cache configuration than processing packets (this is similar to \emph{thrashing} in virtual memory systems).
-
-The proposed solution is particularly attractive with the advent of Soft\-ware-Defined
+This solution is particularly attractive with the advent of Soft\-ware-Defined
 Network (SDN) technology, which allows to manage the expensive memory using a
-software controller~\cite{cacheflow,fibium-zipf}. In particular, our
+software controller. In particular, our
 theoretical model can describe real-world architectures
 like~\cite{cacheflow,fibium-zipf},
 that is, our model formalizes the underlying operational
 problems of such architectures. Our 
 algorithm, when applied in the context of such architectures, can 
 hence be used to prolong the lifetime of IP routers.
+
+\newpage
+The setup  depicted in
+\lref[Figure]{fig:router} consists of two entities: a single router 
+(e.g., an OpenFlow switch) which caches only a~subset of all forwarding rules,
+and the (SDN) controller, which keeps all rules in its less expensive and
+slower memory (see~\cite{fibium-zipf} for a more technical discussion).
+It is also possible that these two entities are parts of a single device.
+In such case, they are called control plane and forwarding plane, respectively.
+
+Rules in the forwarding table form a tree.
+That is, the forwarding rules are prefixes of
+IP addresses (they are bit strings). Whenever a packet arrives, the router
+follows a longest matching prefix (LMP) scheme: it searches for the rule that
+is a~prefix of the destination IP of the packet, and among matching rules, it
+chooses the longest one. In other words, if the prefixes corresponding to
+rules are stored in the tree,
+then the tree is traversed from the root downwards, and the last found rule is
+used (we do not have to assume that they are
+actually stored in a real tree; this tree is implicit in the LMP scheme).
+
+
+
+Dependencies among the rules impose certain restrictions on feasible cache configurations.
+Leaving a less specific rule on the router while evicting a more specific one
+(i.e., keeping a~tree node in cache while evicting its descendant) would result
+in a~situation where packets are forwarded according to the less specific
+rule, and hence potentially exit through the wrong port.
+To guarantee that the router can forward the package correctly with partial forwarding table, we require that cached nodes form a subforest.
+To see that this is sufficient, consider a packet that, having access to the complete forwarding table, would be forwarded by the rule $v$.
+If the rule $v$ is present in the portion of the forwarding table cached at the router,
+then LMP scheme selects $v$, even if some ancestors of $v$ are not present in the cache.
+However, if $v$ is not present in the cache, no other rule present in the cache matches the packet, as predecessors of $v$ do not match the packet.
+
+Consider the situation, where that the router does not have sufficient information to proceed.
+The common way to handle this is to redirect the packet to the controller (where 
+an~appropriate forwarding rule exists).
+We simply add
+an~artificial rule at the tree root in the router (matching an empty prefix).
+This rule is the least specific rule for any packet, hence as long as any rule that matches the packet is present in cache, the LMP scheme never selects the artificial rule.
+When no actual matching rule is found in the 
+cache, the packet will be forwarded according to this artificial rule to the
+controller that stores all the rules and can handle all packets appropriately.
+However, the packet cannot be forwarded by the controller, hence it is supplemented with forwarding informations and sent back to the router.
+Then, the router overrides the usual procedure of forwarding table lookup, and instead it uses the supplemented information to forward the packet.
+For this indirection in packet forwarding, we charge the algorithm the cost~$1$.
+
+% Following this situation, the controller may decide to update the cached portion of the forwarding table kept in the forwarding component.
+At some chosen points in time, the caching algorithm run at the controller may decide
+to remove or add rules to the cache.
+Any such change entails a~fixed cost $\alpha$; this
+cost corresponds to the transmission of a message from the controller to the
+router as well as the update of internal data structures of the router. Such
+an update of proprietary and vendor-dependent structures can be quite
+costly~\cite{tcam-expensive-updates}, but the empirical studies show it to be
+independent of the rule being updated~\cite{fib-updates}.
+Standard caching-related problems arise, such as: which entry to evict to provide space to store the new one.
+Immediate update might seem a rational strategy, but in scenarios with highly dynamic networks that rearrange often, it might be beneficial to delay the update.
+Premature update might result in the situation, where more time is spent alternating the cache configuration than processing packets (this is similar to \emph{thrashing} in virtual memory systems).
+
+Additionally, a rule may need to be updated. For example, due to a~change
+communicated by a dynamic routing protocol run at the controller (e.g., BGP) the action defined by
+a~rule has to be modified. In either case, we have to update the rules at the
+controller: we assume that this cost is zero. (This cost is unavoidable for
+any algorithm, so such an assumption makes our problem only more difficult.)
+Furthermore, if the rule is also stored at the router, then we have to pay a~fixed
+cost of $\alpha$ for updating the router.
+We will show that such penalties can be easily simulated in our model, see Section~\ref{sec:bisimulation}.
 
 
 
