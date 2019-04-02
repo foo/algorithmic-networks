@@ -1,13 +1,13 @@
 
 For executing a certain computation in a data center, one places an adequate number of workers, whose task is to select their data portion, process them, and aggregate the result by cooperation with other workers.
-Workers establish a network connection called a virtual network, formed to perform a~given computational task, and in such setting the worker is referred to as a node of a virtual network.
-While these nodes can be placed at~any feasible physical machine in the data center, the processing performance is heavily influenced by their placement.
+Workers establish network connections called a virtual network, formed to perform a~given computational task, and in such setting the worker is referred to as a node of a virtual network.
+While these nodes can be placed at~any feasible physical machine in the data center, the processing performance is heavily influenced by their positions.
 Placing nodes closely to each other reduces network latency and bandwidth reservations in the data center.
 In this chapter, we investigate mapping a virtual network onto the physical infrastructure: a~task of~assigning the nodes of a virtual network to~physical machines in a~network-efficient way.
 
 \section{Problem Definition}\label{sec:model}
 
-As described informally in the introduction (see Section~\ref{sec:virt_net_emb}), the model combines three components: (1)~the~substrate network (the servers
+As described informally in the introduction (see Section~\ref{sec:virt_net_emb}), in the model we consider three components: (1)~the~substrate network (the servers
 and the connecting physical network),
 (2)~the virtual network (the virtual machines and the logical network connecting the machines to each other
 as well as to the data), and (3)~the data divided into data chunks that needs to be assigned to nodes that process them.
@@ -33,14 +33,14 @@ It is sufficient to assign one replica of each chunk, and we refer to this
 replica as the \emph{active} (or selected) replica.
 
 \parag{The Virtual Network.} The virtual network $\VirtualNodes$ consists of $n_V=|\VirtualNodes|$ virtual machines, called \emph{nodes}.
-Each node can be placed (or, synonymously, embedded) on an arbitrary server and this placement is subject
+Each node can be placed (or, synonymously, embedded) at an arbitrary server and this placement is subject
 to optimization.
 Furthermore, to enable nodes to process the data, network connections need to be established.
-The \emph{(node) inter-connect network} forms a~complete network (a clique) among nodes,
+The \emph{(node) inter-connect network} forms a~complete network (a clique) between nodes,
 and the \emph{(chunk) access network} consists of paths from each active replica to the node that is assigned to process it.
 In order to ensure a predictable application performance, both these networks require certain minimal bandwidth guarantees.
 Concretely, we assume that each chunk
-is connected to its assigned node at a~bandwidth~$\CostTrans$, and each node is connected to any other node
+is connected to its assigned node at bandwidth~$\CostTrans$, and each node is connected to any other node
 at  bandwidth~$\CostCom$.
 
 The choice of replica and the node assigned is subject to optimization, and
@@ -48,7 +48,7 @@ $\mu$ denotes the assignment of chunks to nodes.
 Furthermore, we assume that the number of chunks $\tau$ is divisible by the number of nodes~$n_V$, and the assignment~$\mu$ is \emph{balanced}:
 each node has exactly $\tau / n_V$ chunks assigned.
 Collectively, the nodes with the inter-connect network and the access network form the \emph{virtual network}.
-Note that our definition extends the notion of the virtual virtual network studied by others \cite{oktopus,talk-about,infocom16,ccr15emb,proteus} by incorporating the chunk access network.
+Note that our definition extends the notion of the virtual virtual network studied by others \cite{oktopus,MogPop12,infocom16,ccr15emb,proteus} by incorporating the chunk access network.
 
 
 \begin{figure}[t]
@@ -68,11 +68,11 @@ Our goal is to design algorithms that minimize the resource \emph{footprint}, th
 Formally, let~$\dist(v_1,v_2)$ denote the distance in the underlying physical network~$\Tree$ between the two nodes~$v_1$ and~$v_2$.
 For each chunk $c$,
 $\mu(c)$ is the node to which chunk $c$ is assigned,
-$c^*$ is the replica of $c$ selected for processing,
-and $\dist(c) = \dist(\mu(c), c^*)$, i.e., denotes the distance between active replica of chunk $c$ and the node to which $c$ is assigned.
-The objective is to minimize the footprint of the virtual network, defined as follows
+$c^*$ is the replica of~$c$ selected for processing,
+and $\dist(\mu(c), c^*)$ denotes the distance between their active replica of chunk $c$ and the node to which $c$ is assigned.
+The objective is to minimize the footprint of the virtual network, defined as
 $$
-\underbrace{\sum_{c \in C} \CostTrans \cdot \dist(c)}_{\text{chunk access cost}} +  \underbrace{\frac{1}{2} \cdot \sum_{v\in V} \sum_{v' \in \VirtualNodes\setminus\{v\}} \CostCom \cdot \dist(v,v')}_{\text{node inter-connect cost}}\enspace.
+\underbrace{\sum_{c \in C} \CostTrans \cdot \dist(\mu(c), c^*)}_{\text{chunk access cost}} +  \underbrace{\frac{1}{2} \cdot \sum_{v\in V} \sum_{v' \in \VirtualNodes\setminus\{v\}} \CostCom \cdot \dist(v,v')}_{\text{node inter-connect cost}}\enspace.
 $$
 The solution must obey the capacity of the substrate network: (1)~the total number of nodes hosted at each server $s$ must not exceed $\capacity(s)$, and (2)~the total bandwidth allocated at each link $e$ must not exceed its capacity $\capacity(e)$.
 %Finally, the solution must assign every chunk to some node, i.e., $\bigcup_v \mu(v) = \{ c_1, \ldots, c_{\tau} \}$.
@@ -87,7 +87,7 @@ and bandwidth constraints ($\BW$), as~described below.
 
 \parag{Multiple Assignment ($\MA$).}
 In most applications, the number of chunks~$\tau$ is larger than the number of nodes, and the objective is to assign multiple chunks to each node.
-In each variant (regardless of $\MA$), we investigate assignments that balances chunks among nodes, i.e., where the number of chunks is divisible by the number of nodes, and each node has an~identical integer number of chunks assigned.
+In each variant (regardless of $\MA$), we investigate assignments that balance chunks among nodes, i.e., where the number of chunks is divisible by the number of nodes, and each node has an~identical integer number of chunks assigned.
 We require that the number of chunks assigned to each node is equal to~$\MaFactor = \tau / n_V$, and we call $\MaFactor$ the multi-assignment factor.
 If the number of chunks exceeds the number of nodes, i.e., $\MaFactor > 1$, then we refer to such scenario as $\MA$.
 In~the~$\CTE$ variant without $\MA$, each node has exactly one chunk assigned, i.e., $\MaFactor = 1$.
@@ -281,8 +281,8 @@ graph between the set
 of nodes and
 the set of chunks.
 First, we clone each node~$\MaFactor$ times
-as each node needs to assign
-$\MaFactor$ chunks, and we aggregate all replicas of a given chunk in a
+as each node needs to have
+$\MaFactor$ chunks assigned, and we aggregate all replicas of a given chunk in a
 single %$\ChunkType$
 super-vertex.
 Second, we link (cloned) nodes to (aggregated) replicas.
@@ -376,7 +376,7 @@ The \emph{uplink} of a~proper subtree $T'$, denoted $\Uplink(T')$ is an edge fro
 
 
 \begin{lemma}\label{lem:uplink-alloc}
-In the~$\MA$ variant of $\CTE$, a proper subtree~$\Tree'$
+In the~$\MA$ variant of $\CTE$, for a proper subtree~$\Tree'$
 containing~$\tau(T')$
 chunks and $x$~nodes, the bandwidth allocation on the uplink of $\Tree'$ is at~least ${\CostTrans\cdot|\tau(T')-x\cdot\MaFactor|}$.
 \label{lemma:uplink}
@@ -401,23 +401,23 @@ of the subtree, i.e.,~$|\tau(T')-x\cdot\MaFactor|$ times $\CostTrans$.
 proceeds in a bottom-up fashion, traversing the~substrate network~$\Tree$
 from the leaves toward the root.
 For each subtree~$\Tree'$, we maintain
-two sets~$S_c,S_v$ in order to map unassigned
-chunks~$S_c$ in the subtree~$\Tree'$ to 
-nodes~$S_v$ in~$\Tree'$. Both sets are initially empty.
-We associate a counter with each node that enters $S_v$, and we initialize it to $\MaFactor$, the multi-assignment factor.
+two sets~$S_C,S_V$ in order to map unassigned
+chunks~$S_C$ in the subtree~$\Tree'$ to 
+nodes~$S_V$ in~$\Tree'$. Both sets are initially empty.
+We associate a counter with each node that enters $S_V$, and we initialize it to $\MaFactor$, the multi-assignment factor.
 
 
 We first process all the leaves, in an arbitrary order; subsequently, we process inner vertices
 of~$\Tree$ whenever all their children have been processed.
 We process any leaf~$\ell$
 by adding any
-nodes or chunks which are located on~$\ell$ to the corresponding sets~$S_c$ and~$S_v$.
+nodes or chunks which are located on~$\ell$ to the corresponding sets~$S_C$ and~$S_V$.
 A non-leaf vertex~$u$ is processed in the following way: we take the union of
 the sets corresponding to~$u$'s children, i.e., the sets containing the unmatched chunks and nodes
 in this subtree.
 For both leaves and inner nodes, whenever
-both sets are non-empty, we greedily assign an arbitrary chunk $c$ in~$S_c$ with an arbitrary node $v$ in~$S_v$.
-Then, we remove $c$ from $S_c$, and we decrement the counter of $v$. If the counter of $v$ reaches zero, we remove $v$ from $S_v$.
+both sets are non-empty, we greedily assign an arbitrary chunk $c$ in~$S_C$ with an arbitrary node $v$ in~$S_V$.
+Then, we remove $c$ from $S_C$, and we decrement the counter of $v$. If the counter of $v$ reaches zero, we remove $v$ from $S_V$.
 
 \parag{Analysis.} For each
 vertex in the substrate graph,
@@ -452,7 +452,8 @@ The local matching algorithm outperforms the previous algorithm that relied upon
 %\end{proof}
 
 The algorithm allocates the minimum possible bandwidth at an uplink of every subtree, as stated in Lemma~\ref{lemma:uplink}, and hence the algorithm computes an optimal solution.
-Combined with a~simple post-processing step, this approach can also solve~$\MA+\BW$ variant. The central idea of this extension is
+Combined with a~simple post-processing step, this approach can also solve~$\MA+\BW$ variant.
+It is sufficient to observe
 that the algorithm allocates the minimal bandwidth
 on each individual edge. In consequence, any bandwidth constraint,
 lower than the requirement given in Lemma~\ref{lem:uplink-alloc}, renders
@@ -535,8 +536,8 @@ recursive formula~$f$ for
 the minimal cost solution given any possible number of nodes
 embedded in a given subtree (the actual set of nodes does not matter,
 due to symmetry).
-The value of $f(T', x)$ corresponds to the minimum bandwidth cost of placing $x$ nodes in a subtree $T'$.
-It is defined as the bandwidth allocated inside $T$ plus the bandwidth allocated on the uplink of $T'$.
+The value of $f(T', x)$ corresponds to the minimum cost of placing $x$ nodes in a subtree $T'$.
+It is defined as the cost of the bandwidth allocated inside $T'$ plus the bandwidth allocated on the uplink of $T'$.
 The latter is equal to
 \[
 bw(T',x) = 
@@ -551,6 +552,9 @@ nodes outside of $T'$ (see Lemma~\ref{lemma:uplink} for similar argument).
 The second term of $bw$ represents the required bandwidth for the communication between the~$x$
 nodes inside~$T'$, and the~$\Vms - x$ nodes in the remaining parts of the substrate
 network.
+For the coherence of the description, we assume that the whole tree $T$ also has a dummy uplink of zero capacity.
+Our goal is to compute $f(T, n_V)$; note that by our definition $bw(T, n_V) = 0$ as expected.
+
 Then, the formula to calculate the function $f$ for a subtree containing only a leaf $\ell$ is
 \[
 f(\{ \ell \}, x) =
@@ -563,7 +567,7 @@ We set~$f(\{ \ell \},x)$ to infinity if $x$ exceeds the node hosting capacity of
 
 To calculate the value of $f(T', x)$ for non-leaf subtree $T'$, we split $x$ nodes
 into two positive integer
-values $r$ and $x-r$, and we put~$r$ on the right and~$x - r$ on the left subtree.
+values, $r$ and $x-r$, and we put~$r$ in the right subtree and~$x - r$ in the left one.
 That is, we take the optimal cost
 (given recursively) of placing~$r$ nodes in
 the right subtree~$\textsc{Ri}(T')$ of~$T'$ and~$x-r$ nodes in the left subtree~$\textsc{Le}(T')$ of
@@ -576,8 +580,8 @@ x-r\right) +
 f\left(\textsc{Ri}(T'), r\right) \} + bw(T',x)\enspace.
   \]
 
-We compute~$f$ in a bottom-up manner. 
-To finally compute the actual optimal embedding,
+To compute~$f(T, n_V)$, we evaluate $f$ a bottom-up manner. 
+To finally find an actual optimal embedding,
 we traverse the computed minimal-cost path backwards,
 according to
 the optimal values found for~$f$ during the bottom-up computation.
@@ -716,20 +720,20 @@ Given these concepts, we can now show the computational hardness of the consider
 \end{theorem}
 \begin{proof}
 Fix an instance $\ITDPM$ of~$\TDM$ and construct the~$\ICTE$ instance of
-the~$\FP+\RS+\MA$ variant in the way described above. We prove that~$\ICTE$ has a solution of cost at most $\Thr = 4 \cdot k$ if ($\Rightarrow$) and only if
-($\Leftarrow$)
+the~$\FP+\RS+\MA$ variant in the way described above. We prove that~$\ICTE$ has a solution of cost at most $\Thr = 4 \cdot k$ if ($\Leftarrow$) and only if
+($\Rightarrow$)
 $\ITDPM$ has a~perfect matching (of size~$k$).
 
 \medskip
 
-($\Rightarrow$) Fix a solution $\STDPM$ for~$\ITDPM$, i.e., the set of triples that form a perfect matching. To construct the solution $\SCTE$ to $\ICTE$, we place a single node in every
+($\Leftarrow$) Fix a solution $\STDPM$ for~$\ITDPM$, i.e., the set of triples that form a perfect matching. To construct the solution $\SCTE$ to $\ICTE$, we place a single node in every
 gadget that corresponds to a triple from $\STDPM$ (at an arbitrary leaf of this gadget). In each gadget, we assign all three chunks to the node located in this gadget. This
 solution costs exactly~$\Thr = 4\cdot k$: each of $k$ nodes is assigned one chunk collocated with it and two chunks at distance $2$.
 The solution $\STDPM$ matches every element of the universe $X \cup Y \cup Z$, hence every chunk has a replica assigned to exactly one node, and $\SCTE$ is feasible.
 
 \medskip
 
-($\Leftarrow$) Fix a solution $\SCTE$ for~$\ICTE$ with cost at most $\Thr$.
+($\Rightarrow$) Fix a solution $\SCTE$ for~$\ICTE$ with cost at most $\Thr$.
 We call the triple gadget \emph{active} if it hosts a single node at one of its leaves.
 We claim that $\SCTE$ places at most one node in each triple gadget.
 For contradiction, suppose that two nodes $x_1$, $x_2$ are placed in the same triple gadget.
@@ -740,7 +744,7 @@ In total, chunks assigned for $x_1$ and $x_2$ incur the cost at least $2\cdot 0+
 Second, we lower-bound the cost incurred by remaining $k-2$ nodes.
 Each node can have at most $1$ of its $\MaFactor=3$ replicas assigned for free (every leaf hosts exactly one chunk),
 and it incurs the cost at least $4$ for the remaining~$2$ chunks that are at distance at least~$2$.
-The total chunk assignment cost $4\cdot (k-2)+14 = 4\cdot k + 6$ exceeds then the threshold $\Thr = 4\cdot k$, a contradiction.
+The total chunk assignment cost is then $4\cdot (k-2)+14 = 4\cdot k + 6$ and exceeds the threshold $\Thr = 4\cdot k$, a contradiction.
 As $n_V = k$, we conclude that there are exactly $k$ active gadgets in $\SCTE$.
 
 To construct the solution $\STDPM$ to $\ITDPM$, we pick the set of triples whose gadgets are active.
@@ -752,7 +756,7 @@ Since each chunk is assigned to exactly one node, every element of~$X$,~$Y$ and~
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.9\columnwidth]{figs/static-mapping/overview}
-  \caption{Overview of the substrate network in the proof of the NP-hardness of $\FP+\RS(2)+\MA$ variant of $\CTE$.}
+  \caption{Overview of the substrate network in the proof of the NP-hardness of the $\FP+\RS(2)+\MA$ variant of $\CTE$.}
   \label{fig:red-ma2}
 \end{figure}
 
@@ -832,13 +836,14 @@ We construct a substrate network that consists of two subtrees connected to the
 We construct three sets of chunks.
 The first set corresponds to elements of the universe $X\cup Y\cup Z$.
 This time we cannot repeat the construction of chunks from Section~\ref{ssec:fprsma}, because we need to obey the restricted replication factor.
+The construction for the $\TDPM$ instance from Figure~\ref{fig:fprsma} is given in Figure~\ref{fig:example-rs2}.
 %Namely, for each element of universe $e \in X \cup Y \cup Z$, we construct $\deg(e)$ chunks, each having two replicas.
 %The set of $k$ \emph{unique} chunks is placed in the unique subtree and their role is to enforce the placement of exactly $k$ nodes in the matching subtree.
 %We place $3\cdot(\deg(e) - 1)$ \emph{dummy} chunks in the element gadgets; each node in the element subtree needs to processes only $1$ element chunk and remaining $3$ of $\MaFactor=4$ chunks are the dummy chunks.
 %Unique and dummy chunks have one replica, and we simply identify the chunk with chunk replica.
 \begin{enumerate}
   \item \emph{Element chunks}. For each triple $t = \langle x, y, z \rangle \in P$, we construct $3$ chunks:~$x_t, y_t,$ and $z_t$, i.e., $\sum_e\deg(e)$ $=3\cdot p$ chunks in total.
-  Each element $e$ have then $\deg(e)$ element chunks~$e_t$ for each $t \in P_e$,  collectively called $C_e$.
+  Then, each element $e$ has $\deg(e)$ element chunks~$e_t$ for each $t \in P_e$,  collectively called $C_e$.
   Each chunk from $C_e$ have two replicas. First replicas are placed in the matching subtree:
   we place
   three replicas: $x_t^{(1)}, y_t^{(1)}$ and $z_t^{(1)}$ in the {\TripleGadget} for triple $t\in P$, one per each leaf.
@@ -846,7 +851,6 @@ This time we cannot repeat the construction of chunks from Section~\ref{ssec:fpr
   for each element $e \in X\cup Y\cup Z$, for each $t \in P_e$,
   we place replicas $e_t^{(2)}$ in different leaves of the gadget $G(e)$.
   In total, we place $\deg(e)$ replicas of element chunks in the leaves of the gadget $G(e)$.
-  An example for $\TDPM$ instance from Figure~\ref{fig:fprsma} is given in Figure~\ref{fig:example-rs2}.
   \item \emph{Unique chunks}. We construct~$k$ unique chunks $u_1, \ldots, u_k$ with one replica each, and we place these replicas at the leaves of {\UnqGadgets} (one chunk per leaf).
   \item \emph{Dummy chunks}. For each element~$e\in X\cup Y\cup Z$,
   we construct an additional set of $3\cdot(\deg(e) - 1)$ dummy chunks, with one replica each, and we place these replicas in $3\cdot (\deg(e)-1)$ leaves of $G(e)$ (one chunk per leaf),
@@ -857,7 +861,7 @@ This time we cannot repeat the construction of chunks from Section~\ref{ssec:fpr
 \begin{figure}[t]
 \centering
 \includegraphics[width=1\columnwidth]{figs/static-mapping/cte-ma2.pdf}
-\caption{An instance of $\FP+\MA+\RS(2)$ variant of $\CTE$ corresponding to the $\TDM$ instance from Figure~\ref{fig:fprsma}. Leaves containing dummy chunks are grey. The optimal solution assigns chunks to nodes $v_1, \ldots v_7$ by the dashed lines. In specifying the chunk placement we omit the replica superscripts.}
+\caption{An instance of $\FP+\MA+\RS(2)$ variant of $\CTE$ corresponding to the $\TDM$ instance from Figure~\ref{fig:fprsma}. Leaves containing dummy chunks are grey. The optimal solution assigns chunks to nodes $v_1, \ldots v_8$ by the dashed lines. In specifying the chunk placement we omit the replica superscripts.}
 \label{fig:example-rs2}
 \end{figure}
 
@@ -877,7 +881,7 @@ The multi-assignment factor is $m=4$, and the number of nodes to embed is~$\numN
  \bigskip
  
  Given any $\TDPM$ instance $\ITDPM$, we produce the corresponding instance $\ICTE$ of the $\RS(2)+\MA+\FP$ variant, in the way described above.
- We illustrate an instance of $\CTE$ corresponding to a $\TDPM$ instance from Figure~\ref{fig:fprsma} in Figure~\ref{fig:example-rs2}.
+ We illustrate an instance of $\CTE$ corresponding to the $\TDPM$ instance from Figure~\ref{fig:fprsma} in Figure~\ref{fig:example-rs2}.
  The reduction (Theorem~\ref{th:ma-reduction}) consists of two parts: (1)~given a solution for $\ITDPM$, we construct a solution to $\ICTE$ of cost at most $\Thr$, and (2) given a solution for $\ICTE$ of cost at most $\Thr$, we construct a solution for $\ITDPM$.
  The first part is easier, and we present it now.
 \begin{lemma}

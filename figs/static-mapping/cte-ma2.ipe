@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70005" creator="Ipe 7.1.4">
-<info created="D:20190312133959" modified="D:20190312151847"/>
+<info created="D:20190312133959" modified="D:20190402114051"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -202,13 +202,13 @@ h
 <dashstyle name="dash dotted" value="[4 2 1 2] 0"/>
 <dashstyle name="dash dot dotted" value="[4 2 1 2 1 2] 0"/>
 <textsize name="large" value="\large"/>
-<textsize name="small" value="\small"/>
-<textsize name="tiny" value="\tiny"/>
 <textsize name="Large" value="\Large"/>
 <textsize name="LARGE" value="\LARGE"/>
 <textsize name="huge" value="\huge"/>
 <textsize name="Huge" value="\Huge"/>
+<textsize name="small" value="\small"/>
 <textsize name="footnote" value="\footnotesize"/>
+<textsize name="tiny" value="\tiny"/>
 <textstyle name="center" begin="\begin{center}" end="\end{center}"/>
 <textstyle name="itemize" begin="\begin{itemize}" end="\end{itemize}"/>
 <textstyle name="item" begin="\begin{itemize}\item{}" end="\end{itemize}"/>
@@ -233,6 +233,42 @@ h
 <layer name="alpha"/>
 <view layers="alpha" active="alpha"/>
 <path layer="alpha" stroke="black" dash="dashed">
+524 680 m
+544 712 l
+</path>
+<path stroke="black" dash="dashed">
+524 680 m
+540 712 l
+540 712 l
+</path>
+<path stroke="black" dash="dashed">
+496 680 m
+536 712 l
+536 712 l
+</path>
+<path stroke="black" dash="dashed">
+524 680 m
+492 712 l
+492 712 l
+</path>
+<path stroke="black" dash="dashed">
+524 680 m
+548 712 l
+</path>
+<path stroke="black" dash="dashed">
+496 680 m
+524 712 l
+524 712 l
+</path>
+<path stroke="black" dash="dashed">
+496 680 m
+532 712 l
+</path>
+<path stroke="black" dash="dashed">
+496 680 m
+476 712 l
+</path>
+<path stroke="black" dash="dashed">
 148 680 m
 196 712 l
 </path>
@@ -241,41 +277,9 @@ h
 136 688
 176 708 s
 </path>
-<path stroke="black" dash="dashed">
-544 712 m
-508 680 l
-</path>
 <path stroke="black">
 368 780 m
 336 712 l
-</path>
-<path stroke="black" dash="dashed">
-508 680 m
-476 712 l
-</path>
-<path stroke="black" dash="dashed">
-508 680 m
-492 712 l
-</path>
-<path stroke="black" dash="dashed">
-508 680 m
-524 712 l
-</path>
-<path stroke="black" dash="dashed">
-508 680 m
-532 712 l
-</path>
-<path stroke="black" dash="dashed">
-536 712 m
-508 680 l
-</path>
-<path stroke="black" dash="dashed">
-540 712 m
-508 680 l
-</path>
-<path stroke="black" dash="dashed">
-548 712 m
-508 680 l
 </path>
 <path stroke="black" dash="dashed">
 432 680 m
@@ -851,7 +855,7 @@ h
 28 688 l
 h
 </path>
-<path stroke="black" fill="white">
+<path matrix="1 0 0 1 16 0" stroke="black" fill="white">
 500 688 m
 500 672 l
 516 672 l
@@ -864,6 +868,14 @@ h
 <text matrix="1 0 0 1 240 2.731" transformations="translations" pos="48 676" stroke="black" type="label" width="8.627" height="3.867" depth="0.99" valign="baseline" size="small">$v_4$</text>
 <text matrix="1 0 0 1 320 2.731" transformations="translations" pos="48 676" stroke="black" type="label" width="8.627" height="3.867" depth="0.99" valign="baseline" size="small">$v_5$</text>
 <text matrix="1 0 0 1 380 2.731" transformations="translations" pos="48 676" stroke="black" type="label" width="8.627" height="3.867" depth="0.99" valign="baseline" size="small">$v_6$</text>
-<text matrix="1 0 0 1 456 2.731" transformations="translations" pos="48 676" stroke="black" type="label" width="8.627" height="3.867" depth="0.99" valign="baseline" size="small">$v_7$</text>
+<text matrix="1 0 0 1 472 2.731" transformations="translations" pos="48 676" stroke="black" type="label" width="8.627" height="3.867" depth="0.99" valign="baseline" size="small">$v_8$</text>
+<path matrix="1 0 0 1 -12 0" stroke="black" fill="white">
+500 688 m
+500 672 l
+516 672 l
+516 688 l
+h
+</path>
+<text matrix="1 0 0 1 444 2.731" transformations="translations" pos="48 676" stroke="black" type="label" width="8.627" height="3.867" depth="0.99" valign="baseline" size="small">$v_7$</text>
 </page>
 </ipe>
