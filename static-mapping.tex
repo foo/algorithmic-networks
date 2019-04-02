@@ -890,8 +890,7 @@ The multi-assignment factor is $m=4$, and the number of nodes to embed is~$\numN
     \label{lem:ma-reduction-left}
 \end{lemma}
 \begin{proof}
-  Fix a feasible solution~$\STDPM$ for $\ITDPM$. We construct a solution~$\SCTE$ for $\ICTE$ in the following way:
-  We place $n_V = k + \sum_e(\deg(e) - 1)$ nodes, and we assign $4$ chunks to each of these.
+  Fix a feasible solution~$\STDPM$ for $\ITDPM$. In the solution~$\SCTE$ for $\ICTE$ we need to place $n_V = k + \sum_e(\deg(e) - 1)$ nodes and assign $4$ chunks to each of these.
   \begin{enumerate}
     \item We place~$k$ nodes in~$k$ {\TripleGadgets} (one per gadget, at an arbitrary leaf) that correspond to triples chosen in~$\STDPM$ solution.
     To each such node we assign $3$ chunk replicas from its gadget and one arbitrary, unassigned unique chunk.
