@@ -980,35 +980,49 @@ Therefore, exactly $k$ \TripleGadgets{} are active.
 \end{proof}
 
 \begin{lemma}
-  In a feasible solution $\SCTE$ to $\ICTE$, the unique chunks are assigned by long assignments at distance 4, and remaining chunks are assigned by short assignments (at distance 0~or~2).
-  \label{lem:short-ma}
+  In a feasible solution $\SCTE$ to $\ICTE$, each active node has exactly $1$ long assignment and $3$ short assignments, and remaining nodes have $4$ short assignments.
+  \label{lem:assignment-length}
 \end{lemma}
 \begin{proof}
-  By Lemma~\ref{lem:infeasible}, in $\SCTE$ there are at most $k$ long assignments.
-  By Lemma~\ref{lem:no-unq-ma}, these $k$~long assignments are depleted by $k$ unique chunks, and remaining chunks are assigned by short assignments.
-
-
-  Now we show that the unique chunks are assigned at distance $4$ (and not at distance $6$).
-  In total, we have $4\cdot n_V = 12\cdot p - 8\cdot k$ assignments.
-  At most $n_V = 3\cdot p - 2\cdot k$ of these are for free, as a~node can be co-located with at most one replica.
-  The $k$ unique chunks are assigned for the cost at least $4$ each, and the remaining $4\cdot n_V - k - n_V = 9\cdot p - 7\cdot k$ assignments incur cost at least $2$ each.
-  Suppose that a unique chunk is assigned at distance $6$, i.e., the cost of assignment of the unique chunks is $4\cdot k + 2$.
-  Then, the solution cost is $2\cdot(9\cdot p - 7\cdot k) + 4\cdot k + 2 = 18\cdot p - 10\cdot k + 2 = \Thr + 2 > \Thr$, i.e., the solution cost exceeds the threshold, a contradiction.
+  Consider an active node. Only three chunks are placed at distance at most $2$ to this node. Hence, at least $1$ of its $m = 4$ chunks is assigned at distance at least $4$, i.e., by the long assignment.
+  If an active node would have more than $1$ long assignment, then by Lemma~\ref{lem:n-active-ma}, the total number of long assignments would exceed $k$, and by Lemma~\ref{lem:infeasible} the solution would be infeasible.
+  Therefore, each active node has exactly $1$ long assignment.
+  By Lemma~\ref{lem:infeasible}, in $\SCTE$ there are at most $k$ long assignments, and as these are used by $k$ active nodes, the remaining nodes have no long assignments.
+  Assignments that are not long are short, hence the lemma holds.
 \end{proof}
 
-\begin{lemma}
-  In a feasible solution $\SCTE$ to $\ICTE$, each node in the matching subtree is assigned to one unique chunk and three chunks that are placed in the triple gadget the node is located at.
-  \label{lem:one-unique-per-node}
-\end{lemma}
-\begin{proof}
-  By Lemmas~\ref{lem:n-matchsubtree-ma} and \ref{lem:no-unq-ma}, $k$ nodes in the matching subtree are placed in triple gadgets.
-  As triple gadgets have at most $3$ leaves, each of these nodes causes at least one long assignment.
-  If a node had $i>1$ unique chunks assigned, then the total number of long assignments would be at least $k-1+i>k$, and by Lemma~\ref{lem:infeasible} the solution would be infeasible.
-  If a node had $0$~unique chunks assigned, it would still cause a~long assignment.
-  By Lemma~\ref{lem:short-ma}, each of $k$ unique chunks causes a~long assignment, and in total we would have at least $k+1$ long assignments,  and by Lemma~\ref{lem:infeasible} the solution would be infeasible.
-
-  Remaining $3$ of $\MaFactor=4$ chunks assigned to each node in the matching subtree are assigned by the short assignment, and the only chunks in distance at most $2$ are the chunks located in the same gadget that the node is located at.
-\end{proof}
+%  \begin{lemma}
+%    \todo{...}
+%  In a feasible solution $\SCTE$ to $\ICTE$, the unique chunks are assigned by long assignments at distance 4, and remaining chunks are assigned by short assignments (at distance 0~or~2).
+%  \label{lem:short-ma}
+%\end{lemma}
+%\begin{proof}
+%  By Lemma~\ref{lem:infeasible}, in $\SCTE$ there are at most $k$ long assignments.
+%  By Lemma~\ref{lem:no-unq-ma}, these $k$~long assignments are depleted by $k$ unique chunks, and remaining chunks are assigned by short assignments.
+%
+%
+%  Now we show that the unique chunks are assigned at distance $4$ (and not at distance $6$).
+%  In total, we have $4\cdot n_V = 12\cdot p - 8\cdot k$ assignments.
+%  At most $n_V = 3\cdot p - 2\cdot k$ of these are for free, as a~node can be co-located with at most one replica.
+%  The $k$ unique chunks are assigned for the cost at least $4$ each, and the remaining $4\cdot n_V - k - n_V = 9\cdot p - 7\cdot k$ assignments incur cost at least $2$ each.
+%  Suppose that a unique chunk is assigned at distance $6$, i.e., the cost of assignment of the unique chunks is $4\cdot k + 2$.
+%  Then, the solution cost is $2\cdot(9\cdot p - 7\cdot k) + 4\cdot k + 2 = 18\cdot p - 10\cdot k + 2 = \Thr + 2 > \Thr$, i.e., the solution cost exceeds the threshold, a contradiction.
+%\end{proof}
+%
+%\begin{lemma}
+%    \todo{...}
+%  In a feasible solution $\SCTE$ to $\ICTE$, each node in the matching subtree is assigned to one unique chunk and three chunks that are placed in the triple gadget the node is located at.
+%  \label{lem:one-unique-per-node}
+%\end{lemma}
+%\begin{proof}
+%  By Lemmas~\ref{lem:n-matchsubtree-ma} and \ref{lem:no-unq-ma}, $k$ nodes in the matching subtree are placed in triple gadgets.
+%  As triple gadgets have at most $3$ leaves, each of these nodes causes at least one long assignment.
+%  If a node had $i>1$ unique chunks assigned, then the total number of long assignments would be at least $k-1+i>k$, and by Lemma~\ref{lem:infeasible} the solution would be infeasible.
+%  If a node had $0$~unique chunks assigned, it would still cause a~long assignment.
+%  By Lemma~\ref{lem:short-ma}, each of $k$ unique chunks causes a~long assignment, and in total we would have at least $k+1$ long assignments,  and by Lemma~\ref{lem:infeasible} the solution would be infeasible.
+%
+%  Remaining $3$ of $\MaFactor=4$ chunks assigned to each node in the matching subtree are assigned by the short assignment, and the only chunks in distance at most $2$ are the chunks located in the same gadget that the node is located at.
+%\end{proof}
 
 \begin{theorem}
   The $\RS(2)+\MA+\FP$ variant of the $\CTE$ problem is NP-hard.
@@ -1025,8 +1039,8 @@ Therefore, exactly $k$ \TripleGadgets{} are active.
   By Lemma~\ref{lem:n-active-ma}, exactly $k$ \TripleGadgets{} are active.
   We construct the solution $\STDPM$ from the set of triples that correspond to active \TripleGadgets{}.
 
-  Now, we show that $\STDPM$ is feasible, i.e., it matches every element of $X\cup Y\cup Z$ exactly once.
-  By Lemma~\ref{lem:one-unique-per-node}, every active node is assigned to the three element chunks located at the gadget it is placed at.
+  Now, we show that $\STDPM$ is feasible, i.e., it matches every element of $X\cup Y\cup Z$ exactly once, and the matching is composed from the set of triples $P$.
+  By Lemma~\ref{lem:assignment-length}, every active node has three chunks assigned by the short assignment, and these are the element chunks located at the gadget it is placed at.
   Hence, the chunks $x_t$, $y_t$ and $z_t$ assigned to an active node that corresponds to the triple $t = \langle x, y, z \rangle \in P$.
   
   For every element $e\in X\cup Y \cup Z$, we constructed chunks $C_e$, with two replicas each: one in the matching subtree and one in the cover subtree.
@@ -1034,7 +1048,7 @@ Therefore, exactly $k$ \TripleGadgets{} are active.
   Similar to the proof of Lemma~\ref{lem:n-matchsubtree-ma}, with each $G(e)$ we associate its volume.
   By Lemma~\ref{lem:n-matchsubtree-ma}, we place $n_V-k$ nodes in the cover subtree, i.e., the number of nodes equal the total volume of all gadgets $G(e)$.
   Hence, in each of $G(e)$ we have $n_e$ nodes, where $n_e$ is the volume of $G(e)$.
-  In a single gadget $G(e)$, the total number of chunks is $4\cdot(\deg(e) - 1) + 1$, and nodes in this gadget have $4\cdot(\deg(e)-1)$ chunks assigned.
+  In a single gadget $G(e)$, the total number of chunks is $4\cdot(\deg(e) - 1) + 1$, and by Lemma~\ref{lem:assignment-length}, nodes in this gadget have $4\cdot(\deg(e)-1)$ chunks from this gadget assigned.
    The remaining $1$ element chunk is assigned in a triple gadget.
   Hence, the set of active nodes have $1$~of $\deg(e)$ element chunks assigned for each $e\in X\cup Y\cup Z$, and $\STDPM$ assigns each $e\in X\cup Y\cup Z$ exactly once.
  
