@@ -899,7 +899,7 @@ The multi-assignment factor is $m=4$, and the number of nodes to embed is~$\numN
     gadget) whose another replica is not assigned in any {\TripleGadget}.
     We co-locate the node with one of its assigned replicas, hence one of the assignments is for free, and other three assignments incur the cost $2$~each.
   \end{enumerate}
-  Triples in $\STDPM$ match each element exactly once,
+  Triples chosen in $\STDPM$ match each element exactly once,
   and hence nodes in triple gadgets have exactly one chunk assigned from $C_e$ for each element $e$.
   For each element $e$, by $e_*$ we denote the element chunk $e_t$ that is assigned in a triple gadget, i.e, the replica $e_*^{(1)}$ is assigned in a triple gadget.
   The remaining $\deg(e)-1$ chunks from $C_e \setminus \{ e_* \}$ (their second replicas) are assigned to $\deg(e)-1$ nodes in $G(e)$.
@@ -914,8 +914,8 @@ The multi-assignment factor is $m=4$, and the number of nodes to embed is~$\numN
 \end{proof}
 
 To construct a solution for $\ITDPM$ from a solution to $\ICTE$, we show that every feasible solution for $\ICTE$ has certain structure.
-We call a {\TripleGadget} \textit{active}, if it contains a~single node at one of its leafs, and we call the node \textit{active} if it is placed in a {\TripleGadget}.
-In the lemmas below, we show that in feasible solutions to $\ICTE$, exactly $k$ \TripleGadgets{} are active (similar to Theorem~\ref{th:ma-unlimited}).
+We call a {\TripleGadget} \textit{active}, if it contains a~single node at one of its leafs, and we call a node \textit{active} if it is placed in an active {\TripleGadget}.
+In the lemmas below, we show that in feasible solutions to $\ICTE$, exactly $k$ \TripleGadgets{} are active (similarly to Theorem~\ref{th:ma-unlimited}).
 In the instance $\ICTE$, chunks can be assigned to nodes at distance $0, 2, 4$ or $6$.
 We call the assignments at distance $0$ or $2$ \emph{short}, and the ones at distance $4$ or $6$ \emph{long}.
 
@@ -948,7 +948,7 @@ We call the assignments at distance $0$ or $2$ \emph{short}, and the ones at dis
   Suppose the contrary, i.e., that $\Vms-k+i$ nodes were placed in the \CoverSubtree{} for $i > 0$.
   With each element gadget $G(e)$ we associate its \emph{volume} $\deg(e) - 1$.
   The volume corresponds to the maximum number of nodes that can be placed inside the gadget without causing a long assignment.
-  If the number of nodes in $G(e)$ exceeds its volume, i.e., $\deg(e) - 1 + j_e$ nodes are placed in $G(e)$ for $j_e > 0$,
+  More concretely, if the number of nodes in $G(e)$ exceeds its volume, i.e., $\deg(e) - 1 + j_e$ nodes are placed in $G(e)$ for $j_e > 0$,
   then the number of chunks assigned to these nodes is $4\cdot (\deg(e) - 1 + j_e)$, and at most $4\cdot (\deg(e) - 1) + 1$ can be assigned within the gadget $G(e)$.
   For the remaining $4\cdot j_e - 1 \geq 3\cdot j_e$ chunks, long assignments are used.
   By the pigeon-hole principle, at least $i = \sum_e j_e$ nodes surpass the volume of their gadgets, causing at least $3\cdot i$ long assignments.
