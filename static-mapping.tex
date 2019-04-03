@@ -1094,7 +1094,7 @@ Let~$\ITDPM$ be an instance of~$\TDM$ with $p$ triples and set cardinality $k = 
 We use the identical substrate network as in Section~\ref{ssec:fprsma} with
 identical chunk replicas placed in the same way.
 This time, however, the inter-connect cost is~$\CostCom = 1$, and the number of nodes (virtual machines) is~$\Vms = 3 \cdot k$, where~$k$ is the set cardinality.
-The threshold value is $\Thr := 6\cdot k + 18\cdot (k-1)\cdot k = 2\cdot (3\cdot k) + 4\cdot({ 3\cdot k \choose 2} - (3\cdot k))$, and we set the access cost~$\CostTrans$ to $\Thr + 1$.
+The threshold value is $\Thr :=  2\cdot (3\cdot k) + 4\cdot({ 3\cdot k \choose 2} - (3\cdot k)) = 6\cdot k + 18\cdot (k-1)\cdot k$, and we set the access cost~$\CostTrans$ to $\Thr + 1$.
 High assignment cost forces each node to be collocated with the replica assigned to it.
 %Intuitively, in order to minimize embedding costs,
 %nodes should be placed in near-by leaves of the substrate network.
@@ -1106,15 +1106,16 @@ $3$ nodes each, and~$p-k$ gadgets remain empty.
 \begin{proof}
 The~$n_V = 3\cdot k$ nodes have to be placed
 directly at different $3\cdot k$ leaves, and thus at $3\cdot k$ chunks, as otherwise the access cost would immediately exceed the threshold $\Thr$.
-The $3\cdot k$ nodes are distributed among at least $k$ gadgets, as each gadget can host at most $3$ nodes.
+The $3\cdot k$ nodes are distributed among at least $k$ gadgets as each gadget can host at most $3$ nodes.
 In total there are ${3\cdot k \choose 2}$ pairs of nodes,
 and the inter-connect cost is $2$ for each intra-gadget pair and $4$ for each inter-gadget pair.
 %Note that at most $3\cdot k$ intra-gadget pairs exist, as at most $3$ pairs of nodes exist in each gadget.
-If a gadget contains $3$ nodes, then it has $3$ intra-gadget pairs, if it contains $2$ nodes, then it has $1$ intra-gadget pair, and it has $0$ of these otherwise.
+If a gadget contains $3$ nodes, then it has $3$ intra-gadget pairs.
 
 Suppose that nodes were distributed among more than $k$ gadgets.
-Then, some gadgets contain less than $3$ nodes, and the number of intra-gadget pairs is $3\cdot k - i$ for some $i>0$.
-Hence, the total cost is then $2\cdot (3\cdot k - i) + 4 \cdot ({3 \cdot k \choose 2} - (3\cdot k - i)) = 6\cdot k + 4 \cdot ({3 \cdot k \choose 2} - 3\cdot k) + 2\cdot i = \Thr + 2\cdot i$, and the solution exceeds the threshold $\Thr$.
+Then, some gadgets contain less than $3$ nodes, and the number of intra-gadget pairs is $3\cdot k - i$ for some $i>0$ (each of cost $2$).
+The remaining pairs of nodes are connected between gadgets (of cost $4$ each).
+Hence, the total cost is $2\cdot (3\cdot k - i) + 4 \cdot ({3 \cdot k \choose 2} - (3\cdot k - i)) = 6\cdot k + 4 \cdot ({3 \cdot k \choose 2} - 3\cdot k) + 2\cdot i = \Thr + 2\cdot i$, and the solution exceeds the threshold $\Thr$.
 \end{proof}
 
 \begin{theorem}
@@ -1124,27 +1125,23 @@ The $\FP+\RS+\NI$ variant of $\CTE$ problem is NP-hard.
 \begin{proof}
 Let~$\ITDPM$ be the corresponding instance of~$\TDM$ and let~$\ICTE$ be an instance of
 the~$\FP+\RS+\NI$ variant constructed as described above.
-We prove that~$\ICTE$ has solution of cost~$\leq \Thr$ if ($\Rightarrow$) and only if
-($\Leftarrow$)
+We prove that~$\ICTE$ has solution of cost~$\leq \Thr$ if ($\Leftarrow$) and only if
+($\Rightarrow$)
 $\ITDPM$ has a~solution.
 
-($\Rightarrow$) To compute a solution
+($\Leftarrow$) To compute a solution
 for~$\ICTE$ given a solution for~$\ITDPM$, we proceed as follows.
 Given a perfect matching $\STDPM$ consisting of triples~$ \{t_1, t_2,
 \ldots, t_k\}$, we place three nodes in each gadget that
 corresponds to every triple of~$\STDPM$ (one node per leaf). Chunks are assigned to the nodes which are co-located
 in the same server.
 
-The solution has the following cost:
-(1) the inter-connect cost inside each gadget is~${2 \cdot {3 \choose 2} = 6}$,
-  as the~distance between every pair of nodes there is $2$;
-  (2) the the inter-connect cost from a~single gadget to all other gadgets is~$4
-  \cdot 3 \cdot 3 \cdot (k - 1) / 2 = 18\cdot (k-1)$, where the factor~$4$ corresponds to the distance $4$, the factor~$3$
-  corresponds to the number of nodes per gadget, and~$3 \cdot (k-1)$ is the number of nodes in remote gadgets;
-  as we count each pair twice, we need to divide by two.
-Summing up over all~$k$ gadgets, the total cost is $6\cdot k + 18\cdot(k-1)\cdot k = \Thr$.
+The inter-connect costs inside all gadgets are $2\cdot (3 k)$,
+as the~distance between every pair these of nodes is $2$, and there are $3$ intra-gadget pairs in each of $k$ gadgets.
+The remaining cost is $4\cdot({ 3\cdot k \choose 2} - (3\cdot k))$, as the remaining ${ 3\cdot k \choose 2} - (3\cdot k)$ pairs are intra-gadget pairs, and these incur the cost $4$ each.
+The total cost is then $2\cdot (3\cdot k) + 4\cdot({ 3\cdot k \choose 2} - (3\cdot k)) = \Thr$.
 
-($\Leftarrow$) Given a solution for~$\ICTE$,
+($\Rightarrow$) Given a solution for~$\ICTE$,
 we use Lemma~\ref{lemma:helper} to construct a solution for~$\ITDPM$: in any solution of cost at most~$\Thr$,
 $k$ gadgets contain exactly 3 nodes. These gadgets correspond to a~valid
 3D Perfect Matching, as exactly one replica of every chunk is assigned and
