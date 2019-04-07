@@ -1,7 +1,7 @@
 
-In this chapter, we introduce a natural extension of an online caching problem, where
+To model the problem of maintaining large forwarding tables, we introduce a natural extension of an online caching problem, where
 items have inter-de\-pen\-den\-cies.
-In classic online caching problem, items of some universe are requested by
+In the classic online caching problem, items of some universe are requested by
 a~processing entity (e.g., blocks of RAM are requested by the processor). To
 speed up the access, computers use a faster memory, called
 \emph{cache}, capable of accommodating $k$ such items. Upon a~request to a
@@ -19,8 +19,9 @@ natural refinement of many caching problems.
 As highlighted in the introduction, an important application for caching with tree-based dependency model arises in the context
 of forwarding rules in routers. We begin by a technical overview, %in Section~\ref{sec:tc-technical},
 where we explain the the setup for \emph{caching of forwarding rules} in a router.
-Then, we introduce the formal model for \emph{caching with tree dependencies}, for which we propose a competitive algorithm.
-In Section~\ref{sec:bisimulation} we establish a connection between caching with tree dependencies and caching of forwarding rules.
+Then, we introduce an abstract problem of \emph{caching with tree dependencies} which, with minor differences, matches the forwarding rules caching problem.
+For caching with tree dependencies we propose a competitive algorithm.
+In Section~\ref{sec:bisimulation} we establish a formal link between caching with tree dependencies and caching of forwarding rules.
 Finally, we show that the proposed algorithm can be efficiently implemented.
 
 
@@ -59,11 +60,12 @@ Finally, we show that the proposed algorithm can be efficiently implemented.
 As highlighted in the introduction, routers has finite memory, and in an increasingly common scenario the size of forwarding table exceeds the size of available memory.
 One of the solutions is to store only a part of a~forwarding table on the router, that acts as a cache for the complete forwarding table.
 This solution is particularly attractive with the advent of Soft\-ware-Defined
-Network (SDN) technology, which allows to manage the expensive memory using a
-software controller. In particular, our
-theoretical model can describe real-world architectures
-like~\cite{cacheflow,fibium-zipf},
-that is, our model formalizes the underlying operational
+Network (SDN) technology, which allows to manage the router forwarding table using a
+software controller.
+Such approach is used
+in real-world architectures
+like~\cite{cacheflow,route-caching-flat,prefix-caching,fib-caching-non-overlapping,fibium-zipf}, which we describe below in detail.
+Our model formalizes the underlying operational
 problems of such architectures. Our 
 algorithm, when applied in the context of such architectures, can 
 hence be used to prolong the lifetime of IP routers.
@@ -99,12 +101,12 @@ To guarantee that the router can forward the package correctly with partial forw
 To see that this is sufficient, consider a packet that, having access to the complete forwarding table, would be forwarded by the rule $v$.
 If the rule $v$ is present in the portion of the forwarding table cached at the router,
 then LMP scheme selects $v$, even if some ancestors of $v$ are not present in the cache.
-However, if $v$ is not present in the cache, no other rule present in the cache matches the packet, as predecessors of $v$ do not match the packet.
+However, if $v$ is not present in the cache, neither are its predecessors and hence no rule present in the cache matches the packet.
 
-Consider the situation, where that the router does not have sufficient information to proceed.
-The common way to handle this is to redirect the packet to the controller (where 
-an~appropriate forwarding rule exists).
-We simply add
+To handle packets that would be matched by a rule not present in the cache, we want to 
+ redirect them to the controller, where 
+ an~appropriate forwarding rule exists.
+ To this end, we simply add
 an~artificial rule at the tree root in the router (matching an empty prefix).
 This rule is the least specific rule for any packet, hence as long as any rule that matches the packet is present in cache, the LMP scheme never selects the artificial rule.
 When no actual matching rule is found in the 
@@ -127,6 +129,9 @@ Standard caching-related problems arise, such as: which entry to evict to provid
 Immediate update might seem a rational strategy, but in scenarios with highly dynamic networks that rearrange often, it might be beneficial to delay the update.
 Premature update might result in the situation, where more time is spent alternating the cache configuration than processing packets (this is similar to \emph{thrashing} in virtual memory systems).
 
+\subsection{Rule Updates}
+\label{sec:rule-up}
+
 Additionally, a rule may need to be updated. For example, due to a~change
 communicated by a dynamic routing protocol run at the controller (e.g., BGP) the action defined by
 a~rule has to be modified. In either case, we have to update the rules at the
@@ -134,7 +139,7 @@ controller: we assume that this cost is zero. (This cost is unavoidable for
 any algorithm, so such an assumption makes our problem only more difficult.)
 Furthermore, if the rule is also stored at the router, then we have to pay a~fixed
 cost of $\alpha$ for updating the router.
-We will show that such penalties can be easily simulated in our model, see Section~\ref{sec:bisimulation}.
+In Section~\ref{sec:bisimulation}, we will show that such penalties can be easily simulated in our model.
 
 
 
@@ -172,20 +177,21 @@ $T$}, i.e., a union of disjoint subtrees of~$T$.  We call this problem
 
 We assume discrete time slotted into rounds, with round $t \geq 1$
 corresponding to time interval $(t-1,t)$. In round $t$, the algorithm is given
-one (positive or negative) request to exactly one tree node and has to process
+one request to exactly one tree node and has to process
 it, i.e., pay associated costs (if any). 
 Furthermore, we assume a bypassing model and distinguish between two types of
 requests: a~request can be either \emph{positive} or \emph{negative}. The
 positive requests correspond to ``normal'' requests known from caching
 problems: we pay~$1$ if the node is not cached; for a negative request, we pay
 $1$ if the corresponding request is cached.
+The ability to process negative request will be crucial in using our algorithm to handle rule updates, as described in Section~\ref{sec:rule-up}.
 
-After serving the request, we may
-reorganize our cache arbitrarily, but the resulting cache has to still be a
-subforest of $T$. We pay $\alpha$ for fetching or evicting any single node,
-where $\alpha \geq 1$ is an integer and a~parameter of the problem. Our goal
-is to minimize the overall cost of maintaining the cache and serving the
-requests.
+%After serving the request, we may
+%reorganize our cache arbitrarily, but the resulting cache has to still be a
+%subforest of $T$. We pay $\alpha$ for fetching or evicting any single node,
+%where $\alpha \geq 1$ is an integer and a~parameter of the problem. Our goal
+%is to minimize the overall cost of maintaining the cache and serving the
+%requests.
 
 Right after round~$t$, at time $t$,
 the algorithm may arbitrarily reorganize its cache, (i) ensuring that the

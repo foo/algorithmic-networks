@@ -928,7 +928,7 @@ We call the assignments at distance $0$ or $2$ \emph{short}, and the ones at dis
     Consider a solution that uses $k+i$ long assignments for $i>0$.
     The solution consists of $\MaFactor \cdot n_V = 4\cdot n_V$ assignments, and $k+i$ of them incur cost at least $4\cdot (k+i)$.
     As every leaf of the substrate network of $\ICTE$ contains one replica, at most $n_V$ assignments are free.
-    As the minimum distance between leaves is $2$, the remaining $3\cdot n_V - k-i$ assignments incur the cost $2$ each.
+    As the minimum distance between leaves is $2$, the remaining $3\cdot n_V - k-i$ assignments incur the cost~$2$~each.
     In total, the cost of the solution is then $4\cdot (k+i) + 2\cdot (3\cdot n_V - k-i) = 6\cdot n_V + 2\cdot k + 2\cdot i = \Thr + 2\cdot i$, i.e., the solution cost exceeds the threshold $\Thr$.
   \end{proof}
 
