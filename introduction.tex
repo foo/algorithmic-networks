@@ -251,7 +251,7 @@ The main contribution of this part is an $O(k\cdot \log k)$-competitive algorith
 Recently, there has been much interest in programming models and distributed
 system architectures for processing and analysis of big data (see, e.g.,~\cite{mapreduce,nodb,shark}).
 Such applications
-generate large amounts of network traffic~\cite{orchestra,talk-about,amazonbw},
+generate large amounts of network traffic~\cite{orchestra,MogPop12,amazonbw},
 and over the last years, several systems have been proposed that provide a provable network performance.
 To guarantee a certain performance level, these systems reserve a portion of a~bandwidth among cooperating nodes.
 There are two major approaches to bandwidth reservations: some systems depend on supplying the possibly different volume of bandwidth communication between each pair of nodes~\cite{faircloud,elasticswitch,seawall}, while other systems allocate abundant bandwidth of equal volume among all nodes~\cite{oktopus,secondnet,drl,gatekeeper,proteus}.
@@ -268,7 +268,7 @@ classic Minimum Linear Arrangement problem~\cite{EvNaRS99,ord-prob} which asks f
 embedding of communication graphs on simple line topologies.
 
 We consider a variant of virtual network embedding with extensions motivated by batch-processing applications.
-The most popular virtual network abstraction for batch-processing applications~\cite{mapreduce} is a virtual network that forms a clique~\cite{oktopus,talk-about,infocom16,ccr15emb,proteus}.
+The most popular virtual network abstraction for batch-processing applications~\cite{mapreduce} is a virtual network that forms a clique~\cite{oktopus,MogPop12,infocom16,ccr15emb,proteus}.
 Existing embedding algorithms often ignore a~crucial dimension of the problem, namely data locality:
 an input to a batch-processing application is typically stored in a distributed
 and sometimes redundant file system. Since moving
