@@ -844,7 +844,7 @@ The construction for the $\TDPM$ instance from Figure~\ref{fig:fprsma} is given 
 \begin{enumerate}
   \item \emph{Element chunks}. For each triple $t = \langle x, y, z \rangle \in P$, we construct $3$ chunks:~$x_t, y_t,$ and $z_t$, i.e., $\sum_e\deg(e)$ $=3\cdot p$ chunks in total.
   Then, each element $e$ has $\deg(e)$ element chunks~$e_t$ for each $t \in P_e$,  collectively called $C_e$.
-  Each chunk from $C_e$ have two replicas. First replicas are placed in the matching subtree:
+  Each element chunk has two replicas. First replicas are placed in the matching subtree:
   we place
   three replicas: $x_t^{(1)}, y_t^{(1)}$ and $z_t^{(1)}$ in the {\TripleGadget} for triple $t\in P$, one per each leaf.
   Second replicas are placed in the cover subtree:
@@ -892,7 +892,7 @@ The multi-assignment factor is $m=4$, and the number of nodes to embed is~$\numN
 \begin{proof}
   Fix a feasible solution~$\STDPM$ for $\ITDPM$. In the solution~$\SCTE$ for $\ICTE$ we need to place $n_V = k + \sum_e(\deg(e) - 1)$ nodes and assign $4$ chunks to each of these.
   \begin{enumerate}
-    \item We place~$k$ nodes in~$k$ {\TripleGadgets} (one per gadget, at an arbitrary leaf) that correspond to triples chosen in~$\STDPM$ solution.
+    \item We place~$k$ nodes in~$k$ {\TripleGadgets} (one per gadget, at an arbitrary leaf) that correspond to triples chosen in the solution~$\STDPM$.
     To each such node we assign $3$ chunk replicas from its gadget and one arbitrary, unassigned unique chunk.
     \item For each element $e$, in $G(e)$ we place~$\deg(e) - 1$ nodes, and to each of them we assign $3$~arbitrary dummy chunks and $1$ replica of an arbitrary 
     element chunk (in this
@@ -907,7 +907,7 @@ The multi-assignment factor is $m=4$, and the number of nodes to embed is~$\numN
   
  % \todo{todo: explain: every chunk was processed}
   %Every chunk was assigned, exactly $n_V = k + \sum_e(\deg(e) - 1)$ nodes are placed, and each of the nodes has exactly $4$ chunk replicas assigned.
-  To see that the solution does not exceed the threshold $\Thr$, we sum up the total assignment cost.
+  To see that the solution cost does not exceed the threshold $\Thr$, we sum up the total assignment cost.
   The $k$ nodes placed in \TripleGadgets{} have three assignments to chunk replicas within the \TripleGadget{} of the total cost $0+2+2=4$, and one assignment of cost $4$ (to some \UnqGadget{}).
   The remaining $\Vms-k$ nodes placed in the \CoverSubtree{} have four assignments within element gadgets for the total cost $0+3\cdot 2 = 6$.
   Summing up, the incurred cost is $8\cdot k + 6\cdot (\Vms - k) = \Thr$, i.e., the solution is feasible.
@@ -915,7 +915,7 @@ The multi-assignment factor is $m=4$, and the number of nodes to embed is~$\numN
 
 To construct a solution for $\ITDPM$ from a solution to $\ICTE$, we show that every feasible solution for $\ICTE$ has certain structure.
 We call a {\TripleGadget} \textit{active}, if it contains a~single node at one of its leafs, and we call a node \textit{active} if it is placed in an active {\TripleGadget}.
-In the lemmas below, we show that in feasible solutions to $\ICTE$, exactly $k$ \TripleGadgets{} are active (similarly to Theorem~\ref{th:ma-unlimited}).
+In the lemmas below, we show in particular that in feasible solutions to $\ICTE$, exactly $k$ \TripleGadgets{} are active (similarly to Theorem~\ref{th:ma-unlimited}).
 In the instance $\ICTE$, chunks can be assigned to nodes at distance $0, 2, 4$ or $6$.
 We call the assignments at distance $0$ or $2$ \emph{short}, and the ones at distance $4$ or $6$ \emph{long}.
 
@@ -934,7 +934,7 @@ We call the assignments at distance $0$ or $2$ \emph{short}, and the ones at dis
 
   
 \begin{lemma}
-  Any feasible solution to $\ICTE$ places exactly $k$ nodes in the \MatchSubtree.
+  Any feasible solution to $\ICTE$ places exactly $k$ nodes in the \MatchSubtree and $\deg(e) - 1$ nodes in each gadget $G(e)$ for each $e$.
   \label{lem:n-matchsubtree-ma}
 \end{lemma}
 
@@ -988,7 +988,8 @@ Therefore, exactly $k$ \TripleGadgets{} are active.
   If an active node would have more than $1$ long assignment, then by Lemma~\ref{lem:n-active-ma}, the total number of long assignments would exceed $k$, and by Lemma~\ref{lem:infeasible} the solution would be infeasible.
   Therefore, each active node has exactly $1$ long assignment.
   By Lemma~\ref{lem:infeasible}, in $\SCTE$ there are at most $k$ long assignments, and as these are used by $k$ active nodes, the remaining nodes have no long assignments.
-  Assignments that are not long are short, hence the lemma holds.
+  % Assignments that are not long are short, hence the lemma holds.
+  Therefore, each of the remaining nodes has $4$ short assignments.
 \end{proof}
 
 %  \begin{lemma}
@@ -1039,14 +1040,14 @@ Therefore, exactly $k$ \TripleGadgets{} are active.
   By Lemma~\ref{lem:n-active-ma}, exactly $k$ \TripleGadgets{} are active.
   We construct the solution $\STDPM$ from the set of triples that correspond to active \TripleGadgets{}.
 
-  Now, we show that $\STDPM$ is feasible, i.e., it matches every element of $X\cup Y\cup Z$ exactly once, and the matching is composed from the set of triples $P$.
+  Now, we show that $\STDPM$ is feasible, i.e., it matches every element of $X\cup Y\cup Z$ exactly once, and the matching consists of triples from $P$.
   By Lemma~\ref{lem:assignment-length}, every active node has three chunks assigned by the short assignment, and these are the element chunks located at the gadget it is placed at.
-  Hence, the chunks $x_t$, $y_t$ and $z_t$ assigned to an active node that corresponds to the triple $t = \langle x, y, z \rangle \in P$.
+  Hence, the chunks $x_t$, $y_t$ and $z_t$ are assigned to an active node. This that corresponds to choosing the triple $t = \langle x, y, z \rangle \in P$.
   
   For every element $e\in X\cup Y \cup Z$, we constructed chunks $C_e$, with two replicas each: one in the matching subtree and one in the cover subtree.
-  Now we claim that in each element gadget $G(e)$, we assign exactly $\deg(e) - 1$ element chunks.
-  Similar to the proof of Lemma~\ref{lem:n-matchsubtree-ma}, with each $G(e)$ we associate its volume.
-  By Lemma~\ref{lem:n-matchsubtree-ma}, we place $n_V-k$ nodes in the cover subtree, i.e., the number of nodes equal the total volume of all gadgets $G(e)$.
+  Now we claim that in each element gadget~$G(e)$, we assign exactly $\deg(e) - 1$ element chunks.
+  Similarly to the proof of Lemma~\ref{lem:n-matchsubtree-ma}, with each $G(e)$ we associate its volume.
+  By Lemma~\ref{lem:n-matchsubtree-ma}, we place $n_V-k$ nodes in the cover subtree, i.e., the number of nodes equal to the total volume of all gadgets $G(e)$.
   Hence, in each of $G(e)$ we have $n_e$ nodes, where $n_e$ is the volume of $G(e)$.
   In a single gadget $G(e)$, the total number of chunks is $4\cdot(\deg(e) - 1) + 1$, and by Lemma~\ref{lem:assignment-length}, nodes in this gadget have $4\cdot(\deg(e)-1)$ chunks from this gadget assigned.
    The remaining $1$ element chunk is assigned in a triple gadget.
