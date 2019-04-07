@@ -552,7 +552,7 @@ nodes outside of $T'$ (see Lemma~\ref{lemma:uplink} for similar argument).
 The second term of $bw$ represents the required bandwidth for the communication between the~$x$
 nodes inside~$T'$, and the~$\Vms - x$ nodes in the remaining parts of the substrate
 network.
-For the coherence of the description, we assume that the whole tree $T$ also has a dummy uplink of zero capacity.
+For the coherence of the description, we assume that the whole tree $T$ also has a~dummy uplink of zero capacity.
 Our goal is to compute $f(T, n_V)$; note that by our definition $bw(T, n_V) = 0$ as expected.
 
 Then, the formula to calculate the function $f$ for a subtree containing only a leaf $\ell$ is
@@ -934,7 +934,7 @@ We call the assignments at distance $0$ or $2$ \emph{short}, and the ones at dis
 
   
 \begin{lemma}
-  Any feasible solution to $\ICTE$ places exactly $k$ nodes in the \MatchSubtree and $\deg(e) - 1$ nodes in each gadget $G(e)$ for each $e$.
+  Any feasible solution to $\ICTE$ places exactly $k$ nodes in the matching subtree and $\deg(e) - 1$ nodes in gadget $G(e)$ for each $e \in X \cup Y \cup Z$.
   \label{lem:n-matchsubtree-ma}
 \end{lemma}
 
@@ -953,6 +953,7 @@ We call the assignments at distance $0$ or $2$ \emph{short}, and the ones at dis
   For the remaining $4\cdot j_e - 1 \geq 3\cdot j_e$ chunks, long assignments are used.
   By the pigeon-hole principle, at least $i = \sum_e j_e$ nodes surpass the volume of their gadgets, causing at least $3\cdot i$ long assignments.
   As each of $k-i$ nodes in the matching subtree result in one long assignment, in total we have at least $k+2\cdot i$ long assignments and by Lemma~\ref{lem:infeasible}, the solution is infeasible, a~contradiction.
+  Therefore, exactly $k$ nodes are placed in the matching subtree, and exactly $\deg(e) - 1$ nodes are placed in each $G(e)$.
 \end{proof}
 
 \begin{lemma}
@@ -980,7 +981,7 @@ Therefore, exactly $k$ \TripleGadgets{} are active.
 \end{proof}
 
 \begin{lemma}
-  In a feasible solution $\SCTE$ to $\ICTE$, each active node has exactly $1$ long assignment and $3$ short assignments, and remaining nodes have $4$ short assignments.
+  In a feasible solution $\SCTE$ to $\ICTE$, each active node has exactly $1$ long assignment (to some unique chunk) and $3$ short assignments, and remaining nodes have $4$ short assignments.
   \label{lem:assignment-length}
 \end{lemma}
 \begin{proof}
@@ -1045,12 +1046,13 @@ Therefore, exactly $k$ \TripleGadgets{} are active.
   Hence, the chunks $x_t$, $y_t$ and $z_t$ are assigned to an active node. This that corresponds to choosing the triple $t = \langle x, y, z \rangle \in P$.
   
   For every element $e\in X\cup Y \cup Z$, we constructed chunks $C_e$, with two replicas each: one in the matching subtree and one in the cover subtree.
-  Now we claim that in each element gadget~$G(e)$, we assign exactly $\deg(e) - 1$ element chunks.
-  Similarly to the proof of Lemma~\ref{lem:n-matchsubtree-ma}, with each $G(e)$ we associate its volume.
-  By Lemma~\ref{lem:n-matchsubtree-ma}, we place $n_V-k$ nodes in the cover subtree, i.e., the number of nodes equal to the total volume of all gadgets $G(e)$.
-  Hence, in each of $G(e)$ we have $n_e$ nodes, where $n_e$ is the volume of $G(e)$.
-  In a single gadget $G(e)$, the total number of chunks is $4\cdot(\deg(e) - 1) + 1$, and by Lemma~\ref{lem:assignment-length}, nodes in this gadget have $4\cdot(\deg(e)-1)$ chunks from this gadget assigned.
-   The remaining $1$ element chunk is assigned in a triple gadget.
+  By Lemma~\ref{lem:n-matchsubtree-ma}, in each element gadget~$G(e)$ we have exactly $\deg(e) - 1$ nodes, and by Lemma~\ref{lem:assignment-length}, these nodes have short assignments, and hence they have $4 \cdot (\deg(e) - 1)$ chunks from $G(e)$ assigned, i.e. one chunk is not assigned.
+  Dummy chunks have one replica, and by Lemma~\ref{lem:assignment-length}, long assignments are used only for unique chunks, and hence dummy chunks are assigned by nodes placed in the gadget.
+ % Similarly to the proof of Lemma~\ref{lem:n-matchsubtree-ma}, with each $G(e)$ we associate its volume.
+ % By Lemma~\ref{lem:n-matchsubtree-ma}, we place $n_V-k$ nodes in the cover subtree, i.e., the number of nodes equal to the total volume of all gadgets $G(e)$.
+ % Hence, in each of $G(e)$ we have $n_e$ nodes, where $n_e$ is the volume of $G(e)$.
+ % In a single gadget $G(e)$, the total number of chunks is $4\cdot(\deg(e) - 1) + 1$, and by Lemma~\ref{lem:assignment-length}, nodes in this gadget have $4\cdot(\deg(e)-1)$ chunks from this gadget assigned.
+   The one remaining chunk is an element chunk, assigned in some triple gadget.
   Hence, the set of active nodes have $1$~of $\deg(e)$ element chunks assigned for each $e\in X\cup Y\cup Z$, and $\STDPM$ assigns each $e\in X\cup Y\cup Z$ exactly once.
  
 %  Each of $3\cdot p = \sum_e \deg(e)$ element chunks has two replicas: one in the matching subtree and one in the cover subtree.
