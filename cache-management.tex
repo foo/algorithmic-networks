@@ -18,7 +18,7 @@ Dependencies among to-be-cached items arise in numerous settings and are a
 natural refinement of many caching problems.
 As highlighted in the introduction, an important application for caching with tree-based dependency model arises in the context
 of forwarding rules in routers. We begin by a technical overview, %in Section~\ref{sec:tc-technical},
-where we explain the the setup for \emph{caching of forwarding rules} in a router.
+where we explain the setup for \emph{caching of forwarding rules} in a router.
 Then, we introduce an abstract problem of \emph{caching with tree dependencies} which, with minor differences, matches the forwarding rules caching problem.
 For caching with tree dependencies we propose a competitive algorithm.
 In Section~\ref{sec:bisimulation} we establish a formal link between caching with tree dependencies and caching of forwarding rules.
@@ -57,12 +57,12 @@ Finally, we show that the proposed algorithm can be efficiently implemented.
   controller to the router.}\label{fig:router}
 \end{figure}
 
-As highlighted in the introduction, routers has finite memory, and in an increasingly common scenario the size of forwarding table exceeds the size of available memory.
+As highlighted in the introduction, routers have finite memory, and in an increasingly common scenario the size of a~forwarding table exceeds the size of available memory.
 One of the solutions is to store only a part of a~forwarding table on the router, that acts as a cache for the complete forwarding table.
 This solution is particularly attractive with the advent of Soft\-ware-Defined
-Network (SDN) technology, which allows to manage the router forwarding table using a
+Network (SDN) technology, which allows managing the router forwarding table using a
 software controller.
-Such approach is used
+Such an approach is used
 in real-world architectures
 like~\cite{cacheflow,route-caching-flat,prefix-caching,fib-caching-non-overlapping,fibium-zipf}, which we describe below in detail.
 Our model formalizes the underlying operational
@@ -77,12 +77,12 @@ The setup  depicted in
 and the (SDN) controller, which keeps all rules in its less expensive and
 slower memory (see~\cite{fibium-zipf} for a more technical discussion).
 It is also possible that these two entities are parts of a single device.
-In such case, they are called control plane and forwarding plane, respectively.
+In such a case, they are called control plane and forwarding plane, respectively.
 
 Rules in the forwarding table form a tree.
 That is, the forwarding rules are prefixes of
 IP addresses (they are bit strings). Whenever a packet arrives, the router
-follows a longest matching prefix (LMP) scheme: it searches for the rule that
+follows the longest matching prefix (LMP) scheme: it searches for the rule that
 is a~prefix of the destination IP of the packet, and among matching rules, it
 chooses the longest one. In other words, if the prefixes corresponding to
 rules are stored in the tree,
@@ -94,7 +94,7 @@ actually stored in a real tree; this tree is implicit in the LMP scheme).
 
 Dependencies among the rules impose certain restrictions on feasible cache configurations.
 Leaving a less specific rule on the router while evicting a more specific one
-(i.e., keeping a~tree node in cache while evicting its descendant) would result
+(i.e., keeping a~tree node in the cache while evicting its descendant) would result
 in a~situation where packets are forwarded according to the less specific
 rule, and hence potentially exit through the wrong port.
 To guarantee that the router can forward the package correctly with partial forwarding table, we require that cached nodes form a subforest.
@@ -108,7 +108,7 @@ To handle packets that would be matched by a rule not present in the cache, we w
  an~appropriate forwarding rule exists.
  To this end, we simply add
 an~artificial rule at the tree root in the router (matching an empty prefix).
-This rule is the least specific rule for any packet, hence as long as any rule that matches the packet is present in cache, the LMP scheme never selects the artificial rule.
+This rule is the least specific rule for any packet, hence as long as any rule that matches the packet is present in the cache, the LMP scheme never selects the artificial rule.
 When no actual matching rule is found in the 
 cache, the packet will be forwarded according to this artificial rule to the
 controller that stores all the rules and can handle all packets appropriately.
@@ -126,8 +126,8 @@ an update of proprietary and vendor-dependent structures can be quite
 costly~\cite{tcam-expensive-updates}, but the empirical studies show it to be
 independent of the rule being updated~\cite{fib-updates}.
 Standard caching-related problems arise, such as: which entry to evict to provide space to store the new one.
-Immediate update might seem a rational strategy, but in scenarios with highly dynamic networks that rearrange often, it might be beneficial to delay the update.
-Premature update might result in the situation, where more time is spent alternating the cache configuration than processing packets (this is similar to \emph{thrashing} in virtual memory systems).
+An immediate update might seem a rational strategy, but in scenarios with highly dynamic networks that rearrange often, it might be beneficial to delay the update.
+A premature update might result in the situation, where more time is spent alternating the cache configuration than processing packets (this is similar to \emph{thrashing} in virtual memory systems).
 
 \subsection{Rule Updates}
 \label{sec:rule-up}
@@ -176,7 +176,7 @@ $T$}, i.e., a union of disjoint subtrees of~$T$.  We call this problem
 \emph{online tree caching}.
 
 We assume discrete time slotted into rounds, with round $t \geq 1$
-corresponding to time interval $(t-1,t)$. In round $t$, the algorithm is given
+corresponding to the time interval $(t-1,t)$. In round $t$, the algorithm is given
 one request to exactly one tree node and has to process
 it, i.e., pay associated costs (if any). 
 Furthermore, we assume a bypassing model and distinguish between two types of
@@ -296,7 +296,7 @@ negative.
 \end{lemma}
 
 In the following, we assume that no positive requests are given to nodes
-inside cache and no negative ones to nodes outside of it. (This does not
+inside the cache and no negative ones to nodes outside of it. (This does not
 change the behavior of \ALGTC and can only decrease the cost of \OPT.)
 
 For the sake of analysis, we assume that at time $\enP$, \ALGTC actually
@@ -448,7 +448,7 @@ In the following subsections, we show that it is possible to legally shift the
 requests of any field $F \in \F$ (i.e., shift positive requests down and negative
 requests up), so that they remain within $F$, and they will
 be either exactly or approximately evenly distributed among nodes of $F$.
-This will create $P'$ with appropriately large cost for \OPT.
+This will create $P'$ with an appropriately large cost for \OPT.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -567,7 +567,7 @@ does not contain $p(v)$ or $\tau < s$, then the number of requests in
 $F^t_{\leq \tau} \cap D$ was not changed by the shift, and hence $F^t_{\leq
 \tau} \cap D$ is not over-requested. Otherwise, $D \cup \{v\}$ was a tree cap
 in $Y$ and by the lemma assumption, $F^t_{\leq \tau} \cap (D \cup \{v\})$ was
-not over-requested. As $F^t_{\leq \tau} \cap D$ has now exactly $\alpha$ less
+not over-requested. As $F^t_{\leq \tau} \cap D$ has now exactly $\alpha$ fewer
 requests than $F^t_{\leq \tau} \cap (D \cup \{v\})$ had, it is not
 over-requested, either.
 \end{proof}
@@ -575,7 +575,7 @@ over-requested, either.
 \begin{corollary}
 \label{cor:crucial_lemma_neg}
 For any negative field $F^t$, it is possible to legally shift its requests up,
-so that they remain within $F^t$ and after the modification each node is
+so that they remain within $F^t$ and after the modification, each node is
 requested exactly $\alpha$ times.
 \end{corollary}
 
@@ -700,7 +700,7 @@ $F^\infty$.}
 \end{figure}
 
 We focus on a single node $v$.  We cut its history into interleaved periods:
-\pout \emph{periods}, when $v$ is outside the cache and receives positive 
+\pout \emph{periods} when $v$ is outside the cache and receives positive 
 requests, and \pin \emph{periods} when \ALGTC keeps $v$ in the cache and $v$
 receives negative requests. A final (possibly empty) part corresponding to the
 time when $v$ is in the $F^\infty$ field is not accounted in \pout or \pin
@@ -892,10 +892,10 @@ the node requested at round $t$.
 \end{claim}
 
 \begin{proof}
-First observe that \lref[Invariant]{item:prop1} (for time $t$) along with the
+First, observe that \lref[Invariant]{item:prop1} (for time $t$) along with the
 fact that round $t$ contains only one request immediately implies that
 $\cnt_t(X) \leq \cnt_{t-1}(X) + 1 \leq (|X| \cdot \alpha - 1) + 1 = |X|
-\cdot \alpha$, i.e., \lref[Invariant]{item:prop2} for time~$t$. Furthermore the equality may
+\cdot \alpha$, i.e., \lref[Invariant]{item:prop2} for time~$t$. Furthermore, the equality may
 hold only for changesets containing the node requested at round $t$, which
 implies \lref[Invariant]{item:propmid} for time $t$.
 
@@ -955,7 +955,7 @@ contain a node requested at time $t$, which is a~contradiction as they are
 disjoint.
 
 Therefore, if $X$ is a positive changeset applied at $t$, then $X$ is a~single
-tree cap of a tree from subforest $C_{t+1}$, and likewise if $X$ is negative,
+tree cap of a tree from subforest $C_{t+1}$, and likewise, if $X$ is negative,
 then $X$ is a~single tree cap of a~tree from subforest $C_t$.
 \end{proof}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -979,19 +979,19 @@ the tree will be irrelevant.
 For any input sequence $I$ for the caching problem, we may create a sequence
 $I_\textnormal{T}$ for tree caching, where a request to an element is replaced by
 $\alpha$ requests to the corresponding leaf. Now, we claim that any solution
-$A$ for~$I$ of cost $c$ can be transformed, in online manner, into a~solution
+$A$ for~$I$ of cost $c$ can be transformed, in an online manner, into a~solution
 $A_\textnormal{T}$ for $I_\textnormal{T}$ of cost $\Theta(\alpha \cdot c)$ and
 vice versa.
 
 If upon a request $r$, an algorithm $A$ fetches $r$ to the cache and evicts
 some elements, then $A_\textnormal{T}$ bypasses $\alpha$ corresponding requests
-to leaf $r$, fetches $r$ afterwards and evicts the corresponding leaves,
+to leaf $r$, fetches $r$ afterward and evicts the corresponding leaves,
 paying $O(\alpha)$ times the cost of $A$. By doing it iteratively,
 $A_\textnormal{T}$ ensures that its cache is equivalent to that of $A$. In
 particular, a request free for $A$ is also free for $A_\textnormal{T}$.
 
 Now take any algorithm $A_\textnormal{T}$ for $I_\textnormal{T}$. It can be
-transformed to the algorithm $A_\textnormal{T}'$ that (i)~keeps only leaves of
+transformed into the algorithm $A_\textnormal{T}'$ that (i)~keeps only leaves of
 the tree in the cache and (ii) performs actions only at times that are
 multiplicities of $\alpha$ (losing at most a constant factor in comparison to
 $A_\textnormal{T}$). Then, fix any chunk of $\alpha$ requests to some leaf
@@ -1018,7 +1018,7 @@ In this section, we present a formal argument showing why we can use any
 $q$-competitive online algorithm $A_T$ for the tree caching problem to obtain
 a $2 q$-competitive online algorithm~$A$ for the tree caching problem with updates with fixed cost $\alpha$.
 
-Namely, we take any input $I$ for the latter problem and create, in online
+Namely, we take any input $I$ for the latter problem and create, in an online
 fashion, an input $I_T$ for the tree caching problem.
 For any solution for $I_T$, we may replay its actions (fetches and evictions)
 on~$I$ and vice versa. However, there is one place, where these solutions 
@@ -1233,7 +1233,7 @@ for finding set $|X_t|$ is $O(h(T) + \deg(T) \cdot |X_t|)$.
 
 \section{Conclusions}\label{sec:conclusion-caching}
 
-In this chapter we define a novel variant of online caching which finds
+In this chapter, we defined a novel variant of online caching which finds
 applications in the context of IP routing networks where forwarding rules can
 be cached. We presented a deterministic online algorithm that achieves a
 provably competitive trade-off between the benefit of caching and update costs.
