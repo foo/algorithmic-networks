@@ -201,7 +201,7 @@ We transform bandwidth capacities so that they correspond to the maximal number 
 Concretely, for each link~$e\in E(\Tree)$, we set its new
 capacity in~$\Tree^*$ to~$\lfloor\capacity(e) / \CostTrans\rfloor$.
 After this normalization, we extend the topology of~$\Tree$ by
-introducing an artificial vertex for each of $\tau$ chunks. Each of these artificial
+introducing an artificial vertex for each~of~$\tau$~chunks. Each of these artificial
 vertices is connected to each leaf (i.e., server) in~$\Tree$ where a~replica
  of the respective chunk is located,
 connecting the replica by a link of capacity~$1$. In
@@ -992,6 +992,7 @@ Therefore, exactly $k$ \TripleGadgets{} are active.
   If an active node would have more than $1$ long assignment, then by Lemma~\ref{lem:n-active-ma}, the total number of long assignments would exceed $k$, and by Lemma~\ref{lem:infeasible} the solution would be infeasible.
   Therefore, each active node has exactly $1$ long assignment.
   By Lemma~\ref{lem:infeasible}, in $\SCTE$ there are at most $k$ long assignments, and as these are used by $k$ active nodes, the remaining nodes (in the cover subtree) have no long assignments (they have $4$ short assignments).
+  Finally, by Lemma~\ref{lem:no-unq-ma}, $k$ unique chunks have no node placed at them, hence these can be assigned only by a long assignment, and the only nodes that have long assignments are the active nodes that have $k$ of them in total.
 \end{proof}
 
 %  \begin{lemma}

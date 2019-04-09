@@ -70,7 +70,6 @@ problems of such architectures. Our
 algorithm, when applied in the context of such architectures, can 
 hence be used to prolong the lifetime of IP routers.
 
-\newpage
 The setup  depicted in
 \lref[Figure]{fig:router} consists of two entities: a single router 
 (e.g., an OpenFlow switch) which caches only a~subset of all forwarding rules,
@@ -126,7 +125,7 @@ an update of proprietary and vendor-dependent structures can be quite
 costly~\cite{tcam-expensive-updates}, but the empirical studies show it to be
 independent of the rule being updated~\cite{fib-updates}.
 Standard caching-related problems arise, such as: which entry to evict to provide space to store the new one.
-An immediate update might seem a rational strategy, but in scenarios with highly dynamic networks that rearrange often, it might be beneficial to delay the update.
+An immediate update might seem a~rational strategy, but in scenarios with highly dynamic networks that rearrange often, it might be beneficial to delay the update.
 A premature update might result in the situation, where more time is spent alternating the cache configuration than processing packets (this is similar to \emph{thrashing} in virtual memory systems).
 
 \subsection{Rule Updates}
@@ -1023,7 +1022,7 @@ fashion, an input $I_T$ for the tree caching problem.
 For any solution for $I_T$, we may replay its actions (fetches and evictions)
 on~$I$ and vice versa. However, there is one place, where these solutions 
 may have different costs. Recall that an update of a~rule stored at node~$v$
-in~$I$ is mapped to a \emph{chunk} of $\alpha$ negative requests to~$v$ 
+in~$I$ is mapped to a \emph{chunk} of~$\alpha$ negative requests to~$v$ 
 in~$I_T$. It is then possible that an algorithm for $I_T$ modifies the cache
 \emph{during} a chunk. An~algorithm that never performs such an action
 is called \emph{canonical}.
@@ -1235,7 +1234,7 @@ for finding set $|X_t|$ is $O(h(T) + \deg(T) \cdot |X_t|)$.
 
 In this chapter, we defined a novel variant of online caching which finds
 applications in the context of IP routing networks where forwarding rules can
-be cached. We presented a deterministic online algorithm that achieves a
+be cached. We presented a~deterministic online algorithm that achieves a
 provably competitive trade-off between the benefit of caching and update costs.
 
 It is worth noting that, in the offline setting, choosing the best static cache 

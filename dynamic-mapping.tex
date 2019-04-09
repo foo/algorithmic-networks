@@ -223,7 +223,7 @@ C_1, \ldots, C_{|\set|} \}$ is \emph{mergeable} if $w(\set) \geq
 components are merged into a single one. If multiple mergeable component-sets
 exist, \CREP picks the one with the maximum number of components, breaking ties
 arbitrarily. Weights of all intra-$\set$ edges are reset to zero, and thus
-intra-component edge weights are always zero. A mergeable set $\set$ induces
+intra-component edge weights are always zero. A~mergeable set $\set$ induces
 a~sequence of $|\set|-1$ \emph{merge actions}:
 \CREP iteratively replaces two arbitrary components 
 from~$\set$ by a component being their union (this constitutes a~single merge
@@ -1153,11 +1153,10 @@ $p_1,p_2,\ldots,p_{k-1}$ in the cache).
 For any caching node $p$, let $\comm(p)$ be a subsequence of communication
 requests for the BRP problem, consisting of the request $(p, s)$, followed by
 $\binom{k-1}{2}$ requests to all pairs of auxiliary nodes. Given an input
-sequence $\sigma^P$ for online caching, we construct the input sequence
-$\sigma^B$ for the BRP problem in the following way: For a request
+sequence $\sigma^P$ for online caching, we construct the input sequence~$\sigma^B$ for the BRP problem in the following way: For a request
 $\sigma^P_t$, we repeat a~subsequence $\comm(\sigma^P_t)$ till the node
 clustering maintained by $B$ becomes well-aligned and $\sigma^P_t$ becomes
-collocated with $s$. Note that $B$ must eventually achieve such a node
+collocated with~$s$. Note that $B$ must eventually achieve such a node
 configuration: otherwise its cost would be arbitrarily large while a sequence
 of repeated $\comm(\sigma^P_t)$ subsequences can be served at~a~constant
 cost---the competitive ratio of~$B$ would then be unbounded. We denote the
@@ -1179,7 +1178,7 @@ summed over all requests from sequence $\sigma^P$, yields $2 \cdot
 \alpha \cdot P(\sigma^P) \leq B(\sigma^B)$.
 
 Now we show that there exists an (offline) solution \OFF to $\sigma^B$, whose
-cost is exactly $2 \cdot \alpha \cdot \OPT(\sigma^P)$. Recall that, for a
+cost is exactly ${2 \cdot \alpha \cdot \OPT(\sigma^P)}$. Recall that, for a
 caching request $\sigma^P_t$, $\sigma^B$ contains the~corresponding sequence
 $\comm_t(\sigma^P_t)$. Before serving the first request
 of~$\comm_t(\sigma^P_t)$, \OFF changes its state to a well-aligned
