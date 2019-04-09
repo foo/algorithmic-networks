@@ -1,13 +1,13 @@
 
-For executing a certain computation in a data center, one places an adequate number of workers, whose task is to select their data portion, process them, and aggregate the result by cooperation with other workers.
-Workers establish network connections called a virtual network, formed to perform a~given computational task, and in such setting, the worker is referred to as a node of a virtual network.
+For executing a certain computation in a data center, one places an adequate number of workers, whose task is to select their data portion, process them, and aggregate the result by cooperating with other workers.
+Workers establish network connections called a virtual network, formed to perform a~given computational task, and in such setting, the worker is referred to as a node of the virtual network.
 While these nodes can be placed at~any feasible physical machine in the data center, the processing performance is heavily influenced by their positions.
 Placing nodes closely to each other reduces network latency and bandwidth reservations in the data center.
-In this chapter, we investigate mapping a virtual network onto the physical infrastructure: a~task of~assigning the nodes of a virtual network to~physical machines in a~network-efficient way.
+In this chapter, we investigate mapping the virtual network onto the physical infrastructure: a~task of~assigning the nodes of the virtual network to~physical machines in a~network-efficient way.
 
 \section{Problem Definition}\label{sec:model}
 
-As described informally in the introduction (see Section~\ref{sec:virt_net_emb}), in the model we consider three components: (1)~the~substrate network (the servers
+As described informally in the introduction (see Section~\ref{sec:virt_net_emb}), the model combines three components: (1)~the~substrate network (the servers
 and the connecting physical network),
 (2)~the virtual network (the virtual machines and the logical network connecting the machines to each other
 as well as to the data), and (3)~the data divided into data chunks that need to be assigned to nodes that process them.
@@ -69,7 +69,7 @@ Formally, let~$\dist(v_1,v_2)$ denote the distance in the underlying physical ne
 For each chunk $c$,
 $\mu(c)$ is the node to which chunk $c$ is assigned,
 $c^*$ is the replica of~$c$ selected for processing,
-and $\dist(\mu(c), c^*)$ denotes the distance between their active replica of chunk $c$ and the node to which $c$ is assigned.
+and $\dist(\mu(c), c^*)$ denotes the distance between the active replica of chunk $c$ and the node to which $c$ is assigned.
 The objective is to minimize the footprint of the virtual network, defined as
 $$
 \underbrace{\sum_{c \in C} \CostTrans \cdot \dist(\mu(c), c^*)}_{\text{chunk access cost}} +  \underbrace{\frac{1}{2} \cdot \sum_{v\in V} \sum_{v' \in \VirtualNodes\setminus\{v\}} \CostCom \cdot \dist(v,v')}_{\text{node interconnect cost}}\enspace.
@@ -160,7 +160,7 @@ network~$\Tree^*$: The sink~$\Sink$ is connected to the two leaves that host the
 nodes. The artificial nodes are depicted below the leaves, are labeled with
 their respective chunks (e.g.,~$\achunk_1$), and are connected to the source
 $\Source$ as well as to the leaves that contain replicas of their chunk.
-The~maximum flow with minimum cost is indicated by the dashed lines: each line
+The~maximum flow of minimum cost is indicated by the dashed lines: each line
 represents one unit of flow. The~dotted lines indicate links which have reduced
 capacity due to~$\NI$.}
 %\caption{Example of flow construction: Problem instance with two nodes, four chunk
@@ -425,7 +425,7 @@ we build the union of the
 children's sets.
 The number of all remove operations is equal to
 the number of chunks~$\mathcal{O}(\ChunkType)$.
-Hence the overall complexity of this construction amounts to
+Hence, the overall complexity of this construction amounts to
 $\mathcal{O}(n_S + \ChunkType)$.
 The local matching algorithm outperforms the previous algorithm that relied upon calculating the minimum-weight perfect matching.
 
@@ -455,8 +455,8 @@ The algorithm allocates the minimum possible bandwidth at an uplink of every sub
 Combined with a~simple post-processing step, this approach can also solve~$\MA+\BW$ variant.
 It is sufficient to observe
 that the algorithm allocates the minimal bandwidth
-on each individual edge. In consequence, any bandwidth constraint,
-lower than the requirement given in Lemma~\ref{lem:uplink-alloc}, renders
+on each individual edge. In consequence, any bandwidth constraint
+lower than the requirement given in Lemma~\ref{lem:uplink-alloc} renders
 the problem infeasible. Hence, it is sufficient to temporarily omit the
 bandwidth limitations, compute an optimal assignment for an~$\MA$ instance, and
 verify that the resulting allocations do not violate any capacities. The
@@ -483,7 +483,7 @@ see mapping~$\NodeMapping_1$ in the left picture in
 Figure~\ref{fig:dynamic_motivation}: the four nodes are all
 collocated with chunks, resulting in a zero-cost chunk access network. As a
 result, the paths between the individual nodes are longer than in alternative
-node placements: each node has a~distance of two hops to one other node,
+node placements: each node is at a~distance of two hops to one other node,
 and four hops to two other nodes. Hence the resulting allocations for the
 node interconnect sum up to~$20 \cdot \CostCom$.
 
@@ -563,10 +563,10 @@ f(\{ \ell \}, x) =
     bw(\{ \ell \}, x) & \mbox{otherwise}\enspace. \\
   \end{cases}
   \]
-We set~$f(\{ \ell \},x)$ to infinity if $x$ exceeds the node hosting capacity of the server $\ell$.
+That is, we set~$f(\{ \ell \},x)$ to infinity if $x$ exceeds the node hosting capacity of the server $\ell$.
 
 To calculate the value of $f(T', x)$ for non-leaf subtree $T'$, we split $x$ nodes
-into two positive integer
+into two non-negative integer
 values, $r$ and $x-r$, and we put~$r$ in the right subtree and~$x - r$ in the left one.
 That is, we take the optimal cost
 (given recursively) of placing~$r$ nodes in
@@ -666,14 +666,14 @@ We create an instance~$\ICTE$ of the $\CTE$ problem in the following way:
 and for each triple from $P$, we construct a \emph{triple gadget} which we directly attach as
 a child of the root. The gadget is of height 2
 and consists of an inner node and three leaves.
-\item \emph{Chunks:} For each element in~$X$,~$Y$ and~$Z$,
+\item \emph{Chunks:} For each element $e$ in~$X$,~$Y$ and~$Z$,
  we construct a chunk
 ($3 \cdot k$ chunks in total). Every gadget contains three chunk replicas (one per leaf),
 corresponding to the elements of the triple.
 Note that the number of replicas for a chunk for element $e$ corresponds to the number of triples that contain $e$.
 \item \emph{Other properties of the instance:}
-To transform the optimization problem into a decision problem, we determine that the solution is feasible if it has a cost at most~$\Thr = 4\cdot k$ (the $\Thr$ is the acceptance threshold).
-We fix the number of to-be-embedded nodes $n_V = k$,
+To transform the optimization problem into a decision problem, we say that the solution is feasible if it has a cost at most~$\Thr = 4\cdot k$ (the $\Thr$ is the acceptance threshold).
+We fix the number of to-be-embedded nodes $n_V = k$, bandwidth
 $\CostTrans = 1$, and the the multi-assignment factor
 $\MaFactor=3$.
 \end{enumerate}
@@ -707,7 +707,7 @@ $\MaFactor=3$.
 \caption{\textit{Left:} A~$\TDM$ instance of cardinality $k=2$ with four triples:
 $t_1 = \langle a, b, c \rangle$,~$t_2 = \langle a, e, f \rangle$, $t_3 = \langle d, b, f \rangle$, and $t_4 = \langle d, e, f \rangle$. The solution is
 indicated by the grey triples $t_1$ and $t_4$. \textit{Right:} The corresponding instance and an optimal solution for the~$\FP + \MA
-+ \RS$ variant of the $\CTE$ problem. In specifying the chunk placement, we omitted the replica superscripts. Each triple corresponds to a single triple gadget.}
++ \RS$ variant of the $\CTE$ problem. In specifying the chunk placement, we omitted replica superscripts. Each triple corresponds to a single triple gadget.}
 \hfill
 \label{fig:fprsma}
 \end{figure}
@@ -736,7 +736,7 @@ The solution $\STDPM$ matches every element of the universe $X \cup Y \cup Z$, h
 ($\Rightarrow$) Fix a solution $\SCTE$ for~$\ICTE$ with cost at most $\Thr$.
 We call the triple gadget \emph{active} if it hosts a single node at one of its leaves.
 We claim that $\SCTE$ places at most one node in each triple gadget.
-For contradiction, suppose that two nodes $x_1$, $x_2$ are placed in the same triple gadget.
+For a contradiction, suppose that two nodes $x_1$, $x_2$ are placed in the same triple gadget.
 First, we lower-bound the cost incurred by $x_1$ and $x_2$ that collectively have $2\cdot \MaFactor = 6$ replicas assigned.
 At most two of these chunks are co-located with $x_1$ or $x_2$ and cost $0$, and remaining four chunks incur a cost at least $2$ each.
 Moreover, at least three of these chunks are placed outside of this triple gadget and incur the cost at least $4$ each.
@@ -748,7 +748,7 @@ The total chunk assignment cost is then $4\cdot (k-2)+14 = 4\cdot k + 6$ and exc
 As $n_V = k$, we conclude that there are exactly $k$ active gadgets in $\SCTE$.
 
 To construct the solution $\STDPM$ to $\ITDPM$, we pick the set of triples whose gadgets are active.
-The solution $\STDPM$ consists of $k$ triples.
+The solution $\STDPM$ consists then of $k$ triples.
 Since each chunk is assigned to exactly one node, every element of~$X$,~$Y$ and~$Z$ is matched and $\STDPM$ forms a 3-dimensional perfect matching of $X \cup Y\cup Z$.
 \end{proof}
 
@@ -829,7 +829,7 @@ We construct a substrate network that consists of two subtrees connected to the
   This keeps the tree balanced, and also keeps leaves of
   {\UnqGadgets} far from each other.
   \item The {\ElGadget} $G(e)$ for element $e$ consists of the
-  root and~$4\cdot(\deg(e)-1)+1$ leaves. There are $3\cdot k$ elements numbered from $e_1$ to $e_{3\cdot k}$, and $3\cdot k $ corresponding element gadgets $G(e_1), \ldots, G(e_{3\cdot k})$.
+  gadget root and~$4\cdot(\deg(e)-1)+1$ leaves. There are $3\cdot k$ elements numbered from $e_1$ to $e_{3\cdot k}$, and $3\cdot k $ corresponding element gadgets $G(e_1), \ldots, G(e_{3\cdot k})$.
 \end{enumerate}
 
 \paragraph{Chunks.}
@@ -849,19 +849,19 @@ The construction for the $\TDPM$ instance from Figure~\ref{fig:fprsma} is given 
   three replicas: $x_t^{(1)}, y_t^{(1)}$ and $z_t^{(1)}$ in the {\TripleGadget} for triple $t\in P$, one per each leaf.
   Second replicas are placed in the cover subtree:
   for each element $e \in X\cup Y\cup Z$, for each $t \in P_e$,
-  we place replicas $e_t^{(2)}$ in different leaves of the gadget $G(e)$.
-  In total, we place $\deg(e)$ replicas of element chunks in the leaves of the gadget $G(e)$.
+  we place replicas $e_t^{(2)}$ at different leaves of the gadget $G(e)$.
+  In total, we place $\deg(e)$ replicas of element chunks at the leaves of the gadget $G(e)$.
   \item \emph{Unique chunks}. We construct~$k$ unique chunks $u_1, \ldots, u_k$ with one replica each, and we place these replicas at the leaves of {\UnqGadgets} (one chunk per leaf).
   \item \emph{Dummy chunks}. For each element~$e\in X\cup Y\cup Z$,
   we construct an additional set of $3\cdot(\deg(e) - 1)$ dummy chunks, with one replica each, and we place these replicas in $3\cdot (\deg(e)-1)$ leaves of $G(e)$ (one chunk per leaf),
   not occupied by (the second) replicas of element chunks.
-  Recall that the remaining $\deg(e)$ leaves of $G(e)$ contain replicas $e_t^{(2)}$ for each $t \in P_e$, i.e., one replica at each leaf.
+  Recall that the remaining $\deg(e)$ leaves of $G(e)$ contain replicas $e_t^{(2)}$ for each $t \in P_e$, i.e., there is one replica at each leaf.
 \end{enumerate}
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=1\columnwidth]{figs/static-mapping/cte-ma2.pdf}
-\caption{An instance of $\FP+\MA+\RS(2)$ variant of $\CTE$ corresponding to the $\TDM$ instance from Figure~\ref{fig:fprsma}. Leaves containing dummy chunks are grey. The optimal solution assigns chunks to nodes $v_1, \ldots v_8$ by the dashed lines. In specifying the chunk placement we omit the replica superscripts.}
+\caption{An instance of $\FP+\MA+\RS(2)$ variant of $\CTE$ corresponding to the $\TDM$ instance from Figure~\ref{fig:fprsma}. Leaves containing dummy chunks are grey. An optimal solution assigns chunks to nodes $v_1, \ldots v_8$ by the dashed lines. In specifying the chunk placement we omit replica superscripts.}
 \label{fig:example-rs2}
 \end{figure}
 
@@ -904,6 +904,7 @@ The multi-assignment factor is $m=4$, and the number of nodes to embed is~$\numN
   For each element $e$, by $e_*$ we denote the element chunk $e_t$ that is assigned in a triple gadget, i.e, the replica $e_*^{(1)}$ is assigned in a triple gadget.
   The remaining $\deg(e)-1$ chunks from $C_e \setminus \{ e_* \}$ (their second replicas) are assigned to $\deg(e)-1$ nodes in $G(e)$.
   Finally, each of $k$ unique chunks is assigned to a~node in a triple gadget, and each dummy chunk is assigned to some node in its element gadget.
+  This shows that each chunk is assigned to a node.
   
  % \todo{todo: explain: every chunk was processed}
   %Every chunk was assigned, exactly $n_V = k + \sum_e(\deg(e) - 1)$ nodes are placed, and each of the nodes has exactly $4$ chunk replicas assigned.
@@ -913,9 +914,11 @@ The multi-assignment factor is $m=4$, and the number of nodes to embed is~$\numN
   Summing up, the incurred cost is $8\cdot k + 6\cdot (\Vms - k) = \Thr$, i.e., the solution is feasible.
 \end{proof}
 
-To construct a solution for $\ITDPM$ from a solution to $\ICTE$, we show that every feasible solution for $\ICTE$ has certain structure.
+To construct a solution for $\ITDPM$ from a solution to $\ICTE$, we show that every feasible solution for $\ICTE$ has a certain structure.
 We call a {\TripleGadget} \textit{active}, if it contains a~single node at one of its leafs, and we call a node \textit{active} if it is placed in an active {\TripleGadget}.
 In the lemmas below, we show in particular that in feasible solutions to $\ICTE$, exactly $k$ \TripleGadgets{} are active (similarly to Theorem~\ref{th:ma-unlimited}).
+
+
 In the instance $\ICTE$, chunks can be assigned to nodes at distance $0, 2, 4$ or $6$.
 We call the assignments at distance $0$ or $2$ \emph{short}, and the ones at distance $4$ or $6$ \emph{long}.
 
@@ -952,8 +955,8 @@ We call the assignments at distance $0$ or $2$ \emph{short}, and the ones at dis
   then the number of chunks assigned to these nodes is $4\cdot (\deg(e) - 1 + j_e)$, and at most $4\cdot (\deg(e) - 1) + 1$ can be assigned within the gadget $G(e)$.
   For the remaining $4\cdot j_e - 1 \geq 3\cdot j_e$ chunks, long assignments are used.
   By the pigeon-hole principle, at least $i = \sum_e j_e$ nodes surpass the volume of their gadgets, causing at least $3\cdot i$ long assignments.
-  As each of $k-i$ nodes in the matching subtree result in one long assignment, in total we have at least $k+2\cdot i$ long assignments and by Lemma~\ref{lem:infeasible}, the solution is infeasible, a~contradiction.
-  Therefore, exactly $k$ nodes are placed in the matching subtree, and exactly $\deg(e) - 1$ nodes are placed in each $G(e)$.
+  As each of $k-i$ nodes in the matching subtree causes one long assignment, in total we have at least $k+2\cdot i$ long assignments and, by Lemma~\ref{lem:infeasible}, the solution is infeasible, a~contradiction.
+  Therefore, exactly $k$ nodes are placed in the matching subtree, and exactly $\deg(e) - 1$ nodes are placed in each element gadget $G(e)$.
 \end{proof}
 
 \begin{lemma}
@@ -988,9 +991,7 @@ Therefore, exactly $k$ \TripleGadgets{} are active.
   Consider an active node. Only three chunks are placed at distance at most $2$ to this node. Hence, at least $1$ of its $m = 4$ chunks is assigned at distance at least $4$, i.e., by the long assignment.
   If an active node would have more than $1$ long assignment, then by Lemma~\ref{lem:n-active-ma}, the total number of long assignments would exceed $k$, and by Lemma~\ref{lem:infeasible} the solution would be infeasible.
   Therefore, each active node has exactly $1$ long assignment.
-  By Lemma~\ref{lem:infeasible}, in $\SCTE$ there are at most $k$ long assignments, and as these are used by $k$ active nodes, the remaining nodes have no long assignments.
-  % Assignments that are not long are short, hence the lemma holds.
-  Therefore, each of the remaining nodes has $4$ short assignments.
+  By Lemma~\ref{lem:infeasible}, in $\SCTE$ there are at most $k$ long assignments, and as these are used by $k$ active nodes, the remaining nodes (in the cover subtree) have no long assignments (they have $4$ short assignments).
 \end{proof}
 
 %  \begin{lemma}
@@ -1034,26 +1035,27 @@ Therefore, exactly $k$ \TripleGadgets{} are active.
 \begin{proof}
   
   Fix an instance $\ITDPM$ of~$\TDPM$.
-  We show that~$\ICTE$ constructed on the basis of $\ITDPM$ has a solution of cost~$\leq \Thr$ if ($\Leftarrow$) and only if~($\Rightarrow$) $\ITDPM \in \TDPM$ (there exists a perfect 3D matching in $\ITDPM$).
+  We show that~$\ICTE$ constructed on the basis of $\ITDPM$ has a solution of cost~$\leq \Thr$ if ($\Leftarrow$) and only if~($\Rightarrow$) there exists a perfect 3D matching in $\ITDPM$.
   By Lemma~\ref{lem:ma-reduction-left}, ($\Leftarrow$) holds.
 
   To show ($\Rightarrow$), fix a feasible solution~$\SCTE$ for~$\ICTE$ in the way described in the construction section.
   By Lemma~\ref{lem:n-active-ma}, exactly $k$ \TripleGadgets{} are active.
-  We construct the solution $\STDPM$ from the set of triples that correspond to active \TripleGadgets{}.
+  We construct the solution $\STDPM$ from the set of $k$ triples from $P$ that correspond to active \TripleGadgets{}.
 
-  Now, we show that $\STDPM$ is feasible, i.e., it matches every element of $X\cup Y\cup Z$ exactly once, and the matching consists of triples from $P$.
-  By Lemma~\ref{lem:assignment-length}, every active node has three chunks assigned by the short assignment, and these are the element chunks located at the gadget it is placed at.
-  Hence, the chunks $x_t$, $y_t$ and $z_t$ are assigned to an active node. This that corresponds to choosing the triple $t = \langle x, y, z \rangle \in P$.
-  
-  For every element $e\in X\cup Y \cup Z$, we constructed chunks $C_e$, with two replicas each: one in the matching subtree and one in the cover subtree.
-  By Lemma~\ref{lem:n-matchsubtree-ma}, in each element gadget~$G(e)$ we have exactly $\deg(e) - 1$ nodes, and by Lemma~\ref{lem:assignment-length}, these nodes have short assignments, and hence they have $4 \cdot (\deg(e) - 1)$ chunks from $G(e)$ assigned, i.e. one chunk is not assigned.
-  Dummy chunks have one replica, and by Lemma~\ref{lem:assignment-length}, long assignments are used only for unique chunks, and hence dummy chunks are assigned by nodes placed in the gadget.
+  Now, we show that $\STDPM$ is feasible, i.e., it matches every element of $X\cup Y\cup Z$.
+ % exactly once, and the matching consists of triples from $P$.
+ % By Lemma~\ref{lem:assignment-length}, every active node has three chunks assigned by the short assignment, and these are the element chunks located at the gadget it is placed at.
+ % Hence, the chunks $x_t$, $y_t$ and $z_t$ are assigned to an active node. This that corresponds to choosing the triple $t = \langle x, y, z \rangle \in P$.
+  For every element $e\in X\cup Y \cup Z$, we constructed a set of chunks $C_e$, each chunk having two replicas each: one in the matching subtree and one in the cover subtree.
+  By Lemma~\ref{lem:n-matchsubtree-ma}, in each element gadget~$G(e)$ we have exactly $\deg(e) - 1$ nodes, and by Lemma~\ref{lem:assignment-length}, these nodes have short assignments, and hence they have $4 \cdot (\deg(e) - 1)$ chunks from $G(e)$ assigned, i.e., one chunk is not assigned.
+  Dummy chunks have one replica, and by Lemma~\ref{lem:assignment-length}, long assignments are used only for unique chunks, and hence dummy chunks must be assigned by nodes placed in the gadget.
  % Similarly to the proof of Lemma~\ref{lem:n-matchsubtree-ma}, with each $G(e)$ we associate its volume.
  % By Lemma~\ref{lem:n-matchsubtree-ma}, we place $n_V-k$ nodes in the cover subtree, i.e., the number of nodes equal to the total volume of all gadgets $G(e)$.
  % Hence, in each of $G(e)$ we have $n_e$ nodes, where $n_e$ is the volume of $G(e)$.
  % In a single gadget $G(e)$, the total number of chunks is $4\cdot(\deg(e) - 1) + 1$, and by Lemma~\ref{lem:assignment-length}, nodes in this gadget have $4\cdot(\deg(e)-1)$ chunks from this gadget assigned.
-   The one remaining chunk is an element chunk, assigned in some triple gadget.
-  Hence, the set of active nodes have $1$~of $\deg(e)$ element chunks assigned for each $e\in X\cup Y\cup Z$, and $\STDPM$ assigns each $e\in X\cup Y\cup Z$ exactly once.
+  The one remaining chunk is an element chunk.
+  As its second replica (in the cover subtree) is not assigned, its first replica (in the matching subtree) must be assigned to some node.
+  Hence, the set of active nodes have $1$~of $\deg(e)$ element chunks assigned for each $e\in X\cup Y\cup Z$, and $\STDPM$ assigns each $e\in X\cup Y\cup Z$.
  
 %  Each of $3\cdot p = \sum_e \deg(e)$ element chunks has two replicas: one in the matching subtree and one in the cover subtree.
 %  By Lemma~\ref{lem:one-unique-per-node}, $3\cdot k$ element chunks are matched in the matching subtree.
