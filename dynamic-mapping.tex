@@ -1,13 +1,13 @@
 This chapter further explores algorithmic challenges of network-efficient mapping of virtual networks in data centers.
-In Chapter~\ref{ch:static-mapping}, we considered the static mapping, where nodes of virtual network (virtual machines) are placed at vertices of the physical substrate network until the computation task is done.
-However, communication patterns in virtual networks are difficult to predict, and static mappings may result in suboptimal network utilization.
+In Chapter~\ref{ch:static-mapping}, we considered the static mapping, where nodes of the virtual network (virtual machines) are placed at vertices of the physical substrate network until the computation task is done.
+However, communication patterns in virtual networks are difficult to predict, and static mappings may result in sub-optimal network utilization.
 In this chapter, we study the dynamic mapping, where it is possible to \emph{migrate} a virtual machine from one physical machine to another, incurring a fixed cost.
 We focus on a particular substrate network topology, namely a $1$-level tree.
 
 In contrast to Chapter~\ref{ch:static-mapping}, where we focused on fixed virtual topology suitable for batch processing applications, now we study general virtual networks.
 The communication pattern is not known in advance, and upon receiving a communication request it is possible to reconfigure a mapping by migrating virtual machines.
 By migrating repeatedly communicating virtual machines closer together in the network, it is possible to reduce the overall network utilization.
-To emphasize different focus of this chapter, we refer to vertices of the substrate network as clusters.
+To emphasize the different focus of this chapter, we refer to vertices of the substrate network as clusters.
 
 \section{Problem Definition}
 
@@ -40,7 +40,7 @@ the performance of an online algorithm by comparing to the performance of an opt
 algorithm. Formally, let~$\ONL(\sigma)$, resp.~$\OPT(\sigma)$, be the cost
 incurred by an online algorithm \ONL, resp.~by an optimal offline
 algorithm \OPT, for a given sequence of requests~$\sigma$. In contrast to \ONL, which learns the~requests one-by-one as
-it serves them, \OPT has a complete knowledge of the entire request
+it serves them, \OPT has complete knowledge of the entire request
 sequence~$\sigma$ \emph{ahead of~time}. The goal is to design online repartitioning
 algorithms that provide worst-case guarantees. In particular, $\ONL$ is said
 to be \emph{$\rho$-competitive} if there is a constant $\beta$, such that for any
@@ -174,7 +174,7 @@ occur at different times.
 We describe the construction of \CREP in two stages. The first stage uses
 an~intermediate concept of \emph{communication components}, which are groups of at
 most $k$ nodes. In the second stage, we show how components are assigned to
-clusters, so that all nodes from any single component are always stored in a
+clusters so that all nodes from any single component are always stored in a
 single cluster.
 
 
@@ -221,7 +221,7 @@ performed.
 C_1, \ldots, C_{|\set|} \}$ is \emph{mergeable} if $w(\set) \geq
 (|\set|-1) \cdot \alpha$. If a mergeable component-set $S$ exists, then all its
 components are merged into a single one. If multiple mergeable component-sets
-exist, \CREP picks the one with maximum number of components, breaking ties
+exist, \CREP picks the one with the maximum number of components, breaking ties
 arbitrarily. Weights of all intra-$\set$ edges are reset to zero, and thus
 intra-component edge weights are always zero. A mergeable set $\set$ induces
 a~sequence of $|\set|-1$ \emph{merge actions}:
@@ -246,8 +246,8 @@ by a split action (at the same time point) and \emph{artificial} otherwise.
 At time $t$, \CREP processes a communication request and recomputes components
 as described in the first stage. Recall that we require that nodes of a single
 component are always stored in a~single cluster. To maintain this property for
-artificial merge actions, no actual migration is necessary. The property may
-however be violated by real merge actions. Hence, in the following, we assume
+artificial merge actions, no actual migration is necessary. The property may,
+however, be violated by real merge actions. Hence, in the following, we assume
 that in the first stage \CREP found a mergeable component set $\set = \{ C_1, 
 \ldots, C_{|\set|} \}$ that triggers $|\set|-1$ merge actions not 
 followed by a split action.
@@ -258,7 +258,7 @@ components $C_x$ and $C_y$. As a split action was not executed, $|C_x| +
 |C_y| \leq k$, where $|C|$ denotes the number of component $C$ nodes.
 Without loss of generality, $|C_x| \leq |C_y|$.
 
-We may assume that $C_x$ and $C_y$ are in different clusters as otherwise
+We may assume that $C_x$ and $C_y$ are in different clusters as otherwise,
 \CREP does nothing. If the cluster containing $C_y$ has $|C_x|$ free space,
 then $C_x$ is migrated to this cluster. Otherwise, \CREP finds a cluster that
 has at~most $k$ nodes, and moves both $C_x$ and $C_y$ there. We call the
@@ -282,7 +282,7 @@ $w(\set) < \alpha \cdot (|\set|-1)$ for any non-trivial component-set $\set$.
 \end{lemma}
 
 \begin{proof}
-We prove the lemma by an induction on steps. Clearly, the lemma holds before an
+We prove the lemma by induction on steps. Clearly, the lemma holds before an
 input sequence starts as then $w(\set) = 0 \leq \alpha - 1 < \alpha \cdot
 (|\set|-1)$ for any non-trivial set~$\set$. We assume that it holds at time $t-1$
 and show it for time $t$.
@@ -309,7 +309,7 @@ inequality holds also right after time $t$.
 \item \CREP does not split $C_\A$ and $C_\A \in \set$. Let $\X = \set \setminus
 \{C_\A\}$. Let $w(\A,\X)$ denote the total weight of all edges with one endpoint
 in $\A$ and another in~$\X$. Recall that
-\CREP always merges a~mergeable component-set with maximum number of components. 
+\CREP always merges a~mergeable component-set with the maximum number of components. 
 As \CREP merged component-set~$\A$ and did not merge
 (larger) component-set $\A \uplus \X$, $\A$ was mergeable ($w(\A) \geq \alpha \cdot
 (|\A|-1)$), while $\A \uplus \X$ was not, i.e., $w(\A) + w(\A,\X) + w(\X) = w(\A
@@ -347,7 +347,7 @@ $w(\set) = (|\set|-1) \cdot \alpha$ for a mergeable component-set~$\set$.
 
 In the remaining part of the analysis, we fix an~input sequence $\sigma$ and
 consider a set $\spl(\sigma)$ of all components that are split by \CREP, i.e.,
-components that were created by merge actions, but because of their size they
+components that were created by merge actions, but because of their size, they
 were immediately split into singleton components. Our goal is to compare both
 the cost of \OPT and \CREP to $\sum_{C \in \spl(\sigma)} |C|$. 
 Below provide the main intuitions for our approach.
@@ -422,7 +422,7 @@ cover all possible node-time pairs (except for time zero).
 For a given component $C$, we say that a communication request between nodes
 $x$ and $y$ at time~$t$ \emph{is contained} in $F(C)$ if both $(x,t) \in \F(C)$
 and $(y,t) \in \F(C)$. Note that only the requests contained in~$\F(C)$
-could contribute towards later creation of~$C$ by \CREP. In fact, by
+could contribute towards the later creation of~$C$ by \CREP. In fact, by
 Corollary~\ref{cor:mergeable_sets}, the number of these requests that
 entailed an~actual cost to~\CREP is exactly $(|\set(C)| - 1) \cdot \alpha$.
 
@@ -577,12 +577,12 @@ For any input $\sigma$, $\CREPreq(\sigma) = |M(\sigma)| \cdot \alpha + w(\final(
 \end{lemma}
 
 \begin{proof}
-The proof follows by an induction on all requests of $\sigma$. Whenever \CREP
+The proof follows by induction on all requests of $\sigma$. Whenever \CREP
 pays for the communication request, the corresponding edge weight is incremented
 and both sides increase by $1$. At a time when $s$ components are merged, $s-1$
 merge actions are executed and, by Corollary~\ref{cor:mergeable_sets}, the sum of all
 edge weights decreases exactly by $(s-1) \cdot \alpha$. Then, the value of both
-sides remain unchanged.
+sides remains unchanged.
 \end{proof}
 
 \begin{lemma}
@@ -610,7 +610,7 @@ In other words, the lemma will be shown using amortized analysis, where
 the amount $\sum_{j=1}^\ell (4/\eps) \cdot \alpha \cdot \ovr^\sigma(V_j)$ serves 
 as a potential function.
 
-The proof of \eqref{eq:crep_migrations} follows by an induction on all
+The proof of \eqref{eq:crep_migrations} follows by induction on all
 requests in $\sigma$. Clearly, \eqref{eq:crep_migrations} holds trivially at the
 beginning, as there are no overflows, and thus both sides of
 \eqref{eq:crep_migrations} are zero. Assume that~\eqref{eq:crep_migrations}
@@ -629,8 +629,8 @@ respectively, and $V_z$ be the destination cluster for $C_x$ and $C_y$ (it is
 possible that $V_z = V_y$). For any cluster~$V$, we denote the change in 
 its overflow by $\Delta \ovr(V) = \ovr^{\sigma \cup \{r\}}(V) - \ovr^\sigma(V)$. 
 It suffices to show that the
-change of the left hand side of \eqref{eq:crep_migrations} is at most
-the~increase of its right hand side, i.e.,
+change of the left-hand side of \eqref{eq:crep_migrations} is at most
+the~increase of its right-hand side, i.e.,
 \begin{equation}
 \label{eq:crep_mig_inc}
 \CREPmig(r) \;+\; \sum_{V \in \{ V_x, V_y, V_z \}} (4/\eps) \cdot \alpha \cdot \Delta\ovr(V) 
@@ -661,7 +661,7 @@ This implies that $\Delta \ovr(V_z) = 0 - 0 = 0$.
 $V_y$ had less than $|C_x|$ empty slots and $|C_y| > (2/\eps) \cdot |C_x|$.
 As in the previous case, \CREP migrates $C_x$ and $C_y$ to~component $V_z$, 
 paying $\CREPmig(r) = (|C_x| + |C_y|) \cdot \alpha < 2 \cdot |C_y| \cdot \alpha$.
-This time, $\CREPmig(r)$ can be much larger than the right hand side 
+This time, $\CREPmig(r)$ can be much larger than the right-hand side 
 of~\eqref{eq:crep_mig_inc}, and thus we resort to showing that 
 the second summand~of~\eqref{eq:crep_mig_inc} is at most $ - 2 \cdot |C_y| \cdot \alpha$.
 
@@ -709,7 +709,7 @@ where all logarithms are binary.
 \end{lemma}
 
 \begin{proof}
-We prove the lemma by an induction on all requests of $\sigma$. At the very
+We prove the lemma by induction on all requests of $\sigma$. At the very
 beginning, both sides of the lemma inequality are zero, and hence the induction
 basis holds trivially. We assume that the lemma inequality is preserved for a
 sequence $\sigma$ and we show it for sequence $\sigma \cup \{ r \}$, where $r$
@@ -720,7 +720,7 @@ First, assume $r$ triggered a sequence of real merge actions. We show that the
 lemma inequality is preserved after processing each merge action. Consider a
 merge action and let $C_x$ and $C_y$ be the components that are merged, with
 sizes $p = |C_x|$ and $q = |C_y|$, where $p \leq q$ without loss of generality.
-Due to the merge action, the right hand side of the lemma inequality increases
+Due to the merge action, the right-hand side of the lemma inequality increases
 by
 \begin{align*}
   (p + q) \cdot \log (p + q) & - p \cdot \log p - q \cdot \log q \\
@@ -728,7 +728,7 @@ by
 		\geq &\; p \cdot \log (p+q) / p \\
 		\geq &\; p \cdot \log 2 = p.
 \end{align*}
-As~the~left hand side of the inequality changes exactly by $p$, the inductive
+As~the~left-hand side of the inequality changes exactly by $p$, the inductive
 hypothesis holds.
 
 Second, assume $r$ triggered a sequence of artificial merge actions (i.e., followed by a
@@ -737,7 +737,7 @@ merged to create a component $C$ that was immediately split. Then, the right
 hand side of the lemma inequality changes by $- \sum_{i = 1}^g |C_i| \cdot
 \log |C_i| + |C| \cdot \log k
 \geq - \sum_{i = 1}^g |C_i| \cdot \log k + |C| \cdot \log k = 0$.
-As~the~left hand side of the lemma inequality is unaffected by artificial
+As~the~left-hand side of the lemma inequality is unaffected by artificial
 merge actions, the inductive hypothesis follows also in this case.
 \end{proof}
 
@@ -832,7 +832,7 @@ and~$y$, $\GREEDY$ increments the weight~$w(e)$, where $e = (x,y)$. Let $x'$
 and $y'$ be the nodes collocated with $x$ and~$y$, respectively. If after the
 weight increase, it holds that $w(x,y) + w(x',y') \geq \lambda
 \cdot \alpha$, $\GREEDY$ performs a~swap: it places $x$ and $y$ in one
-cluster and $x'$ and~$y'$ in another; afterwards, it resets the weights of
+cluster and $x'$ and~$y'$ in another; afterward, it resets the weights of
 edges $(x,y)$ and $(x',y')$ to 0. Finally, \GREEDY pays for the request
 between $x$ and $y$. Note that if the request triggered a migration, then
 \GREEDY does not pay its communication cost.
@@ -891,7 +891,7 @@ second stage, the weight $w(x,y)$ is increased accordingly and both \OPT and
 node swap of \GREEDY, in which case its serving cost is zero. Finally, in the
 third stage, \GREEDY may perform a node swap.
 
-We show that for an appropriate choice of $\lambda$, $f$ and $g$, for all
+We show that for an appropriate choice of $\lambda$, $f$, and $g$, for all
 three stages described above the following inequality holds:
 \begin{equation}
 \label{eq:rematch_bound}
@@ -986,7 +986,7 @@ edges that were in $\MGREEDY$ before the swap and let $(x,y)$ and $(y,y')$ be
 the new edges in $\MGREEDY$ after the swap. Note that $w(x,x') = w(y,y') = 0$
 before and after the swap. By the definition of \GREEDY and our modification
 of weight updates, $w(x,y) + w(x',y') = \lambda
-\cdot \alpha$ before the swap, and after the swap these weights are reset to
+\cdot \alpha$ before the swap, and after the swap, these weights are reset to
 zero.
 
 For any edge $e$, let $\winit(e)$ and $\Phiinit(e)$ denote the weight and the
@@ -1059,7 +1059,7 @@ For $\lambda = 4/5$, $\GREEDY$ is $7$-competitive.
 \end{theorem}
 
 \begin{proof}
-We choose $f = 6$ and $g = 14/5$. The chosen values of $\lambda$, $f$ and $g$
+We choose $f = 6$ and $g = 14/5$. The chosen values of $\lambda$, $f$, and $g$
 satisfy the conditions of Lemmas~\ref{lem:opt_swap}, \ref{lem:rematch_req},
 and \ref{lem:greedy_swap}. Summing these
 inequalities over all stages occurring while serving an input sequence~$\sigma$
@@ -1136,17 +1136,17 @@ $\sigma^P_t$ on the basis of $B$'s responses.
 
 We use the following $2k$ nodes for the BRP problem: caching nodes $p_1,p_2,
 \ldots, p_k$, auxiliary nodes $a_1,a_2,\ldots,$ $a_{k-1}$, and a special node
-$s$. We say that the node clustering is \emph{well aligned} if one cluster
+$s$. We say that the node clustering is \emph{well-aligned} if one cluster
 contains the node $s$ and $k-1$ caching nodes, and the other cluster contains
 one caching node and all auxiliary nodes. There is a natural bijection between
-possible cache contents and well aligned configurations: the cache consists of
+possible cache contents and well-aligned configurations: the cache consists of
 the $k-1$ caching nodes that are in the same cluster as node $s$. (Without loss
 of generality, we may assume that the cache of any caching algorithm is always
 full, i.e., consists of $k-1$ pages.) If the configuration $c$ of a BRP
-algorithm is well aligned, $\textsc{cache}(c)$ denotes the corresponding cache
+algorithm is well-aligned, $\textsc{cache}(c)$ denotes the corresponding cache
 contents.
 
-The initial configuration for the BRP problem is the well aligned
+The initial configuration for the BRP problem is the well-aligned
 configuration corresponding to the initial cache (pages
 $p_1,p_2,\ldots,p_{k-1}$ in the cache).
 
@@ -1156,7 +1156,7 @@ $\binom{k-1}{2}$ requests to all pairs of auxiliary nodes. Given an input
 sequence $\sigma^P$ for online caching, we construct the input sequence
 $\sigma^B$ for the BRP problem in the following way: For a request
 $\sigma^P_t$, we repeat a~subsequence $\comm(\sigma^P_t)$ till the node
-clustering maintained by $B$ becomes well aligned and $\sigma^P_t$ becomes
+clustering maintained by $B$ becomes well-aligned and $\sigma^P_t$ becomes
 collocated with $s$. Note that $B$ must eventually achieve such a node
 configuration: otherwise its cost would be arbitrarily large while a sequence
 of repeated $\comm(\sigma^P_t)$ subsequences can be served at~a~constant
@@ -1166,7 +1166,7 @@ $\comm_t(\sigma^P_t)$.
 
 To construct the response to the caching request $\sigma^P_t$, the algorithm
 $P$ runs $B$ on $\comm_t(\sigma^P_t)$. Right after processing
-$\comm_t(\sigma^P_t)$, the node configuration $c$ of $B$ is well aligned and
+$\comm_t(\sigma^P_t)$, the node configuration $c$ of $B$ is well-aligned and
 $\sigma^P_t$ is collocated with~$s$. Hence, $P$ may change its cache
 configuration to $\textsc{cache}(c)$: such a response is feasible, because
 since $\sigma^P_t$ is collocated with $s$, it is included by $P$ in the cache.
@@ -1182,7 +1182,7 @@ Now we show that there exists an (offline) solution \OFF to $\sigma^B$, whose
 cost is exactly $2 \cdot \alpha \cdot \OPT(\sigma^P)$. Recall that, for a
 caching request $\sigma^P_t$, $\sigma^B$ contains the~corresponding sequence
 $\comm_t(\sigma^P_t)$. Before serving the first request
-of~$\comm_t(\sigma^P_t)$, \OFF changes its state to a well aligned
+of~$\comm_t(\sigma^P_t)$, \OFF changes its state to a well-aligned
 configuration corresponding to the cache of $\OPT$ right after serving caching 
 request $\sigma^P_t$. This ensures that the subsequence $\comm_t(\sigma^P_t)$
 is free for \OFF. Furthermore, the cost of node migration of \OFF is $2 \cdot
@@ -1272,7 +1272,7 @@ all remaining clusterings.
 
 Similarly to the proof of Theorem~\ref{thm:loweraugmk}, the adversary always
 requests a communication between two nodes not collocated by \ONL.
-This time the exact choice of such nodes is relevant: \ONL receives request to
+This time the exact choice of such nodes is relevant: \ONL receives a request to
 $(v_1,v_2)$ in configuration A, and to $(v_0,v_1)$ in configurations B and C.
 
 We define three offline algorithms. They keep nodes
@@ -1307,7 +1307,7 @@ negligible as the length of $\sigma$ grows.
 %This approach limits the total number of virtual machines in the data center in favor of reducing network usage by allowing efficient reconfiguration of interacting virtual machines.
 %From the theoretical point of view, we designed the algorithm for the resource augmented scenario with competitive ratio $O(k\log k)$ (where $k$ is the capacity of a physical cluster), and we provided a lower-bound of $\Omega(k)$ for the competitive ratio of any deterministic algorithm that holds even in resource-augmented scenario.
 
-In this chapter we introduced a formal model for studying a natural dynamic partitioning problem which
+In this chapter, we introduced a formal model for studying a natural dynamic partitioning problem which
 finds applications, e.g., in the context of virtualized distributed systems
 subject to changing communication patterns. We derived upper and lower bounds,
 both for the general case as well as for a special case, related to a dynamic
