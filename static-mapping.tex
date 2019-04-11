@@ -901,7 +901,7 @@ The multi-assignment factor is $m=4$, and the number of nodes to embed is~$\numN
   \end{enumerate}
   Triples selected in $\STDPM$ match each element exactly once,
   and hence nodes in triple gadgets have exactly one chunk assigned from $C_e$ for each element $e$.
-  For each element $e$, by $e_*$ we denote the element chunk $e_t$ that is assigned in a triple gadget, i.e, the replica $e_*^{(1)}$ is assigned in a triple gadget.
+  For each element $e$, by $e_*$ we denote the element chunk $e_t$ that is assigned in a triple gadget, i.e., the replica $e_*^{(1)}$ is assigned in a triple gadget.
   The remaining $\deg(e)-1$ chunks from $C_e \setminus \{ e_* \}$ (their second replicas) are assigned to $\deg(e)-1$ nodes in $G(e)$.
   Finally, each of $k$ unique chunks is assigned to a~node in a triple gadget, and each dummy chunk is assigned to some node in its element gadget.
   This shows that each chunk is assigned to a node.
@@ -952,7 +952,7 @@ We call the assignments at distance $0$ or $2$ \emph{short}, and the ones at dis
   With each element gadget $G(e)$ we associate its \emph{volume} $\deg(e) - 1$.
   The volume corresponds to the maximum number of nodes that can be placed inside the gadget without causing a~long assignment.
   More concretely, if the number of nodes in $G(e)$ exceeds its volume, i.e., $\deg(e) - 1 + j_e$ nodes are placed in $G(e)$ for $j_e > 0$,
-  then the number of chunks assigned to these nodes is $4\cdot (\deg(e) - 1 + j_e)$, and at most $4\cdot (\deg(e) - 1) + 1$ can be assigned within the gadget $G(e)$.
+  then the number of chunks assigned to these nodes is $4\cdot (\deg(e) - 1 + j_e)$, and at most $4\cdot (\deg(e) - 1) + 1$ of them can be assigned within the gadget $G(e)$.
   For the remaining $4\cdot j_e - 1 \geq 3\cdot j_e$ chunks, long assignments are used.
   By the pigeon-hole principle, at least $i = \sum_e j_e$ nodes surpass the volume of their gadgets, causing at least $3\cdot i$ long assignments.
   As each of $k-i$ nodes in the matching subtree causes one long assignment, in total we have at least $k+2\cdot i$ long assignments and, by Lemma~\ref{lem:infeasible}, the solution is infeasible, a~contradiction.
@@ -966,7 +966,7 @@ We call the assignments at distance $0$ or $2$ \emph{short}, and the ones at dis
 \begin{proof}
   By Lemma~\ref{lem:n-matchsubtree-ma}, exactly $k$ nodes were placed in the \MatchSubtree{}.
   Suppose that $j>0$ of these nodes were placed in the \UnqGadgets{}.
-  Every leaf of every unique gadget is at distance at least $4$ from every other leaf of the substrate network.
+  The leaf of every unique gadget is at distance at least $4$ from every other leaf of the substrate network.
   Hence, each of $j$ nodes placed in a unique gadget has at least $3$ out of its $\MaFactor = 4$ chunks assigned by a long assignment.
   As triple gadgets consists of $3$ leaves, each of remaining $k-j$ nodes placed in the triple gadget uses at least $1$ long assignment.
   In total, the number of long assignments would be then at least $k-j + 3\cdot j > k$, which by Lemma~\ref{lem:infeasible} would lead to infeasibility of $\SCTE$.
@@ -988,11 +988,11 @@ Therefore, exactly $k$ \TripleGadgets{} are active.
   \label{lem:assignment-length}
 \end{lemma}
 \begin{proof}
-  Consider an active node. Only three chunks are placed at distance at most $2$ to this node. Hence, at least $1$ of its $m = 4$ chunks is assigned at distance at least $4$, i.e., by the long assignment.
+  Consider an active node (in an active gadget). Only three chunks are placed at distance at most $2$ to this node. Hence, at least $1$ of its $m = 4$ chunks is assigned at distance at least $4$, i.e., by the long assignment.
   If an active node would have more than $1$ long assignment, then by Lemma~\ref{lem:n-active-ma}, the total number of long assignments would exceed $k$, and by Lemma~\ref{lem:infeasible} the solution would be infeasible.
   Therefore, each active node has exactly $1$ long assignment.
   By Lemma~\ref{lem:infeasible}, in $\SCTE$ there are at most $k$ long assignments, and as these are used by $k$ active nodes, the remaining nodes (in the cover subtree) have no long assignments (they have $4$ short assignments).
-  Finally, by Lemma~\ref{lem:no-unq-ma}, $k$ unique chunks have no node placed at them, hence these can be assigned only by a long assignment, and the only nodes that have long assignments are the active nodes that have $k$ of them in total.
+  Finally, by Lemma~\ref{lem:no-unq-ma}, $k$ unique chunks have no node placed at them, hence they can be assigned only by a long assignment, and the only nodes that have long assignments are the active nodes that have $k$ of them in total.
 \end{proof}
 
 %  \begin{lemma}
@@ -1047,47 +1047,17 @@ Therefore, exactly $k$ \TripleGadgets{} are active.
  % exactly once, and the matching consists of triples from $P$.
  % By Lemma~\ref{lem:assignment-length}, every active node has three chunks assigned by the short assignment, and these are the element chunks located at the gadget it is placed at.
  % Hence, the chunks $x_t$, $y_t$ and $z_t$ are assigned to an active node. This that corresponds to choosing the triple $t = \langle x, y, z \rangle \in P$.
-  For every element $e\in X\cup Y \cup Z$, we constructed a set of chunks $C_e$, each chunk having two replicas each: one in the matching subtree and one in the cover subtree.
-  By Lemma~\ref{lem:n-matchsubtree-ma}, in each element gadget~$G(e)$ we have exactly $\deg(e) - 1$ nodes, and by Lemma~\ref{lem:assignment-length}, these nodes have short assignments, and hence they have $4 \cdot (\deg(e) - 1)$ chunks from $G(e)$ assigned, i.e., one chunk is not assigned.
-  Dummy chunks have one replica, and by Lemma~\ref{lem:assignment-length}, long assignments are used only for unique chunks, and hence dummy chunks must be assigned by nodes placed in the gadget.
+  For every element $e\in X\cup Y \cup Z$, we constructed a set of chunks $C_e$, each chunk having two replicas: one in the matching subtree and one in the cover subtree.
+  By Lemma~\ref{lem:n-matchsubtree-ma}, in each element gadget~$G(e)$ we have exactly $\deg(e) - 1$ nodes, and by Lemma~\ref{lem:assignment-length}, these nodes have short assignments only.
+  Hence, they have $4 \cdot (\deg(e) - 1)$ chunks from $G(e)$ assigned, i.e., one chunk is not assigned.
+  Dummy chunks have one replica, and by Lemma~\ref{lem:assignment-length}, long assignments are used only for unique chunks, and thus dummy chunks must be assigned by nodes placed in the element gadget.
  % Similarly to the proof of Lemma~\ref{lem:n-matchsubtree-ma}, with each $G(e)$ we associate its volume.
  % By Lemma~\ref{lem:n-matchsubtree-ma}, we place $n_V-k$ nodes in the cover subtree, i.e., the number of nodes equal to the total volume of all gadgets $G(e)$.
  % Hence, in each of $G(e)$ we have $n_e$ nodes, where $n_e$ is the volume of $G(e)$.
  % In a single gadget $G(e)$, the total number of chunks is $4\cdot(\deg(e) - 1) + 1$, and by Lemma~\ref{lem:assignment-length}, nodes in this gadget have $4\cdot(\deg(e)-1)$ chunks from this gadget assigned.
   The one remaining chunk is an element chunk.
   As its second replica (in the cover subtree) is not assigned, its first replica (in the matching subtree) must be assigned to some node.
-  Hence, the set of active nodes have $1$~of $\deg(e)$ element chunks assigned for each $e\in X\cup Y\cup Z$, and $\STDPM$ assigns each $e\in X\cup Y\cup Z$.
- 
-%  Each of $3\cdot p = \sum_e \deg(e)$ element chunks has two replicas: one in the matching subtree and one in the cover subtree.
-%  By Lemma~\ref{lem:one-unique-per-node}, $3\cdot k$ element chunks are matched in the matching subtree.
-%  From Lemma~\ref{lem:n-active-ma}, $n_V - k = \sum_e (\deg(e) - 1)$ nodes are placed in the cover subtree.
-%  Nodes in the cover subtree 
-%
-%  \todo{wyjasnij dokladniej i opisz tutaj strukture gadzetu element}
-%  Chunks have two replicas; one replica is not processed in element gadget (indivisible argument).
-%  The other replica is processed in the matching subtree by active nodes.
-%\todo{uzyj 1 unique per node}
-%  In total all are processed.
- % By Lemma~\ref{lem:infeasible}, we have at most $k$ long matches and,
-%  by Lemma~\ref{lem:no-unq-ma}, all these long matches are depleted by $k$ unique chunks.
-%  Therefore, all but the unique chunks are matched by a short match.
-  
-%  Therefore, each chunk $c(e, t)$ for each $e\in X\cup Y\cup Z$, for each $t \in P$ is matched by a short match.
-%  Hence, each active node processes three chunks that are placed in its \TripleGadget, and collectively active nodes process $3 \cdot k$ chunks.
-
-
-%  The number of chunks $4\cdot(\deg(e) - 1) + 1$ in each element gadget $G(e)$ is non-divisible by $\MaFactor = 4$, i.e.,
-%  $4 | 4\cdot(\deg(e) - 1) + 1 = 1$.
-%  As all matches in the element subtree are short, in each element gadget 
-%  
-%  Let $\tau(G(e)) = 4\cdot(\deg(e) - 1) + 1$ be the number of chunks placed in a gadget $G(e)$ for an element $e\in X\cup Y\cup Z$.
-%  By construction, $4 | \tau(G(e)) = 1$.
-%  Recall that all matches (besides unique chunks) are short.
-%  Hence, in each $G(e)$, there exists a chunk $c(e, t)$ for some $t \in P$ that is not matched.
-%  Let's call this chunk~$\Unmatched(e)$, and let~$\Unmatched := \cup_e \Unmatched(e)$.
-%  Note that~$|\Unmatched| = 3\cdot k$.
-%  The solution $\SCTE$ is feasible, hence every chunk is matched, and $\Unmatched(e)$ is covered by its second replica, placed in the matching subtree.
-%  The set~$\Unmatched$ is covered by \ActiveNodes{}, and hence the set of triples in $\STDPM$ form a 3D Perfect Matching of $X\cup Y\cup Z$.
+  Therefore, active nodes have one~of $\deg(e)$ element chunks assigned for each $e\in X\cup Y\cup Z$, and thus $\STDPM$ matches each $e\in X\cup Y\cup Z$.
 \end{proof}
 
 
@@ -1102,10 +1072,10 @@ is NP-hard if an interconnect has to be established between nodes.
 In our terminology, this is the~$\FP+\RS+\NI$ variant.
 The proof is similar in spirit to the proof of the~$\FP+\RS+\MA$ variant, however,
 we modify the construction to account for the absence of~$\MA$:
-we place bandwidth constraints on the certain links in the substrate network.
+we place bandwidth constraints on certain links in the substrate network.
 Additionally, we choose
 a high value for~$\CostTrans$ (the cost of chunk assignment), so that nodes are directly collocated with
-their assigned chunks.
+their assigned chunk replicas.
 %We leverage the fact that any solution which does not
 %assign zero or the maximum possible number of chunks to each gadget has higher communication costs.
 
@@ -1135,7 +1105,7 @@ If a gadget contains $3$ nodes, then it has $3$ intra-gadget pairs.
 Suppose that nodes were distributed among more than $k$ gadgets.
 Then, some gadgets contain less than $3$ nodes, and the number of intra-gadget pairs is $3\cdot k - i$ for some $i>0$ (each of cost $2$).
 The remaining pairs of nodes are connected between gadgets (of cost $4$ each).
-Hence, the total cost is $2\cdot (3\cdot k - i) + 4 \cdot ({3 \cdot k \choose 2} - (3\cdot k - i)) = 6\cdot k + 4 \cdot ({3 \cdot k \choose 2} - 3\cdot k) + 2\cdot i = \Thr + 2\cdot i$, and the solution exceeds the threshold $\Thr$.
+Hence, the total cost is $2\cdot (3\cdot k - i) + 4 \cdot ({3 \cdot k \choose 2} - (3\cdot k - i)) = 6\cdot k + 4 \cdot ({3 \cdot k \choose 2} - 3\cdot k) + 2\cdot i = \Thr + 2\cdot i$, i.e., the solution exceeds the threshold $\Thr$, a contradiction.
 \end{proof}
 
 \begin{theorem}
@@ -1145,7 +1115,7 @@ The $\FP+\RS+\NI$ variant of $\CTE$ problem is NP-hard.
 \begin{proof}
 Let~$\ITDPM$ be the corresponding instance of~$\TDM$ and let~$\ICTE$ be an instance of
 the~$\FP+\RS+\NI$ variant constructed as described above.
-We prove that~$\ICTE$ has solution of cost~$\leq \Thr$ if ($\Leftarrow$) and only if
+We prove that~$\ICTE$ has solution of cost~at most $\Thr$ if ($\Leftarrow$) and only if
 ($\Rightarrow$)
 $\ITDPM$ has a~solution.
 
@@ -1154,9 +1124,9 @@ for~$\ICTE$ given a solution for~$\ITDPM$, we proceed as follows.
 Given a perfect matching $\STDPM$ consisting of triples~$ \{t_1, t_2,
 \ldots, t_k\}$, we place three nodes in each gadget that
 corresponds to every triple of~$\STDPM$ (one node per leaf). Chunks are assigned to the nodes which are co-located
-in the same server.
+in the same server, and thus each chunk is assigned.
 
-The interconnect costs inside all gadgets are $2\cdot (3 k)$,
+The interconnect costs inside all gadgets are $2\cdot (3 \cdot k)$,
 as the~distance between every pair these of nodes is $2$, and there are $3$ intra-gadget pairs in each of $k$ gadgets.
 The remaining cost is $4\cdot({ 3\cdot k \choose 2} - (3\cdot k))$, as the remaining ${ 3\cdot k \choose 2} - (3\cdot k)$ pairs are intra-gadget pairs, and these incur the cost $4$ each.
 The total cost is then $2\cdot (3\cdot k) + 4\cdot({ 3\cdot k \choose 2} - (3\cdot k)) = \Thr$.
@@ -1164,8 +1134,7 @@ The total cost is then $2\cdot (3\cdot k) + 4\cdot({ 3\cdot k \choose 2} - (3\cd
 ($\Rightarrow$) Given a solution for~$\ICTE$,
 we use Lemma~\ref{lemma:helper} to construct a solution for~$\ITDPM$: in any solution of cost at most~$\Thr$,
 $k$ gadgets contain exactly 3 nodes. These gadgets correspond to a~valid
-3D Perfect Matching, as exactly one replica of every chunk is assigned and
-hence every element is covered exactly once.
+3D perfect matching, as exactly one replica of every chunk is assigned, every element is covered exactly once.
 \end{proof}
 
 \paragraph{Remark on two replicas and interconnects.}
