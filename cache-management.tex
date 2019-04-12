@@ -9,17 +9,16 @@ non-cached item, the algorithm has to fetch it into the cache, paying a~fixed
 cost, while a request to a cached item is free. If the cache is full, the
 algorithm has to free some space by evicting an arbitrary subset of items from
 the cache.
-%The model variant, where fetching is optional (the requested item can be served without being in the cache, incurring some fixed cost) is called a \emph{bypassing model}.
 In the traditional caching problem, the cache elements are independent: it is always feasible to pull in or out the elements of the cache regardless of cache configuration.
 
 
 
 Dependencies among to-be-cached items arise in numerous settings and are a
 natural refinement of many caching problems.
-As highlighted in the introduction, an important application for caching with tree-based dependency model arises in the context
-of forwarding rules in routers. We begin by a technical overview, %in Section~\ref{sec:tc-technical},
+As highlighted in the introduction, an important application for caching with tree-based dependencies arises in the context
+of forwarding rules in routers. We begin with a technical overview, %in Section~\ref{sec:tc-technical},
 where we explain the setup for storing only a part of forwarding rules in a router.
-Then, we introduce an abstract problem of \emph{tree caching} which, for which we propose a competitive algorithm.
+We model this setup by introducing an abstract problem of \emph{tree caching} which, for which we propose a competitive algorithm.
 %In Section~\ref{sec:bisimulation} we establish a formal link between caching with tree dependencies and caching of forwarding rules.
 Finally, we show that the proposed algorithm can be efficiently implemented.
 
@@ -57,9 +56,9 @@ Finally, we show that the proposed algorithm can be efficiently implemented.
 \end{figure}
 
 As highlighted in the introduction, routers have finite memory, and in an increasingly common scenario the size of a~forwarding table exceeds the size of available memory.
-One of the solutions is to store only a part of a~forwarding table on the router, that acts as a cache for the complete forwarding table.
+One of the solutions is to store only a part of a~forwarding table in the router, which acts as a cache for the complete forwarding table.
 This solution is particularly attractive with the advent of Soft\-ware-Defined
-Network (SDN) technology, which allows managing the router forwarding table using a
+Networking (SDN) technology, which allows managing the router forwarding table using a
 software controller.
 Such an approach is used
 in real-world architectures
@@ -68,6 +67,8 @@ Our model formalizes the underlying operational
 problems of such architectures. Our 
 algorithm, when applied in the context of such architectures, can 
 hence be used to prolong the lifetime of IP routers.
+
+\pagebreak
 
 The setup  depicted in
 \lref[Figure]{fig:router} consists of two entities: a single router 
@@ -88,7 +89,7 @@ chooses the longest one. In other words, if the prefixes corresponding to
 rules are stored in the tree,
 then the tree is traversed from the root downwards, and the last found rule is
 used (we do not have to assume that they are
-actually stored in a real tree; this tree is implicit in the LMP scheme).
+actually stored in a tree; this tree is implicit in the LMP scheme).
 
 
 
@@ -98,7 +99,7 @@ Leaving a less specific rule on the router while evicting a more specific one
 in a~situation where packets are forwarded according to the less specific
 rule, and hence potentially exit through the wrong port.
 To guarantee that the router can forward the package correctly with partial forwarding table, we require that cached nodes form a subforest.
-To see that this is sufficient, consider a packet that, having access to the complete forwarding table, would be forwarded by the rule $v$.
+To see that this is sufficient, consider a packet that, according to the complete forwarding table, should be forwarded using the rule $v$.
 If the rule $v$ is present in the portion of the forwarding table cached at the router,
 then LMP scheme selects $v$, even if some ancestors of $v$ are not present in the cache.
 However, if $v$ is not present in the cache, neither are its predecessors, and hence no rule present in the cache matches the packet.
@@ -115,7 +116,7 @@ controller that stores all the rules and can handle all packets appropriately.
 
 Technically speaking, the packet cannot be sent out to the appropriate network by the controller, hence it is supplemented with forwarding informations and sent back to the router.
 Then, the router overrides the usual procedure of forwarding table lookup, and instead it uses the supplemented information to forward the packet.
-For this indirection in packet forwarding, we assign a fixed cost~$1$.
+For this indirection in packet forwarding (a cache miss), we assign a fixed cost~$1$.
 
 % Following this situation, the controller may decide to update the cached portion of the forwarding table kept in the forwarding component.
 After forwarding a packet, the caching algorithm run at the controller may decide
@@ -136,10 +137,10 @@ A premature update might result in the situation, where more time is spent alter
 Additionally, a rule may need to be updated. For example, due to a~change
 communicated by a dynamic routing protocol run at the controller (e.g., BGP) the action defined by
 a~rule has to be modified. In either case, we have to update the rules at the
-controller: we assume that this cost is zero. (This cost is unavoidable for
-any algorithm, so such an assumption makes our problem only more difficult.)
+controller: we assume that this cost is zero (this cost is unavoidable for
+any algorithm, so such an assumption makes our problem only more difficult).
 Furthermore, if the rule is also stored at the router (the cache), then we charge a~fixed
-cost of $\alpha$ for updating the router.
+cost $\alpha$ for updating the router.
 We ignore this issue for now, and we come back to it in Section~\ref{sec:bisimulation}, 
 where we show that such penalties can be easily simulated in our model.
 
@@ -168,7 +169,7 @@ where we show that such penalties can be easily simulated in our model.
 %the cache, for another fixed cost (usually being at most the cost of item
 %fetching).
 
-In our model, we assume that the universe is
+In our abstract problem, we assume that the universe is
 an arbitrary (not necessarily binary) rooted tree $T$ and the requested items
 are its nodes. For any tree node $v$, $T(v) \subseteq T$ is a subtree rooted
 at $v$ containing $v$ and all its descendants. We require the following
@@ -181,12 +182,12 @@ We assume discrete time slotted into rounds, with round $t \geq 1$
 corresponding to the time interval $(t-1,t)$. In round $t$, the algorithm is given
 one request to exactly one tree node and has to process
 it, i.e., pay associated costs (if any). 
-Furthermore, we assume a bypassing model and distinguish between two types of
+We distinguish between two types of
 requests: a~request can be either \emph{positive} or \emph{negative}. The
 positive requests correspond to ``normal'' requests known from caching
 problems: we pay~$1$ if the node is not cached; for a negative request, we pay
 $1$ if the corresponding request is cached.
-The ability to process negative requests will be crucial in using our algorithm to handle forced cache modifications (cf. Section~\ref{sec:rule-up}), and we elaborate on this in Section~\ref{sec:bisimulation}.
+The ability to process negative requests will be crucial in using our algorithm to handle forced cache modifications (cf. Section~\ref{sec:rule-up}), and we elaborate on this issue in Section~\ref{sec:bisimulation}.
 
 %After serving the request, we may
 %reorganize our cache arbitrarily, but the resulting cache has to still be a
@@ -199,11 +200,21 @@ Right after round~$t$, at time $t$,
 the algorithm may arbitrarily reorganize its cache, (i) ensuring that the
 resulting cache is a subforest of $T$ (i.e., if the cache contains node $v$,
 then it contains the entire~$T(v)$) and (ii)~preserving the cache capacity
-constraint. An algorithm pays $\alpha$ for a~single node fetch or eviction. We
+constraint. An algorithm pays $\alpha$ for a~single node fetch or eviction,
+where $\alpha \geq 1$ is an integer and a~parameter of the problem. We
 denote the contents of the cache at round $t$ by $C_t$ (as the cache changes
 contents only between rounds, $C_t$ is well defined). We assume that $\alpha$
 is an even integer (this assumption may change costs at most by a constant
 factor). We assume that the algorithm starts with the empty cache.
+
+
+In the standard caching problem, fetching is mandatory: the requested item must be present in the cache to serve the request,
+and if it is not, we must reconfigure the cache to include it.
+The variant of caching, where this requirement is relaxed is called the
+\emph{bypassing model}~\cite{caching-rejection-penalties,paging-irani}, where the item fetching is optional: and the requested item can be served without being in
+the cache, for a fixed cost.
+In the tree caching model, we also assume a bypassing model, where we pay $1$ for serving the requested item not present in cache, and afterward we can reconfigure the cache, paying $\alpha$ for each altered item.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -272,10 +283,86 @@ then we say that $A$ is a tree cap of $B$.
 Throughout this chapter, we fix an input $I$, its partition into phases, and
 analyze both \ALGTC and \OPT on a~single fixed phase $P$. We denote the times at
 which $P$ starts and ends by $\beP$ and $\enP$, respectively, i.e., rounds in
-$P$ are numbered from $\beP+1$ to $\enP$. A proof of the following technical
-lemma follows by induction and is presented in 
-\lref{sec:proof_of_lemma_1}.
+$P$ are numbered from $\beP+1$ to $\enP$.
 
+
+In the following, we assume that no positive requests are given to nodes
+inside the cache and no negative ones to nodes outside of it (this does not
+change the behavior of \ALGTC and can only decrease the cost of \OPT).
+
+For the sake of analysis, we assume that at time $\enP$, \ALGTC actually
+performs a cache fetch (exceeding the cache size limit) and then, at the same
+time instant, empties the cache. This replacement only increases the cost of
+\ALGTC. Let $k_P$ denote the number of nodes in the cache of $\ALGTC$ at $\enP$.
+In a finished phase, we measure it after the artificial fetch, but right
+before the final eviction, and thus $k_P \geq \kALG + 1$; in an unfinished
+phase $k_P \leq \kALG$.
+
+The crucial part of our analysis that culminates in
+\lref[Section]{sec:shifting} is the technique of shifting requests. Namely, we
+modify the input sequence by shifting requests up or down the tree, so that
+the resulting input sequence (i) is not harder for \OPT and (ii) is more
+structured: we may lower bound the cost of \OPT on each node separately and
+relate it to the cost of \ALGTC.
+
+\subsection{Properties of Valid Changesets}
+\label{sec:prop-ch}
+
+In Lemma~\ref{lem:no_over-requested_changesets}, we state that no valid changeset contains too many requests to its rules.
+The proof follows by induction and uses the following technical claim.
+
+\begin{lemma}
+\label{cla:inductive_properties}
+For any phase $P$, the following invariants hold for any time $t > \beP$:
+\begin{enumerate}
+\item $\cnt_{t-1}(X) < |X| \cdot \alpha$ for a valid changeset $X$ for $C_t$,\hspace{-1em}
+\label{item:prop1}
+\item $\cnt_t(X) \leq |X| \cdot \alpha$ for a valid changeset $X$ for $C_t$,
+\label{item:prop2}
+\item any changeset $X$ with property $\cnt_t(X) = |X| \cdot \alpha$ contains 
+the node requested at round $t$.
+\label{item:propmid}
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+First, observe that \lref[Invariant]{item:prop1} (for time $t$) along with the
+fact that round $t$ contains only one request immediately implies that
+$\cnt_t(X) \leq \cnt_{t-1}(X) + 1 \leq (|X| \cdot \alpha - 1) + 1 = |X|
+\cdot \alpha$, i.e., \lref[Invariant]{item:prop2} for time~$t$. Furthermore, the equality may
+hold only for changesets containing the node requested at round $t$, which
+implies \lref[Invariant]{item:propmid} for time $t$.
+
+It remains to show that \lref[Invariant]{item:prop1} holds for any step $t >
+\beP$. It is trivially true for $t = \beP+1$ 
+as $\cnt_{t-1}(X) = 0$ then. Let $t+1$ be the earliest time in phase $P$ for
+which \lref[Invariant]{item:prop1} does not hold; we will then show a
+contradiction with the definition of \ALG or a contradiction with other
+Invariants at time $t$. That is, we assume that there exists a~positive
+changeset $X$ for $C_{t+1}$ such that $\cnt_t(X) \geq |X| \cdot \alpha$ (the
+proof for a negative changeset is analogous). Note that \ALG must have
+performed an action (fetch or eviction) at time $t$ as otherwise $X$ would be
+also  a changeset for $C_t = C_{t+1}$ with $\cnt_t(X) \geq |X| \cdot \alpha$,
+which means that $X$ should have been applied by \ALG at time $t$. We consider
+two cases.
+
+If \ALG fetches a positive changeset $Y$ at time $t$, $C_{t+1} = C_t \sqcup Y$
+and $\cnt_t(Y) = |Y|\cdot\alpha$. Then, $Y \sqcup X$ is a changeset for $C_t$,
+and $\cnt_t(Y \sqcup X) \geq |Y \sqcup X| \cdot \alpha$. This contradicts
+the maximality property of set~$Y$ chosen at time~$t$ by~\ALG.
+
+If \ALG evicts a negative changeset $Y$ at time $t$, $C_{t+1} = C_t \setminus
+Y$. \lref[Invariant]{item:prop2} and the definition of \ALG implies $\cnt_t(Y) =
+|Y| \cdot \alpha$, and thus, by \lref[Invariant]{item:propmid}, $Y$ contains
+the node requested at round $t$. As $X \cap Y \subseteq C_t$, \mbox{$X \cap Y$} does
+not have any positive requests at time~$t$, and therefore $\cnt_t(X \setminus
+Y) = \cnt_t(X) \geq |X| \cdot \alpha \geq |X \setminus Y| \cdot \alpha$. By
+\lref[Invariant]{item:prop2}, $\cnt_t(X \setminus Y) \leq |X \setminus Y|
+\cdot \alpha$, and hence $\cnt_t(X \setminus Y) = |X \setminus Y| \cdot
+\alpha$. This contradicts \lref[Invariant]{item:propmid} as $X \setminus Y$
+cannot contain the node requested at round $t$ (because $Y$ contains this
+node).
+\end{proof}
 
 \begin{lemma}
 \label{lem:no_over-requested_changesets}
@@ -297,24 +384,54 @@ negative.
 \end{enumerate}
 \end{lemma}
 
-In the following, we assume that no positive requests are given to nodes
-inside the cache and no negative ones to nodes outside of it. (This does not
-change the behavior of \ALGTC and can only decrease the cost of \OPT.)
 
-For the sake of analysis, we assume that at time $\enP$, \ALGTC actually
-performs a cache fetch (exceeding the cache size limit) and then, at the same
-time instant, empties the cache. This replacement only increases the cost of
-\ALGTC. Let $k_P$ denote the number of nodes in the cache of $\ALGTC$ at $\enP$.
-In a finished phase, we measure it after the artificial fetch, but right
-before the final eviction, and thus $k_P \geq \kALG + 1$; in an unfinished
-phase $k_P \leq \kALG$.
 
-The crucial part of our analysis that culminates in
-\lref[Section]{sec:shifting} is the technique of shifting requests. Namely, we
-modify the input sequence by shifting requests up or down the tree, so that
-the resulting input sequence (i) is not harder for \OPT and (ii) is more
-structured: we may lower bound the cost of \OPT on each node separately and
-relate it to the cost of \ALGTC.
+\begin{proof}[Proof of Lemma~\ref*{lem:no_over-requested_changesets}]
+The inequality $\cnt_t(X) \leq |X| \cdot \alpha$ is equivalent to
+\lref[Invariant]{item:prop2} of \lref[Lemma]{cla:inductive_properties}.
+Assume now that $X$ is applied at time $t$. By the definition of \ALG,
+$\cnt_t(X) \geq |X| \cdot \alpha$, and thus $\cnt_t(X) = |X| \cdot \alpha$,
+i.e., \lref[Property]{lemit:2} follows. Then, \lref[Invariant]{item:propmid}
+of \lref[Lemma]{cla:inductive_properties} implies \lref[Property]{lemit:1}.
+Finally, \lref[Invariant]{item:prop1} of
+\lref[Lemma]{cla:inductive_properties} for time $t+1$ is equivalent to
+\lref[Property]{lemit:3}.
+
+To show \lref[Property]{lemit:4}, observe that the changeset $X$
+applied at time $t$ cannot be a disjoint union of two (or more) valid
+changesets $X_1$ and $X_2$. By \lref[Property]{lemit:2}, $|X| \cdot \alpha =
+\cnt_t(X) = \cnt_t(X_1) + \cnt_t(X_2)$. If $\cnt_t(X_1) < |X_1| \cdot \alpha$
+or $\cnt_t(X_2) < |X_2| \cdot \alpha$, then $\cnt_t(X_1) + \cnt_t(X_2) <
+(|X_1| + |X_2|) \cdot \alpha = |X| \cdot \alpha$, a contradiction. Therefore,
+$\cnt_t(X_1) = |X_1| \cdot \alpha$ and $\cnt_t(X_2) = |X_2| \cdot
+\alpha$. But then \lref[Invariant]{item:propmid} of
+\lref[Lemma]{cla:inductive_properties} would imply that both $X_1$ and $X_2$
+contain a node requested at time $t$, which is a~contradiction as they are
+disjoint.
+
+Therefore, if $X$ is a positive changeset applied at $t$, then $X$ is a~single
+tree cap of a tree from subforest $C_{t+1}$, and likewise, if $X$ is negative,
+then $X$ is a~single tree cap of a~tree from subforest $C_t$.
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -343,7 +460,7 @@ phase $P$. For a~changeset~$X_t$ applied by
   F^t = \left\{\ (v,r) : v \in X_t \, \wedge\, \last_v(t)+1 \leq r \leq t\ \right\}.
 \]
 That is, field $F^t$ contains all the requests that eventually trigger the
-application of $X_t$ at time $t$. We say that $F^t$ ends at $t$. We call field
+application of $X_t$ at time~$t$. We say that $F^t$ ends at $t$. We call field
 $F^t$ \emph{positive} (\emph{negative}) if $X_t$ is a positive (negative)
 changeset. An~example of a~partitioning into fields is given in
 \lref[Figure]{fig:fields}. We define $\req(F^t)$ as the number of requests
@@ -372,7 +489,7 @@ positive (negative) if $F$ is positive (negative).
 \end{observation}
 
 Finally, we call the rest of the event space defined by phase $P$
-\emph{open field} and denote it by $F^\infty$. The set of all fields except $
+\emph{open field} and denote it by~$F^\infty$. The set of all fields except $
 F^\infty$ is denoted by $\F$. Let $\sizetc(\F) = \sum_{F \in \F} \sizetc(F)$.
 
 \begin{lemma}
@@ -449,7 +566,7 @@ and hence we cannot argue that $\OPT(P')$ is sufficiently large.
 In the following subsections, we show that it is possible to legally shift the
 requests of any field $F \in \F$ (i.e., shift positive requests down and negative
 requests up), so that they remain within $F$, and they will
-be either exactly or approximately evenly distributed among nodes of $F$.
+be either exactly or approximately evenly distributed among nodes of~$F$.
 This will create $P'$ with an appropriately large cost for \OPT.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -492,7 +609,7 @@ As the nodes from $F^t_{\leq \tau} \cap D$ form a valid changeset at time~$\tau$
 D| \cdot \alpha$.
 
 The proof of the second property is identical: As $F^t_{\leq \tau} \cap T'$ is
-also a valid changeset at time $\tau$, by
+also a valid changeset at time~$\tau$, by
 \lref[Lemma]{lem:no_over-requested_changesets}, $\req(F^t_{\leq \tau}
 \cap T') = \cnt_\tau(F^t_{\leq \tau} \cap T')
 \leq |F^t_{\leq \tau} \cap T'| \cdot \alpha$. 
@@ -552,7 +669,7 @@ so that in result $\req({v}) = \alpha$ and $Y \setminus \{v\}$ is proper.
 As $\req(F^t \cap Y) = |Y| \cdot \alpha$, \lref[Corollary]{cor:density}
 implies that any leaf of $Y$ was requested at least $\alpha$ times
 inside~$F^t$. We pick an arbitrary leaf $v$, and let $r \geq \alpha$ be the
-number of requests to $v$ in $F^t$.
+number of requests to $v$ in~$F^t$.
 
 We look at all the requests to $v$ in $F^t$ ordered by their round. Let $s$ be
 the round when $(\alpha+1)$-th of them arrives. We will now show that at round
@@ -560,7 +677,7 @@ $s$, \ALGTC already has $p(v)$ in its cache. If it had not, $\{v\}$ would be a
 tree cap of $F^t_{\leq s}$, and by the first property of
 \lref[Lemma]{lem:not_over-requested}, it would contain at most $\alpha$
 requests, which is a~contradiction. Hence, if we shift the chronologically
-last $r - \alpha$ requests from $v$ to $p(v)$, these requests stay within
+last~$r - \alpha$ requests from $v$ to $p(v)$, these requests stay within
 $F^t$.
 
 It remains to show that $Y \setminus \{v\}$ is proper after such a shift. We
@@ -621,7 +738,7 @@ would cease to be a subforest of $T$). In particular, it holds that $u_1 = v$.
 We number $c \cdot (\alpha / 2)$ requests to $v$ chronologically, starting
 from $1$. For any $j \in \{1, \ldots, \lceil c/2 \rceil \}$ we look at round
 $\tau_j$ with the $((j-1) \cdot \alpha + 1)$-th request to $v$. When this
-request arrives, node $u_j$ is already present in the cache. Otherwise, we
+request arrives, the node~$u_j$ is already present in the cache. Otherwise, we
 would have at least \mbox{$j \cdot \alpha + 1$} requests in $F^t_{\leq
 {\tau_j}} \cap \{u_1, \ldots, u_j\}$ (already in $F^t_{\leq {\tau_j}}
 \cap \{u_1\}$ alone), which would make it over-requested, and thus contradict
@@ -702,7 +819,7 @@ $F^\infty$.}
 \end{figure}
 
 We focus on a single node $v$.  We cut its history into interleaved periods:
-\pout \emph{periods} when $v$ is outside the cache and receives positive 
+\pout \emph{periods} when~$v$ is outside the cache and receives positive 
 requests, and \pin \emph{periods} when \ALGTC keeps $v$ in the cache and $v$
 receives negative requests. A final (possibly empty) part corresponding to the
 time when $v$ is in the $F^\infty$ field is not accounted in \pout or \pin
@@ -758,7 +875,7 @@ For any phase $P$, it holds that $\req (F^\infty) \leq 2 \cdot \kALG \cdot
 
 \begin{proof}
 We assume first that $P$ is a finished phase. Then, $P$ ends with an
-artificial fetch of $X_{\enP}$ at time $\enP$ (followed by the final eviction).
+artificial fetch of~$X_{\enP}$ at time $\enP$ (followed by the final eviction).
 We split $F^\infty$ into two disjoint parts (see \lref[Figure]{fig:fields}):
 \begin{align*}
   F^\infty_- = &\; \{(v, t): v \in C_{\enP}, t \geq \last_v(\enP)\}, \\
@@ -872,143 +989,14 @@ all phases of $I$ yields $\ALGTC(I) \leq O(R) \cdot \OPT(I) + O(h(T) \cdot \kALG
 \cdot \alpha)$.
 \end{proof}
 
-\subsection{No over-requested changesets}
-\label{sec:proof_of_lemma_1}
+%\subsection{No over-requested changesets}
+%\label{sec:proof_of_lemma_1}
 
-Before proving \lref[Lemma]{lem:no_over-requested_changesets}, 
-we present the following technical claim.
+%Before proving \lref[Lemma]{lem:no_over-requested_changesets}, 
+%we present the following technical claim.
 
-
-\begin{claim}
-\label{cla:inductive_properties}
-For any phase $P$, the following invariants hold for any time $t > \beP$:
-\begin{enumerate}
-\item $\cnt_{t-1}(X) < |X| \cdot \alpha$ for a valid changeset $X$ for $C_t$,\hspace{-1em}
-\label{item:prop1}
-\item $\cnt_t(X) \leq |X| \cdot \alpha$ for a valid changeset $X$ for $C_t$,
-\label{item:prop2}
-\item any changeset $X$ with property $\cnt_t(X) = |X| \cdot \alpha$ contains 
-the node requested at round $t$.
-\label{item:propmid}
-\end{enumerate}
-\end{claim}
-
-\begin{proof}
-First, observe that \lref[Invariant]{item:prop1} (for time $t$) along with the
-fact that round $t$ contains only one request immediately implies that
-$\cnt_t(X) \leq \cnt_{t-1}(X) + 1 \leq (|X| \cdot \alpha - 1) + 1 = |X|
-\cdot \alpha$, i.e., \lref[Invariant]{item:prop2} for time~$t$. Furthermore, the equality may
-hold only for changesets containing the node requested at round $t$, which
-implies \lref[Invariant]{item:propmid} for time $t$.
-
-It remains to show that \lref[Invariant]{item:prop1} holds for any step $t >
-\beP$. It is trivially true for $t = \beP+1$ 
-as $\cnt_{t-1}(X) = 0$ then. Let $t+1$ be the earliest time in phase $P$ for
-which \lref[Invariant]{item:prop1} does not hold; we will then show a
-contradiction with the definition of \ALG or a contradiction with other
-Invariants at time $t$. That is, we assume that there exists a~positive
-changeset $X$ for $C_{t+1}$ such that $\cnt_t(X) \geq |X| \cdot \alpha$ (the
-proof for a negative changeset is analogous). Note that \ALG must have
-performed an action (fetch or eviction) at time $t$ as otherwise $X$ would be
-also  a changeset for $C_t = C_{t+1}$ with $\cnt_t(X) \geq |X| \cdot \alpha$,
-which means that $X$ should have been applied by \ALG at time $t$. We consider
-two cases.
-
-If \ALG fetches a positive changeset $Y$ at time $t$, $C_{t+1} = C_t \sqcup Y$
-and $\cnt_t(Y) = |Y|\cdot\alpha$. Then, $Y \sqcup X$ is a changeset for $C_t$,
-and $\cnt_t(Y \sqcup X) \geq |Y \sqcup X| \cdot \alpha$. This contradicts
-the maximality property of set~$Y$ chosen at time~$t$ by~\ALG.
-
-If \ALG evicts a negative changeset $Y$ at time $t$, $C_{t+1} = C_t \setminus
-Y$. \lref[Invariant]{item:prop2} and the definition of \ALG implies $\cnt_t(Y) =
-|Y| \cdot \alpha$, and thus, by \lref[Invariant]{item:propmid}, $Y$ contains
-the node requested at round $t$. As $X \cap Y \subseteq C_t$, \mbox{$X \cap Y$} does
-not have any positive requests at time~$t$, and therefore $\cnt_t(X \setminus
-Y) = \cnt_t(X) \geq |X| \cdot \alpha \geq |X \setminus Y| \cdot \alpha$. By
-\lref[Invariant]{item:prop2}, $\cnt_t(X \setminus Y) \leq |X \setminus Y|
-\cdot \alpha$, and hence $\cnt_t(X \setminus Y) = |X \setminus Y| \cdot
-\alpha$. This contradicts \lref[Invariant]{item:propmid} as $X \setminus Y$
-cannot contain the node requested at round $t$ (because $Y$ contains this
-node).
-\end{proof}
-
-
-\begin{proof}[Proof of Lemma~\ref*{lem:no_over-requested_changesets}]
-The inequality $\cnt_t(X) \leq |X| \cdot \alpha$ is equivalent to
-\lref[Invariant]{item:prop2} of \lref[Claim]{cla:inductive_properties}.
-Assume now that $X$ is applied at time $t$. By the definition of \ALG,
-$\cnt_t(X) \geq |X| \cdot \alpha$, and thus $\cnt_t(X) = |X| \cdot \alpha$,
-i.e., \lref[Property]{lemit:2} follows. Then, \lref[Invariant]{item:propmid}
-of \lref[Claim]{cla:inductive_properties} implies \lref[Property]{lemit:1}.
-Finally, \lref[Invariant]{item:prop1} of
-\lref[Claim]{cla:inductive_properties} for time $t+1$ is equivalent to
-\lref[Property]{lemit:3}.
-
-To show \lref[Property]{lemit:4}, observe that the changeset $X$
-applied at time $t$ cannot be a disjoint union of two (or more) valid
-changesets $X_1$ and $X_2$. By \lref[Property]{lemit:2}, $|X| \cdot \alpha =
-\cnt_t(X) = \cnt_t(X_1) + \cnt_t(X_2)$. If $\cnt_t(X_1) < |X_1| \cdot \alpha$
-or $\cnt_t(X_2) < |X_2| \cdot \alpha$, then $\cnt_t(X_1) + \cnt_t(X_2) <
-(|X_1| + |X_2|) \cdot \alpha = |X| \cdot \alpha$, a contradiction. Therefore,
-$\cnt_t(X_1) = |X_1| \cdot \alpha$ and $\cnt_t(X_2) = |X_2| \cdot
-\alpha$. But then \lref[Invariant]{item:propmid} of
-\lref[Claim]{cla:inductive_properties} would imply that both $X_1$ and $X_2$
-contain a node requested at time $t$, which is a~contradiction as they are
-disjoint.
-
-Therefore, if $X$ is a positive changeset applied at $t$, then $X$ is a~single
-tree cap of a tree from subforest $C_{t+1}$, and likewise, if $X$ is negative,
-then $X$ is a~single tree cap of a~tree from subforest $C_t$.
-\end{proof}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\section{Lower Bound on the Competitive Ratio}
-\label{sec:lower-bound-on-the-problem}
-
-\begin{theorem}
-For any $\alpha \geq 1$, the competitive ratio of any deterministic online
-algorithm for the online tree caching problem is at least
-$\Omega(\kALG/(\kALG-\kOPT+1))$
-\end{theorem}
-
-\begin{proof}
-We will assume that in the tree caching problem, evictions are free (this
-changes the cost by at most by a factor of two). We consider a tree whose
-leaves correspond to the set of all elements in the caching problem. The rest of
-the tree will be irrelevant.
-
-For any input sequence $I$ for the caching problem, we may create a sequence
-$I_\textnormal{T}$ for tree caching, where a request to an element is replaced by
-$\alpha$ requests to the corresponding leaf. Now, we claim that any solution
-$A$ for~$I$ of cost $c$ can be transformed, in an online manner, into a~solution
-$A_\textnormal{T}$ for $I_\textnormal{T}$ of cost $\Theta(\alpha \cdot c)$ and
-vice versa.
-
-If upon a request $r$, an algorithm $A$ fetches $r$ to the cache and evicts
-some elements, then $A_\textnormal{T}$ bypasses $\alpha$ corresponding requests
-to leaf $r$, fetches $r$ afterward and evicts the corresponding leaves,
-paying $O(\alpha)$ times the cost of $A$. By doing it iteratively,
-$A_\textnormal{T}$ ensures that its cache is equivalent to that of $A$. In
-particular, a request free for $A$ is also free for $A_\textnormal{T}$.
-
-Now take any algorithm $A_\textnormal{T}$ for $I_\textnormal{T}$. It can be
-transformed into the algorithm $A_\textnormal{T}'$ that (i)~keeps only leaves of
-the tree in the cache and (ii) performs actions only at times that are
-multiplicities of $\alpha$ (losing at most a constant factor in comparison to
-$A_\textnormal{T}$). Then, fix any chunk of $\alpha$ requests to some leaf
-$r'$ immediately followed by some fetches and evictions of $A_\textnormal{T}'$
-leaves. Upon seeing the corresponding request $r'$ in $I$, the algorithm $A$
-performs fetches and evictions on the corresponding elements. In effect, the cost
-of $A$ is $O(1/\alpha)$ times the cost of $A_\textnormal{T}$.
-
-The bidirectional reduction described above preserves competitive ratios up to
-a constant factor. Hence, applying the adversarial strategy for the caching
-problem that enforces the competitive ratio  $R = \kALG/(\kALG-\kOPT+1)$
-\cite{SleTar85} immediately implies the lower bound of $\Omega(R)$
-on the competitive ratio for the tree caching problem.
-\end{proof}
-
 
 
 
@@ -1019,7 +1007,7 @@ on the competitive ratio for the tree caching problem.
 In this section, we show how to handle forced cache modifications (cf. Section~\ref{sec:rule-up}).
 That is, we present a formal argument showing why we can use any
 $q$-competitive online algorithm $A_T$ for the tree caching problem to obtain
-a $2 q$-competitive online algorithm~$A$ for the tree caching problem with forced updates.
+a $2 q$-competitive online algorithm~$A$ for the tree caching problem with forced cache modifications.
 Recall that they cost $\alpha$ when the requested item is present in the cache, and $0$ if it is not.
 We call this the \emph{extended tree caching problem}.
 
@@ -1055,6 +1043,53 @@ The second inequality follows immediately by the $q$-com\-pe\-ti\-ti\-ve\-ness
 of $A_T$. The third inequality follows by replaying cache modifications as
 well, but this time we take solution $\OPT(I)$ and replay its actions on $I_T$,
 creating a canonical (not necessarily optimal) solution of the same cost.
+
+\section{Lower Bound on the Competitive Ratio}
+\label{sec:lower-bound-on-the-problem}
+
+\begin{theorem}
+For any $\alpha \geq 1$, the competitive ratio of any deterministic online
+algorithm for the online tree caching problem is at least
+$\Omega(\kALG/(\kALG-\kOPT+1))$
+\end{theorem}
+
+\begin{proof}
+We will assume that in the tree caching problem, evictions are free (this
+changes the cost by at most by a factor of two). We consider a tree whose
+leaves correspond to the set of all elements in the caching problem. The rest of
+the tree will be irrelevant.
+
+For any input sequence $I$ for the caching problem, we may create a sequence
+$I_\textnormal{T}$ for tree caching, where a request to an element is replaced by
+$\alpha$ requests to the corresponding leaf. Now, we claim that any solution
+$A$ for~$I$ of cost $c$ can be transformed, in an online manner, into a~solution
+$A_\textnormal{T}$ for $I_\textnormal{T}$ of cost $\Theta(\alpha \cdot c)$ and
+vice versa.
+
+If upon a request $r$, an algorithm $A$ fetches $r$ to the cache and evicts
+some elements, then $A_\textnormal{T}$ pays for $\alpha$ corresponding requests
+to leaf $r$, fetches $r$ afterward and evicts the corresponding leaves,
+paying $O(\alpha)$ times the cost of $A$. By doing it iteratively,
+$A_\textnormal{T}$ ensures that its cache is equivalent to that of $A$. In
+particular, a request free for $A$ is also free for $A_\textnormal{T}$.
+
+Now take any algorithm $A_\textnormal{T}$ for $I_\textnormal{T}$. It can be
+transformed into the algorithm $A_\textnormal{T}'$ that (i)~keeps only leaves of
+the tree in the cache and (ii) performs actions only at times that are
+multiplicities of $\alpha$ (losing at most a constant factor in comparison to
+$A_\textnormal{T}$). Then, fix any chunk of $\alpha$ requests to some leaf
+$r'$ immediately followed by some fetches and evictions of $A_\textnormal{T}'$
+leaves. Upon seeing the corresponding request $r'$ in $I$, the algorithm $A$
+performs fetches and evictions on the corresponding elements. In effect, the cost
+of $A$ is $O(1/\alpha)$ times the cost of $A_\textnormal{T}$.
+
+The bidirectional reduction described above preserves competitive ratios up to
+a constant factor. Hence, applying the adversarial strategy for the caching
+problem that enforces the competitive ratio  $R = \kALG/(\kALG-\kOPT+1)$
+\cite{SleTar85} immediately implies the lower bound of $\Omega(R)$
+on the competitive ratio for the tree caching problem.
+\end{proof}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

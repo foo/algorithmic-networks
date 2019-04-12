@@ -24,6 +24,7 @@ where the servers are located at the tree leaves and routers at inner nodes.
 Depending on the available capacity~$\capacity(s)$ of server~$s$, multiple virtual machines may be hosted on~$s$.
 Each link~$e\in E$ in the substrate network has a certain bandwidth capacity~$\capacity(e)$.
 
+
 \parag{The Data.} The data to be processed constitutes the input to the batch-processing application.
 The data is stored in a distributed filesystem spread across the servers; this spatial distribution is given and is not subject to optimization.
 The input data consists of~$\tau$ different \emph{chunks}~${C = \{ \achunk_1, \ldots, \achunk_{\ChunkType} \}}$,
@@ -374,6 +375,7 @@ The \emph{uplink} of a~proper subtree $T'$, denoted $\Uplink(T')$ is an edge fro
 %$\MA$ have a local assignment. We exploit this in our algorithms described
 %in the following.
 
+\pagebreak
 
 \begin{lemma}\label{lem:uplink-alloc}
 In the~$\MA$ variant of $\CTE$, for a proper subtree~$\Tree'$
@@ -884,6 +886,7 @@ The multi-assignment factor is $m=4$, and the number of nodes to embed is~$\numN
  We illustrate an instance of $\CTE$ corresponding to the $\TDPM$ instance from Figure~\ref{fig:fprsma} in Figure~\ref{fig:example-rs2}.
  The reduction (Theorem~\ref{th:ma-reduction}) consists of two parts: (1)~given a solution for $\ITDPM$, we construct a solution to $\ICTE$ of cost at most $\Thr$, and (2) given a solution for $\ICTE$ of cost at most $\Thr$, we construct a solution for $\ITDPM$.
  The first part is easier, and we present it now.
+ 
 \begin{lemma}
   Fix an instance $\ITDPM$ of~$\TDPM$ and construct an instance $\ICTE$ of $\CTE$ in the way described in this section.
   If there exists a perfect 3D matching for $\ITDPM$, then $\ICTE$ has a~solution of cost at most $\Thr$.
@@ -1134,7 +1137,7 @@ The total cost is then $2\cdot (3\cdot k) + 4\cdot({ 3\cdot k \choose 2} - (3\cd
 ($\Rightarrow$) Given a solution for~$\ICTE$,
 we use Lemma~\ref{lemma:helper} to construct a solution for~$\ITDPM$: in any solution of cost at most~$\Thr$,
 $k$ gadgets contain exactly 3 nodes. These gadgets correspond to a~valid
-3D perfect matching, as exactly one replica of every chunk is assigned, every element is covered exactly once.
+3D perfect matching: as exactly one replica of every chunk is assigned, every element is covered exactly once.
 \end{proof}
 
 \paragraph{Remark on two replicas and interconnects.}
