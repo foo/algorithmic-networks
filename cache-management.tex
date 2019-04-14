@@ -845,8 +845,11 @@ periods; each of them together with the following \pin period constitutes a
 \OPT has to pay at least $\alpha/2$ for the node in the course of the history
 described by a~full \pout-\pin pair: it pays $\alpha$ either for changing the
 cached/non-cached state of a node, or $\alpha/2$ for all positive requests or
-$\alpha/2$ for all negative ones. Thus, $\OPT(P') \geq ( p^\pout / (2 h(T)) -
-k_P ) \cdot \alpha/2 \geq ( \sizetc(\F) / (4 h(T)) - k_P ) \cdot \alpha/2$.
+$\alpha/2$ for all negative ones. Thus,
+\[
+\OPT(P') \geq ( p^\pout / (2 h(T)) -
+k_P ) \cdot \alpha/2 \geq ( \sizetc(\F) / (4 h(T)) - k_P ) \cdot \alpha/2\enspace.
+\]
 \end{proof}
 
 
@@ -1141,8 +1144,8 @@ The situation for negative changesets is more complex as even after applying
 \lref[Lemma]{lem:no_over-requested_changesets} there are still exponentially
 many valid negative changesets to consider. In
 \lref[Section]{sec:implementing_negative_counters}, we construct an~auxiliary
-data structure that returns a viable candidate in time $O(h(T) + \degree(T)
-\cdot |X_t|)$. The update of this structure at time $t$ can be also done in
+data structure that returns a viable candidate in time ${O(h(T) + \degree(T)
+\cdot |X_t|)}$. The update of this structure at time $t$ can be also done in
 $O(h(T) + \degree(T) \cdot |X_t|)$ operations.
 
 \subsection{Positive Requests and Fetches}
@@ -1187,7 +1190,7 @@ nodes~$A$ and any time $t$, let
   \val_t(A) = \cnt_t(A) - |A| \cdot \alpha + \frac{|A|}{|T|+1}.
 \]
 Note that for any non-empty set $A$, $\val_t(A) \neq 0$ as the first two terms
-are integers and $|A|/(|T|+1) \in (0,1)$. Furthermore, $\val_t$ is additive:
+are integers and ${|A|/(|T|+1)} \in (0,1)$. Furthermore, $\val_t$ is additive:
 for two disjoint sets $A$ and $B$, $\val_t(A \sqcup B) =
 \val_t(A) + \val_t(B)$. For any time~$t$ and a cached node $u$, we define
 \[
@@ -1243,7 +1246,7 @@ at~$u$, it holds that $\cnt_t(X) - |X| \cdot \alpha < \val_t(X) \leq
 \lref[Lemma]{lem:no_over-requested_changesets}, $\cnt_t(H^u) \leq |H^u| \cdot
 \alpha$, and therefore $\cnt_t(H^u) - |H^u| \cdot \alpha = 0$, i.e.,
 $\val_t(H^u) = |H^u| / (|T|+1)$. It remains to show that $H^u$ is maximal,
-i.e., there is no valid saturated changeset $Y \supsetneq H^u$. By
+i.e., there is no valid saturated changeset ${Y \supsetneq H^u}$. By
 \lref[Lemma]{lem:no_over-requested_changesets}, $Y$ has to be a tree cap
 rooted at $u$ as well. If $Y$ was saturated, $\val_t(Y) = \cnt_t(Y) - |Y|
 \cdot \alpha + |Y| / (|T|+1) \geq |Y| / (|T|+1) > |H^u|/(|T|+1) = \val_t(H^u)$, 

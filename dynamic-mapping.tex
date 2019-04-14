@@ -515,9 +515,12 @@ By Lemma~\ref{lem:merge_action_cut}, the number of communication requests in
 $\F(C)$ that are between different bundles is at least $(p-1) \cdot \alpha$,
 and each of these requests is paid by \OPT.
 Additionally, $\OPT(C)$ involves $\sum_{B \in \set(C)}
-\optmig(B)$ node migrations in $\F(C)$, and therefore $\OPT(C) \geq (p-1) \cdot
+\optmig(B)$ node migrations in $\F(C)$, and therefore
+\[
+\OPT(C) \geq (p-1) \cdot
 \alpha + \sum_{B \in \set(C)} \optmig(B) \cdot \alpha
-\geq (|Y_C|-1) \cdot \alpha - \sum_{B \in \set(C)} (|Y_B|-1) \cdot \alpha$.
+\geq (|Y_C|-1) \cdot \alpha - \sum_{B \in \set(C)} (|Y_B|-1) \cdot \alpha\enspace.
+\]
 \end{proof}
 
 
@@ -552,8 +555,11 @@ thus $|C| > k$.
 
 The proof is concluded by observing that, for any two components $C_1$
 and~$C_2$ from~$\spl(\sigma)$, the corresponding trees~$\T(C_1)$ and $\T(C_2)$ do not share common
-components, and therefore $\OPT(\sigma) \geq \sum_{C \in \spl(\sigma)} \sum_{B
-\in \T(C)} \OPT(B) \geq \sum_{C \in \spl(\sigma)} |C| / (2k) \cdot \alpha$.
+components, and therefore
+\[
+\OPT(\sigma) \geq \sum_{C \in \spl(\sigma)} \sum_{B
+  \in \T(C)} \OPT(B) \geq \sum_{C \in \spl(\sigma)} |C| / (2k) \cdot \alpha\enspace.
+\]
 \end{proof}
 
 
@@ -650,8 +656,10 @@ follows.
 \item 
 $V_y$ had less than $|C_x|$ empty slots and $|C_y| \leq (2/\eps) \cdot |C_x|$.
 \CREP migrates both $C_x$ and $C_y$ to~component $V_z$ and the incurred cost is 
-$\CREPmig(r) = (|C_x| + |C_y|) \cdot \alpha \leq (1+2/\eps) \cdot |C_x| \cdot \alpha
-< (1 + 4/\eps) \cdot |C_x| \cdot \alpha$. 
+\[
+\CREPmig(r) = (|C_x| + |C_y|) \cdot \alpha \leq (1+2/\eps) \cdot |C_x| \cdot \alpha
+< (1 + 4/\eps) \cdot |C_x| \cdot \alpha\enspace.
+\]
 It remains to show that the second summand of \eqref{eq:crep_mig_inc} is~at~most $0$. 
 Clearly, $\Delta \ovr(V_x) \leq 0$ and $\Delta \ovr(V_y) \leq 0$. 
 Furthermore, the number of 
@@ -1144,7 +1152,7 @@ one caching node and all auxiliary nodes. There is a natural bijection between
 possible cache contents and well-aligned configurations: the cache consists of
 the $k-1$ caching nodes that are in the same cluster as node $s$. (Without loss
 of generality, we may assume that the cache of any caching algorithm is always
-full, i.e., consists of $k-1$ pages.) If the configuration $c$ of a BRP
+full, i.e., consists of $k-1$ pages.) If the configuration $c$ of a~BRP
 algorithm is well-aligned, $\textsc{cache}(c)$ denotes the corresponding cache
 contents.
 The initial configuration for the BRP problem is the well-aligned

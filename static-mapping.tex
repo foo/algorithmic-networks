@@ -70,7 +70,7 @@ Formally, let~$\dist(v_1,v_2)$ denote the distance in the underlying physical ne
 For each chunk $c$,
 $\mu(c)$ is the node to which chunk $c$ is assigned,
 $c^*$ is the replica of~$c$ selected for processing,
-and $\dist(\mu(c), c^*)$ denotes the distance between the active replica of chunk $c$ and the node to which $c$ is assigned.
+and $\dist(\mu(c), c^*)$ denotes the distance between the active replica of chunk~$c$ and the node to which $c$ is assigned.
 The objective is to minimize the footprint of the virtual network, defined as
 $$
 \underbrace{\sum_{c \in C} \CostTrans \cdot \dist(\mu(c), c^*)}_{\text{chunk access cost}} +  \underbrace{\frac{1}{2} \cdot \sum_{v\in V} \sum_{v' \in \VirtualNodes\setminus\{v\}} \CostCom \cdot \dist(v,v')}_{\text{node interconnect cost}}\enspace.
@@ -751,7 +751,7 @@ As $n_V = k$, we conclude that there are exactly $k$ active gadgets in $\SCTE$.
 
 To construct the solution $\STDPM$ to $\ITDPM$, we pick the set of triples whose gadgets are active.
 The solution $\STDPM$ consists then of $k$ triples.
-Since each chunk is assigned to exactly one node, every element of~$X$,~$Y$ and~$Z$ is matched and $\STDPM$ forms a 3-dimensional perfect matching of $X \cup Y\cup Z$.
+Since each chunk is assigned to exactly one node, every element of~$X$,~$Y$ and~$Z$ is matched and $\STDPM$ forms a 3-dimensional perfect matching.
 \end{proof}
 
 \pagebreak
