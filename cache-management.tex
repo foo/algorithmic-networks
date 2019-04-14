@@ -1,5 +1,5 @@
 
-To model the problem of maintaining large forwarding tables, we introduce a natural extension of an online caching problem, where
+To model the problem of maintaining large forwarding tables, we introduce a natural extension of online caching, where
 items have inter-de\-pen\-den\-cies.
 In the classic online caching problem, items of some universe are requested by
 a~processing entity (e.g., blocks of RAM are requested by the processor). To
@@ -18,7 +18,7 @@ natural refinement of many caching problems.
 As highlighted in the introduction, an important application for caching with tree-based dependencies arises in the context
 of forwarding rules in routers. We begin with a technical overview, %in Section~\ref{sec:tc-technical},
 where we explain the setup for storing only a part of forwarding rules in a router.
-We model this setup by introducing an abstract problem of \emph{tree caching} which, for which we propose a competitive algorithm.
+We model this setup by introducing an abstract problem of \emph{tree caching}, for which we propose a competitive algorithm.
 %In Section~\ref{sec:bisimulation} we establish a formal link between caching with tree dependencies and caching of forwarding rules.
 Finally, we show that the proposed algorithm can be efficiently implemented.
 
@@ -56,7 +56,7 @@ Finally, we show that the proposed algorithm can be efficiently implemented.
 \end{figure}
 
 As highlighted in the introduction, routers have finite memory, and in an increasingly common scenario the size of a~forwarding table exceeds the size of available memory.
-One of the solutions is to store only a part of a~forwarding table in the router, which acts as a cache for the complete forwarding table.
+One of the solutions is to store only a part of a~forwarding table in the router, which acts as a cache for the complete forwarding table, stored at another (slow) device.
 This solution is particularly attractive with the advent of Soft\-ware-Defined
 Networking (SDN) technology, which allows managing the router forwarding table using a
 software controller.
@@ -141,7 +141,7 @@ controller: we assume that this cost is zero (this cost is unavoidable for
 any algorithm, so such an assumption makes our problem only more difficult).
 Furthermore, if the rule is also stored at the router (the cache), then we charge a~fixed
 cost $\alpha$ for updating the router.
-We ignore this issue for now, and we come back to it in Section~\ref{sec:bisimulation}, 
+We ignore such forced modifications for now, and we come back to it in Section~\ref{sec:bisimulation}, 
 where we show that such penalties can be easily simulated in our model.
 
 
@@ -187,7 +187,7 @@ requests: a~request can be either \emph{positive} or \emph{negative}. The
 positive requests correspond to ``normal'' requests known from caching
 problems: we pay~$1$ if the node is not cached; for a negative request, we pay
 $1$ if the corresponding request is cached.
-The ability to process negative requests will be crucial in using our algorithm to handle forced cache modifications (cf. Section~\ref{sec:rule-up}), and we elaborate on this issue in Section~\ref{sec:bisimulation}.
+The ability to process negative requests will be crucial in using our algorithm to handle forced cache modifications (cf.~Section~\ref{sec:rule-up}), and we elaborate on this issue in Section~\ref{sec:bisimulation}.
 
 %After serving the request, we may
 %reorganize our cache arbitrarily, but the resulting cache has to still be a
@@ -208,7 +208,7 @@ is an even integer (this assumption may change costs at most by a constant
 factor). We assume that the algorithm starts with the empty cache.
 
 
-In the standard caching problem, fetching is mandatory: the requested item must be present in the cache to serve the request,
+Note that in the standard caching problem, fetching is mandatory: the requested item must be present in the cache to serve the request,
 and if it is not, we must reconfigure the cache to include it.
 The variant of caching, where this requirement is relaxed is called the
 \emph{bypassing model}~\cite{caching-rejection-penalties,paging-irani}, where the item fetching is optional: and the requested item can be served without being in
@@ -280,13 +280,13 @@ the path from $u$ to $v$. If $A \subseteq B$ are both tree caps rooted at $v$,
 then we say that $A$ is a tree cap of $B$.
 
 
-Throughout this chapter, we fix an input $I$, its partition into phases, and
+Throughout this section, we fix an input $I$, its partition into phases, and
 analyze both \ALGTC and \OPT on a~single fixed phase $P$. We denote the times at
 which $P$ starts and ends by $\beP$ and $\enP$, respectively, i.e., rounds in
 $P$ are numbered from $\beP+1$ to $\enP$.
 
 
-In the following, we assume that no positive requests are given to nodes
+We assume that no positive requests are given to nodes
 inside the cache and no negative ones to nodes outside of it (this does not
 change the behavior of \ALGTC and can only decrease the cost of \OPT).
 
@@ -308,7 +308,7 @@ relate it to the cost of \ALGTC.
 \subsection{Properties of Valid Changesets}
 \label{sec:prop-ch}
 
-In Lemma~\ref{lem:no_over-requested_changesets}, we state that no valid changeset contains too many requests to its rules.
+We state that no valid changeset contains too many requests to its rules.
 The proof follows by induction and uses the following technical claim.
 
 \begin{lemma}
@@ -386,7 +386,7 @@ negative.
 
 
 
-\begin{proof}[Proof of Lemma~\ref*{lem:no_over-requested_changesets}]
+\begin{proof}
 The inequality $\cnt_t(X) \leq |X| \cdot \alpha$ is equivalent to
 \lref[Invariant]{item:prop2} of \lref[Lemma]{cla:inductive_properties}.
 Assume now that $X$ is applied at time $t$. By the definition of \ALG,
@@ -470,7 +470,7 @@ immediately by \lref[Lemma]{lem:no_over-requested_changesets}.
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.99\columnwidth,keepaspectratio]{figs/cache-management/fields_horizontal}
+  \includegraphics[width=0.80\columnwidth,keepaspectratio]{figs/cache-management/fields_horizontal}
   \caption{Partitioning of a single phase into fields for a line (a tree with
   no branches). The thick line represents cache contents. Possible final eviction
   at $\enP$ is not depicted. $F^{t_1}$ is a~negative field and $F^{t_2}$ is a
@@ -708,11 +708,11 @@ requested exactly $\alpha$ times.
 We will now focus on the problem of shifting the positive requests down in a
 single positive field $F^t$, corresponding to a single fetch of \ALGTC at the
 time $t$. Our goal is to devise a shifting strategy, that will result in at
-least $\Omega(\sizetc(F^t)/h(T))$ nodes having $\alpha/2$ requests each. While
-this result may be suboptimal, deriving a shifting strategy for a~positive
-field that would have the same equal distribution guarantee as the one
-provided by \lref[Corollary]{cor:crucial_lemma_neg} is not possible.
-
+least $\Omega(\sizetc(F^t)/h(T))$ nodes having $\alpha/2$ requests each.
+%While
+%this result may be suboptimal, deriving a shifting strategy for a~positive
+%field that would have the same equal distribution guarantee as the one
+%provided by \lref[Corollary]{cor:crucial_lemma_neg} is not possible.
 First, we prove that from any node $v$ in the field, we can shift down a
 constant fraction of its requests within the field, distributing them to
 different nodes.
@@ -799,8 +799,7 @@ For any phase $P$, $\OPT(P) \geq (\sizetc(\F) / (4 h(T)) - k_P)
 
 \begin{proof}
 We transform $P$ using legal shifts that are described in 
-\lref[Section]{sec:negative_shifting} and
-\lref[Section]{sec:positive_shifting}. That is, we create a~corresponding
+this section. That is, we create a~corresponding
 phase $P'$ that satisfies both
 \lref[Corollary]{cor:crucial_lemma_neg} and
 \lref[Lemma]{lem:crucial_lemma_pos}. 
@@ -809,7 +808,7 @@ $\OPT(P') \geq (\sizetc(\F) / (4 h(T)) - k_P) \cdot \alpha/2$.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.9\columnwidth,keepaspectratio]{figs/cache-management/leftover}
+\includegraphics[width=0.8\columnwidth,keepaspectratio]{figs/cache-management/leftover}
 \caption{Partitioning of the phase into interleaving \pin and \pout periods
 for node $v$. The thick line represents cache contents. The \emph{leftover}
 \pout period (the last one) is present for node $v$ as it has finished phase
@@ -912,8 +911,8 @@ Hence, in total, $\req (F^\infty) \leq 2 \cdot \kALG \cdot
 
 We note that if there was no cache change at $\enP$, the analysis above would
 hold with $X_{\enP} = \emptyset$ with virtually no change. Therefore, for an
-unfinished phase $P$ ending with a fetch or ending without cache change at
-$\enP$, the bound on $\req(F^\infty)$ still holds. However, if an unfinished
+unfinished phase $P$ ending with a~fetch or ending without cache change at
+$\enP$, the bound on $\req(F^\infty)$ still holds. However, if an~unfinished
 phase~$P$ ends with an eviction, then we look at the last eviction-free 
 time $\tau$ of~$P$. We now observe the evolution of field
 $F^\infty$ from time~$\tau$ till $\enP$. At time $\tau$, $\req(F^\infty) \leq
@@ -1009,11 +1008,11 @@ That is, we present a formal argument showing why we can use any
 $q$-competitive online algorithm $A_T$ for the tree caching problem to obtain
 a $2 q$-competitive online algorithm~$A$ for the tree caching problem with forced cache modifications.
 Recall that they cost $\alpha$ when the requested item is present in the cache, and $0$ if it is not.
-We call this the \emph{extended tree caching problem}.
+We call the variant with forced cache modifications the \emph{extended tree caching problem}.
 
 Namely, we take any input $I$ for the extended tree caching problem and create, in an online
 fashion, an input $I_T$ for the non-extended tree caching problem.
-To this end, we repeat positive and negative requests from $I$, and upon encountering a forced cache modification of some node, we insert a sequence $\alpha$ negative requests for it, called a \emph{chunk}.
+To this end, we repeat positive and negative requests from $I$, and upon encountering a forced cache modification of some node, we insert to $I_T$ a sequence $\alpha$ negative requests for it, called a \emph{chunk}.
 For any solution for $I_T$, we may replay its actions (fetches and evictions)
 on~$I$ and vice versa. However, there is one place, where these solutions 
 may have different costs. As forced rule modifications of node~$v$
@@ -1054,6 +1053,7 @@ $\Omega(\kALG/(\kALG-\kOPT+1))$
 \end{theorem}
 
 \begin{proof}
+  We show the lower bound by a reduction to the (standard) caching problem.
 We will assume that in the tree caching problem, evictions are free (this
 changes the cost by at most by a factor of two). We consider a tree whose
 leaves correspond to the set of all elements in the caching problem. The rest of
@@ -1190,10 +1190,10 @@ Note that for any non-empty set $A$, $\val_t(A) \neq 0$ as the first two terms
 are integers and $|A|/(|T|+1) \in (0,1)$. Furthermore, $\val_t$ is additive:
 for two disjoint sets $A$ and $B$, $\val_t(A \sqcup B) =
 \val_t(A) + \val_t(B)$. For any time~$t$ and a cached node $u$, we define
-\begin{align*}
-  H_t(u) = \arg \max_D \{ \val_t(D) : &\; \textnormal{$D$ is a non-empty tree cap} \\
-    & \quad \textnormal{rooted at $u$} \}.
-\end{align*}
+\[
+  H_t(u) = \arg \max_D \{ \val_t(D) : \; \textnormal{$D$ is a non-empty tree cap}
+    \quad \textnormal{rooted at $u$} \}.
+\]
 Our scheme maintains the value $H_t(u)$ for any cached node $u$. To this end,
 we observe that $H_t(u)$ can be defined recursively as follows. Let
 $H'_t(u) = H_t(u)$ if $\val_t(H_t(u)) > 0$ and $H'_t(u) = \emptyset$ otherwise.
