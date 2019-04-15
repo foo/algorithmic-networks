@@ -1,0 +1,17 @@
+* Master's and Bachelors
+* phd details + selected publications + update BRP disc -> SIDMA SIAM
+* granty
+** Preludium
+** NCN Marcina contractor
+** Kapital ludzki
+* summer schools: fpt i adfocs
+* internships in Berlin
+* short-term visits: Berlin, Vienna
+* konferencje uczestnictwo
+** 2018: SPAA, PODC, ICALP
+** 2016? Algo (wypisac konkrentne)
+** 
+* computer science skills
+** algorithm design
+** games and graphics
+** computer systems: operating systems, networking, virtualization
